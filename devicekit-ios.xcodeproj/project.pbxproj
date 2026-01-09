@@ -6,6 +6,16 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		782BB5A22F113EF5008252BE /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 782BB5A12F113EF4008252BE /* ReplayKit.framework */; };
+		782BB5AC2F113EF5008252BE /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 782BB5A12F113EF4008252BE /* ReplayKit.framework */; };
+		782BB5AE2F113EF5008252BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 782BB5AD2F113EF5008252BE /* UIKit.framework */; };
+		782BB5B52F113EF5008252BE /* BroadcastUploadExtensionSetupUI.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 782BB5AB2F113EF5008252BE /* BroadcastUploadExtensionSetupUI.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		782BB5B82F113EF5008252BE /* BroadcastUploadExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 782BB59F2F113EF4008252BE /* BroadcastUploadExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		782BB5D12F114A5D008252BE /* H264Codec in Frameworks */ = {isa = PBXBuildFile; productRef = 782BB5D02F114A5D008252BE /* H264Codec */; };
+		782BB5D32F114A5D008252BE /* TCP in Frameworks */ = {isa = PBXBuildFile; productRef = 782BB5D22F114A5D008252BE /* TCP */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2D7C5B9F2EF1F235007AB2A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,13 +31,63 @@
 			remoteGlobalIDString = 2D7C5B902EF1F233007AB2A8;
 			remoteInfo = "devicekit-ios";
 		};
+		782BB5B32F113EF5008252BE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D7C5B892EF1F232007AB2A8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 782BB5AA2F113EF5008252BE;
+			remoteInfo = BroadcastUploadExtensionSetupUI;
+		};
+		782BB5B62F113EF5008252BE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D7C5B892EF1F232007AB2A8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 782BB59E2F113EF4008252BE;
+			remoteInfo = BroadcastUploadExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		782BB5B92F113EF5008252BE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				782BB5B52F113EF5008252BE /* BroadcastUploadExtensionSetupUI.appex in Embed Foundation Extensions */,
+				782BB5B82F113EF5008252BE /* BroadcastUploadExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2D7C5B912EF1F233007AB2A8 /* devicekit-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "devicekit-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C5B9E2EF1F235007AB2A8 /* devicekit-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "devicekit-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C5BA82EF1F235007AB2A8 /* devicekit-iosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "devicekit-iosUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		782BB59F2F113EF4008252BE /* BroadcastUploadExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BroadcastUploadExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		782BB5A12F113EF4008252BE /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
+		782BB5AB2F113EF5008252BE /* BroadcastUploadExtensionSetupUI.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BroadcastUploadExtensionSetupUI.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		782BB5AD2F113EF5008252BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		782BB5BE2F113EF5008252BE /* Exceptions for "BroadcastUploadExtension" folder in "BroadcastUploadExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 782BB59E2F113EF4008252BE /* BroadcastUploadExtension */;
+		};
+		782BB5C02F113EF5008252BE /* Exceptions for "BroadcastUploadExtensionSetupUI" folder in "BroadcastUploadExtensionSetupUI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 782BB5AA2F113EF5008252BE /* BroadcastUploadExtensionSetupUI */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2D7C5B932EF1F233007AB2A8 /* devicekit-ios */ = {
@@ -38,6 +98,22 @@
 		2D7C5BAB2EF1F235007AB2A8 /* devicekit-iosUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "devicekit-iosUITests";
+			sourceTree = "<group>";
+		};
+		782BB5A32F113EF5008252BE /* BroadcastUploadExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				782BB5BE2F113EF5008252BE /* Exceptions for "BroadcastUploadExtension" folder in "BroadcastUploadExtension" target */,
+			);
+			path = BroadcastUploadExtension;
+			sourceTree = "<group>";
+		};
+		782BB5AF2F113EF5008252BE /* BroadcastUploadExtensionSetupUI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				782BB5C02F113EF5008252BE /* Exceptions for "BroadcastUploadExtensionSetupUI" folder in "BroadcastUploadExtensionSetupUI" target */,
+			);
+			path = BroadcastUploadExtensionSetupUI;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -64,6 +140,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		782BB59C2F113EF4008252BE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				782BB5D32F114A5D008252BE /* TCP in Frameworks */,
+				782BB5A22F113EF5008252BE /* ReplayKit.framework in Frameworks */,
+				782BB5D12F114A5D008252BE /* H264Codec in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		782BB5A82F113EF5008252BE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				782BB5AC2F113EF5008252BE /* ReplayKit.framework in Frameworks */,
+				782BB5AE2F113EF5008252BE /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -72,6 +167,9 @@
 			children = (
 				2D7C5B932EF1F233007AB2A8 /* devicekit-ios */,
 				2D7C5BAB2EF1F235007AB2A8 /* devicekit-iosUITests */,
+				782BB5A32F113EF5008252BE /* BroadcastUploadExtension */,
+				782BB5AF2F113EF5008252BE /* BroadcastUploadExtensionSetupUI */,
+				782BB5A02F113EF4008252BE /* Frameworks */,
 				2D7C5B922EF1F233007AB2A8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -82,8 +180,19 @@
 				2D7C5B912EF1F233007AB2A8 /* devicekit-ios.app */,
 				2D7C5B9E2EF1F235007AB2A8 /* devicekit-iosTests.xctest */,
 				2D7C5BA82EF1F235007AB2A8 /* devicekit-iosUITests.xctest */,
+				782BB59F2F113EF4008252BE /* BroadcastUploadExtension.appex */,
+				782BB5AB2F113EF5008252BE /* BroadcastUploadExtensionSetupUI.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		782BB5A02F113EF4008252BE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				782BB5A12F113EF4008252BE /* ReplayKit.framework */,
+				782BB5AD2F113EF5008252BE /* UIKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -96,10 +205,13 @@
 				2D7C5B8D2EF1F233007AB2A8 /* Sources */,
 				2D7C5B8E2EF1F233007AB2A8 /* Frameworks */,
 				2D7C5B8F2EF1F233007AB2A8 /* Resources */,
+				782BB5B92F113EF5008252BE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				782BB5B42F113EF5008252BE /* PBXTargetDependency */,
+				782BB5B72F113EF5008252BE /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2D7C5B932EF1F233007AB2A8 /* devicekit-ios */,
@@ -154,6 +266,52 @@
 			productReference = 2D7C5BA82EF1F235007AB2A8 /* devicekit-iosUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		782BB59E2F113EF4008252BE /* BroadcastUploadExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 782BB5BF2F113EF5008252BE /* Build configuration list for PBXNativeTarget "BroadcastUploadExtension" */;
+			buildPhases = (
+				782BB59B2F113EF4008252BE /* Sources */,
+				782BB59C2F113EF4008252BE /* Frameworks */,
+				782BB59D2F113EF4008252BE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				782BB5A32F113EF5008252BE /* BroadcastUploadExtension */,
+			);
+			name = BroadcastUploadExtension;
+			packageProductDependencies = (
+				782BB5D02F114A5D008252BE /* H264Codec */,
+				782BB5D22F114A5D008252BE /* TCP */,
+			);
+			productName = BroadcastUploadExtension;
+			productReference = 782BB59F2F113EF4008252BE /* BroadcastUploadExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		782BB5AA2F113EF5008252BE /* BroadcastUploadExtensionSetupUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 782BB5C12F113EF5008252BE /* Build configuration list for PBXNativeTarget "BroadcastUploadExtensionSetupUI" */;
+			buildPhases = (
+				782BB5A72F113EF5008252BE /* Sources */,
+				782BB5A82F113EF5008252BE /* Frameworks */,
+				782BB5A92F113EF5008252BE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				782BB5AF2F113EF5008252BE /* BroadcastUploadExtensionSetupUI */,
+			);
+			name = BroadcastUploadExtensionSetupUI;
+			packageProductDependencies = (
+			);
+			productName = BroadcastUploadExtensionSetupUI;
+			productReference = 782BB5AB2F113EF5008252BE /* BroadcastUploadExtensionSetupUI.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -161,7 +319,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2600;
+				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					2D7C5B902EF1F233007AB2A8 = {
@@ -174,6 +332,12 @@
 					2D7C5BA72EF1F235007AB2A8 = {
 						CreatedOnToolsVersion = 26.0.1;
 						TestTargetID = 2D7C5B902EF1F233007AB2A8;
+					};
+					782BB59E2F113EF4008252BE = {
+						CreatedOnToolsVersion = 26.1;
+					};
+					782BB5AA2F113EF5008252BE = {
+						CreatedOnToolsVersion = 26.1;
 					};
 				};
 			};
@@ -194,6 +358,8 @@
 				2D7C5B902EF1F233007AB2A8 /* devicekit-ios */,
 				2D7C5B9D2EF1F235007AB2A8 /* devicekit-iosTests */,
 				2D7C5BA72EF1F235007AB2A8 /* devicekit-iosUITests */,
+				782BB59E2F113EF4008252BE /* BroadcastUploadExtension */,
+				782BB5AA2F113EF5008252BE /* BroadcastUploadExtensionSetupUI */,
 			);
 		};
 /* End PBXProject section */
@@ -214,6 +380,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2D7C5BA62EF1F235007AB2A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		782BB59D2F113EF4008252BE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		782BB5A92F113EF5008252BE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -244,6 +424,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		782BB59B2F113EF4008252BE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		782BB5A72F113EF5008252BE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -256,6 +450,16 @@
 			isa = PBXTargetDependency;
 			target = 2D7C5B902EF1F233007AB2A8 /* devicekit-ios */;
 			targetProxy = 2D7C5BA92EF1F235007AB2A8 /* PBXContainerItemProxy */;
+		};
+		782BB5B42F113EF5008252BE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 782BB5AA2F113EF5008252BE /* BroadcastUploadExtensionSetupUI */;
+			targetProxy = 782BB5B32F113EF5008252BE /* PBXContainerItemProxy */;
+		};
+		782BB5B72F113EF5008252BE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 782BB59E2F113EF4008252BE /* BroadcastUploadExtension */;
+			targetProxy = 782BB5B62F113EF5008252BE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -386,9 +590,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = FMP8GTNUK8;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -403,6 +608,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -418,9 +624,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = FMP8GTNUK8;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -435,6 +642,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -449,14 +657,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = FMP8GTNUK8;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-iosTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -471,14 +681,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = FMP8GTNUK8;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-iosTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -492,13 +704,15 @@
 		2D7C5BB92EF1F235007AB2A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = FMP8GTNUK8;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-iosUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -512,13 +726,15 @@
 		2D7C5BBA2EF1F235007AB2A8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = FMP8GTNUK8;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-iosUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -526,6 +742,130 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "devicekit-ios";
+			};
+			name = Release;
+		};
+		782BB5BA2F113EF5008252BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BroadcastUploadExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BroadcastUploadExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-ios.BroadcastUploadExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		782BB5BB2F113EF5008252BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BroadcastUploadExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BroadcastUploadExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-ios.BroadcastUploadExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		782BB5BC2F113EF5008252BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BroadcastUploadExtensionSetupUI/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BroadcastUploadExtensionSetupUI;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-ios.BroadcastUploadExtensionSetupUI";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		782BB5BD2F113EF5008252BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BroadcastUploadExtensionSetupUI/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BroadcastUploadExtensionSetupUI;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-ios.BroadcastUploadExtensionSetupUI";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -568,7 +908,36 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		782BB5BF2F113EF5008252BE /* Build configuration list for PBXNativeTarget "BroadcastUploadExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				782BB5BA2F113EF5008252BE /* Debug */,
+				782BB5BB2F113EF5008252BE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		782BB5C12F113EF5008252BE /* Build configuration list for PBXNativeTarget "BroadcastUploadExtensionSetupUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				782BB5BC2F113EF5008252BE /* Debug */,
+				782BB5BD2F113EF5008252BE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		782BB5D02F114A5D008252BE /* H264Codec */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = H264Codec;
+		};
+		782BB5D22F114A5D008252BE /* TCP */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TCP;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2D7C5B892EF1F232007AB2A8 /* Project object */;
 }
