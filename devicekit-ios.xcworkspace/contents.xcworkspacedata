@@ -5,10 +5,10 @@
       location = "group:README.md">
    </FileRef>
    <FileRef
-      location = "group:h264-codec 2">
+      location = "group:h264-codec">
    </FileRef>
    <FileRef
-      location = "group:tcp 2">
+      location = "group:tcp">
    </FileRef>
    <FileRef
       location = "container:devicekit-ios.xcodeproj">
