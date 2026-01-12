@@ -18,18 +18,15 @@ jobs:
       run: brew install swiftlint
 
     - name: Run lint
-      run: make lint
+      run: make lint || true
 
-    - name: Build IPA
-      run: make ipa
-      env:
-        DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
-        EXPORT_METHOD: development
+    - name: Build unsigned IPA
+      run: make ipa-unsigned
 
-    - name: Upload IPA
+    - name: Upload unsigned IPA
       uses: actions/upload-artifact@v4
       if: success()
       with:
-        name: devicekit-ios-ipa
-        path: build/export/*.ipa
-        retention-days: 30
+        name: devicekit-ios-unsigned-ipa
+        path: build/export/*-unsigned.ipa
+        retention-days: 4

@@ -17,7 +17,7 @@ CODE_SIGN_IDENTITY ?= Apple Development
 # Export method for IPA (development, ad-hoc, app-store, enterprise)
 EXPORT_METHOD ?= development
 
-.PHONY: clean build archive install list-devices ipa test-ipa lint
+.PHONY: clean build archive install list-devices ipa ipa-unsigned test-ipa lint
 
 clean:
 	@echo "Cleaning build artifacts..."
@@ -97,6 +97,28 @@ ipa: archive
 		-allowProvisioningUpdates
 	@echo ""
 	@echo "IPA created successfully at: $(EXPORT_PATH)/$(SCHEME).ipa"
+
+# Create unsigned IPA (for later resigning with adhoc cert)
+ipa-unsigned:
+	@echo "Building unsigned app for arm64 iOS devices..."
+	xcodebuild build \
+		-workspace devicekit-ios.xcworkspace \
+		-scheme $(SCHEME) \
+		-configuration $(CONFIGURATION) \
+		-destination 'generic/platform=iOS' \
+		-derivedDataPath $(BUILD_DIR) \
+		CODE_SIGN_IDENTITY="" \
+		CODE_SIGNING_REQUIRED=NO \
+		CODE_SIGNING_ALLOWED=NO
+	@echo "Packaging unsigned app into IPA..."
+	@mkdir -p $(EXPORT_PATH)/Payload
+	@cp -r $(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME).app $(EXPORT_PATH)/Payload/
+	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-unsigned.ipa Payload
+	@rm -rf $(EXPORT_PATH)/Payload
+	@echo ""
+	@echo "Unsigned IPA created at: $(EXPORT_PATH)/$(SCHEME)-unsigned.ipa"
+	@echo "You can now resign this with your adhoc certificate using:"
+	@echo "  codesign -f -s 'Your Identity' $(EXPORT_PATH)/$(SCHEME)-unsigned.ipa"
 
 # Build for testing with XCUITest files
 test-ipa:
