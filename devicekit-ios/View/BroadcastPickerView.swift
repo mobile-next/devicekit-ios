@@ -30,9 +30,14 @@ struct BroadcastPickerView: UIViewRepresentable {
     let preferredExtension: String
 
     func makeUIView(context: Context) -> RPSystemBroadcastPickerView {
-        let picker = RPSystemBroadcastPickerView(frame: CGRect(
-            x: 0, y: 0, width: 80, height: 80
-        ))
+        let picker = RPSystemBroadcastPickerView(
+            frame: CGRect(
+                x: 0,
+                y: 0,
+                width: 80,
+                height: 80
+            )
+        )
         picker.preferredExtension = preferredExtension
 
         // Tint the internal button to match the desired UI theme.

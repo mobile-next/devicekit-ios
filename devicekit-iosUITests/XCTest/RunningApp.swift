@@ -31,7 +31,6 @@ struct RunningApp {
 
     private init() {}
 
-    
     /// Returns the current foreground application.
     ///
     /// Uses XCUIApplication's private `activeAppsInfo()` method to detect
@@ -39,17 +38,20 @@ struct RunningApp {
     ///
     /// - Returns: The foreground `XCUIApplication`, or `nil` if none detected.
     static func getForegroundApp() -> XCUIApplication? {
-        let runningAppIds = XCUIApplication.activeAppsInfo().compactMap { $0["bundleId"] as? String }
-        
+        let runningAppIds = XCUIApplication.activeAppsInfo().compactMap {
+            $0["bundleId"] as? String
+        }
+
         NSLog("Detected running apps: \(runningAppIds)")
 
         if runningAppIds.count == 1, let bundleId = runningAppIds.first {
             return XCUIApplication(bundleIdentifier: bundleId)
         } else {
-            return runningAppIds
+            return
+                runningAppIds
                 .map { XCUIApplication(bundleIdentifier: $0) }
                 .first { $0.state == .runningForeground }
         }
     }
-    
+
 }

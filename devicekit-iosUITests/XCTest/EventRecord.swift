@@ -45,7 +45,8 @@ final class EventRecord: NSObject {
     ///   - orientation: The interface orientation for event coordinates.
     ///   - style: The touch style (single or multi-finger).
     init(orientation: UIInterfaceOrientation, style: Style = .singeFinger) {
-        eventRecord = objc_lookUpClass("XCSynthesizedEventRecord")?.alloc()
+        eventRecord =
+            objc_lookUpClass("XCSynthesizedEventRecord")?.alloc()
             .perform(
                 NSSelectorFromString("initWithName:interfaceOrientation:"),
                 with: style.rawValue,
@@ -60,7 +61,9 @@ final class EventRecord: NSObject {
     ///   - point: The screen coordinates for the touch.
     ///   - touchUpAfter: Duration to hold before lifting (nil for default tap duration).
     /// - Returns: Self for method chaining.
-    func addPointerTouchEvent(at point: CGPoint, touchUpAfter: TimeInterval?) -> Self {
+    func addPointerTouchEvent(at point: CGPoint, touchUpAfter: TimeInterval?)
+        -> Self
+    {
         var path = PointerEventPath.pathForTouch(at: point)
         path.offset += touchUpAfter ?? Self.defaultTapDuration
         path.liftUp()
@@ -74,7 +77,7 @@ final class EventRecord: NSObject {
     func add(_ path: PointerEventPath) -> Self {
         let selector = NSSelectorFromString("addPointerEventPath:")
         let imp = eventRecord.method(for: selector)
-        typealias Method = @convention(c) (NSObject, Selector, NSObject) -> ()
+        typealias Method = @convention(c) (NSObject, Selector, NSObject) -> Void
         let method = unsafeBitCast(imp, to: Method.self)
         method(eventRecord, selector, path.path)
         return self

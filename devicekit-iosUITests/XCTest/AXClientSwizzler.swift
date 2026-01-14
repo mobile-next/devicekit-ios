@@ -48,19 +48,29 @@ struct AXClientSwizzler {
     /// Setting any value triggers lazy initialization of the swizzler.
     static var overwriteDefaultParameters: [String: Int] {
         get { _overwriteDefaultParameters }
-        set { setup; _overwriteDefaultParameters = newValue }
+        set {
+            setup
+            _overwriteDefaultParameters = newValue
+        }
     }
 
     /// Lazy initializer that performs the method swizzle.
     static let setup: Void = {
-        let axClientiOSClass: AnyClass = objc_getClass("XCAXClient_iOS") as! AnyClass
-        let defaultParametersSelector = #selector(XCAXClient_iOS.defaultParameters)
-        let original = class_getInstanceMethod(axClientiOSClass, defaultParametersSelector)!
+        let axClientiOSClass: AnyClass =
+            objc_getClass("XCAXClient_iOS") as! AnyClass
+        let defaultParametersSelector = #selector(
+            XCAXClient_iOS.defaultParameters
+        )
+        let original = class_getInstanceMethod(
+            axClientiOSClass,
+            defaultParametersSelector
+        )!
 
         let replaced = class_getInstanceMethod(
             AXClientiOS_Standin.self,
-            #selector(AXClientiOS_Standin.swizzledDefaultParameters))!
-        
+            #selector(AXClientiOS_Standin.swizzledDefaultParameters)
+        )!
+
         method_exchangeImplementations(original, replaced)
     }()
 }
@@ -80,7 +90,10 @@ struct AXClientSwizzler {
     func originalDefaultParameters() -> NSDictionary {
         let selector = #selector(XCAXClient_iOS.defaultParameters)
         let swizzeledSelector = #selector(swizzledDefaultParameters)
-        let imp = class_getMethodImplementation(AXClientiOS_Standin.self, swizzeledSelector)
+        let imp = class_getMethodImplementation(
+            AXClientiOS_Standin.self,
+            swizzeledSelector
+        )
         typealias Method = @convention(c) (NSObject, Selector) -> NSDictionary
         let method = unsafeBitCast(imp, to: Method.self)
         return method(self, selector)
@@ -91,7 +104,8 @@ struct AXClientSwizzler {
     /// Returns the original defaults merged with any custom overrides from
     /// `AXClientSwizzler.overwriteDefaultParameters`.
     @objc func swizzledDefaultParameters() -> NSDictionary {
-        let defaultParameters = originalDefaultParameters().mutableCopy() as! NSMutableDictionary
+        let defaultParameters =
+            originalDefaultParameters().mutableCopy() as! NSMutableDictionary
 
         for (key, value) in _overwriteDefaultParameters {
             defaultParameters[key] = value

@@ -39,7 +39,8 @@ class RunnerDaemonProxy {
         let method = unsafeBitCast(imp, to: Method.self)
         let session = method(clazz, selector)
 
-        proxy = session
+        proxy =
+            session
             .perform(NSSelectorFromString("daemonProxy"))
             .takeUnretainedValue() as! NSObject
     }
@@ -51,18 +52,29 @@ class RunnerDaemonProxy {
     ///   - typingFrequency: Maximum characters per second (default: 10).
     /// - Throws: An error if the text input fails.
     func send(string: String, typingFrequency: Int = 10) async throws {
-        let selector = NSSelectorFromString("_XCT_sendString:maximumFrequency:completion:")
+        let selector = NSSelectorFromString(
+            "_XCT_sendString:maximumFrequency:completion:"
+        )
         let imp = proxy.method(for: selector)
-        typealias Method = @convention(c) (NSObject, Selector, NSString, Int, @escaping (Error?) -> ()) -> ()
+        typealias Method =
+            @convention(c) (
+                NSObject, Selector, NSString, Int, @escaping (Error?) -> Void
+            ) -> Void
         let method = unsafeBitCast(imp, to: Method.self)
         return try await withCheckedThrowingContinuation { continuation in
-            method(proxy, selector, string as NSString, typingFrequency, { error in
-                if let error = error {
-                    continuation.resume(with: .failure(error))
-                } else {
-                    continuation.resume(with: .success(()))
+            method(
+                proxy,
+                selector,
+                string as NSString,
+                typingFrequency,
+                { error in
+                    if let error = error {
+                        continuation.resume(with: .failure(error))
+                    } else {
+                        continuation.resume(with: .success(()))
+                    }
                 }
-            })
+            )
         }
     }
 
@@ -73,16 +85,25 @@ class RunnerDaemonProxy {
     func synthesize(eventRecord: EventRecord) async throws {
         let selector = NSSelectorFromString("_XCT_synthesizeEvent:completion:")
         let imp = proxy.method(for: selector)
-        typealias Method = @convention(c) (NSObject, Selector, NSObject, @escaping (Error?) -> ()) -> ()
+        typealias Method =
+            @convention(c) (
+                NSObject, Selector, NSObject, @escaping (Error?) -> Void
+            ) -> Void
         let method = unsafeBitCast(imp, to: Method.self)
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            method(proxy, selector, eventRecord.eventRecord, { error in
-                if let error = error {
-                    continuation.resume(with: .failure(error))
-                } else {
-                    continuation.resume(with: .success(()))
+        try await withCheckedThrowingContinuation {
+            (continuation: CheckedContinuation<Void, Error>) in
+            method(
+                proxy,
+                selector,
+                eventRecord.eventRecord,
+                { error in
+                    if let error = error {
+                        continuation.resume(with: .failure(error))
+                    } else {
+                        continuation.resume(with: .success(()))
+                    }
                 }
-            })
+            )
         }
     }
 }

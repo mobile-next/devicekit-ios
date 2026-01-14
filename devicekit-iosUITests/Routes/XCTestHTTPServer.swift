@@ -110,11 +110,18 @@ final class XCTestHTTPServer {
     /// - Note: This method blocks the calling task until the server is stopped.
     ///   The port can be configured via the `PORT` environment variable.
     func start() async throws {
-        let port = ProcessInfo.processInfo.environment["PORT"]?.toUInt16() ?? defaultPort
-        let server = HTTPServer(address: try .inet(ip4: localhost, port: port), timeout: defaultTimeout)
+        let port =
+            ProcessInfo.processInfo.environment["PORT"]?.toUInt16()
+            ?? defaultPort
+        let server = HTTPServer(
+            address: try .inet(ip4: localhost, port: port),
+            timeout: defaultTimeout
+        )
 
         for route in Route.allCases {
-            let handler = await RouteHandlerFactory.createRouteHandler(route: route)
+            let handler = await RouteHandlerFactory.createRouteHandler(
+                route: route
+            )
             await server.appendRoute(route.toHTTPRoute(), to: handler)
         }
 

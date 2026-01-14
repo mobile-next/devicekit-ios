@@ -28,14 +28,18 @@ extension CMSampleBuffer {
     /// - If ReplayKit omits the orientation attachment, this returns `nil`.
     /// - If the attachment contains an unexpected type, the conversion may fail.
     var orientation: CGImagePropertyOrientation? {
-        guard let sampleOrientation = CMGetAttachment(
-            self,
-            key: RPVideoSampleOrientationKey as CFString,
-            attachmentModeOut: nil
-        ) else {
+        guard
+            let sampleOrientation = CMGetAttachment(
+                self,
+                key: RPVideoSampleOrientationKey as CFString,
+                attachmentModeOut: nil
+            )
+        else {
             return nil
         }
 
-        return CGImagePropertyOrientation(rawValue: sampleOrientation.uint32Value)
+        return CGImagePropertyOrientation(
+            rawValue: sampleOrientation.uint32Value
+        )
     }
 }

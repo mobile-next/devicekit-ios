@@ -1,5 +1,5 @@
-import XCTest
 import FlyingFox
+import XCTest
 import os
 
 /// Default timeout used when waiting for UI elements to appear.
@@ -20,7 +20,9 @@ extension XCUIApplication {
     /// - If the alert appears after this method is called, it will not be handled.
     fileprivate func closeBroadcastFailedAlertIfNeeded() {
         let okButton = buttons["OK"]
-        let okButtonExists = okButton.waitForExistence(timeout: defaultExistenceTimeout)
+        let okButtonExists = okButton.waitForExistence(
+            timeout: defaultExistenceTimeout
+        )
         if okButtonExists && okButton.isHittable {
             okButton.tap()
         }
@@ -41,7 +43,7 @@ extension XCUIApplication {
 /// - UI tests involving ReplayKit are inherently fragile due to system UI timing.
 /// - `sleep(3)` is used as a stabilization delay; replacing it with expectations would be more robust.
 final class devicekit_iosUITests: XCTestCase {
-   
+
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: "devicekit_iosUITests"
@@ -78,7 +80,9 @@ final class devicekit_iosUITests: XCTestCase {
     /// - `recorderApp.tap()` may not always bring the app to the foreground reliably.
     @MainActor
     func testRunAutomation() async throws {
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let springboard = XCUIApplication(
+            bundleIdentifier: "com.apple.springboard"
+        )
         springboard.closeBroadcastFailedAlertIfNeeded()
 
         let recorderApp = XCUIApplication()
@@ -93,26 +97,35 @@ final class devicekit_iosUITests: XCTestCase {
             "the app is not running in foreground, state: \(recorderApp.state)"
         )
 
-        let selectBroadcastButton = springboard.buttons["BroadcastUploadExtension"]
+        let selectBroadcastButton = springboard.buttons[
+            "BroadcastUploadExtension"
+        ]
         let startBroadcastButton = springboard.buttons["Start Broadcast"]
         let stopBroadcastButton = springboard.buttons["Stop Broadcast"]
 
         recorderApp.tap()
 
         // If a broadcast is already running, stop early.
-        if stopBroadcastButton.waitForExistence(timeout: defaultExistenceTimeout) {
+        if stopBroadcastButton.waitForExistence(
+            timeout: defaultExistenceTimeout
+        ) {
             returnToHomeScreen()
             return
         }
 
         // Select the broadcast extension if needed.
-        if selectBroadcastButton.waitForExistence(timeout: defaultExistenceTimeout),
-           selectBroadcastButton.isHittable {
+        if selectBroadcastButton.waitForExistence(
+            timeout: defaultExistenceTimeout
+        ),
+            selectBroadcastButton.isHittable
+        {
             selectBroadcastButton.tap()
         }
 
         // If the start button is not visible, tap the popup container.
-        if !startBroadcastButton.waitForExistence(timeout: defaultExistenceTimeout) {
+        if !startBroadcastButton.waitForExistence(
+            timeout: defaultExistenceTimeout
+        ) {
             recorderApp.otherElements["start_broadcast_popup"].tap()
         }
 
@@ -133,7 +146,7 @@ final class devicekit_iosUITests: XCTestCase {
     override class func tearDown() {
         logger.trace("tearDown")
     }
-    
+
     /// Returns to the iOS home screen by simulating three Home button presses.
     ///
     /// ## Notes

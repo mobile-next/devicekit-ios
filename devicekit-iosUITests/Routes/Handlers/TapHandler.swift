@@ -104,12 +104,22 @@ struct TapHandler: HTTPHandler {
     ///
     /// - Parameter request: The HTTP request containing tap coordinates.
     /// - Returns: HTTP 200 on success, or an error response on failure.
-    func handleRequest(_ request: FlyingFox.HTTPRequest) async throws -> FlyingFox.HTTPResponse {
+    func handleRequest(_ request: FlyingFox.HTTPRequest) async throws
+        -> FlyingFox.HTTPResponse
+    {
         let decoder = JSONDecoder()
 
-        guard let requestBody = try? await decoder.decode(TapRequest.self, from: request.bodyData) else {
+        guard
+            let requestBody = try? await decoder.decode(
+                TapRequest.self,
+                from: request.bodyData
+            )
+        else {
             NSLog("Invalid request for tapping")
-            return ServerError(type: .precondition, message: "incorrect request body provided for tap route").httpResponse
+            return ServerError(
+                type: .precondition,
+                message: "incorrect request body provided for tap route"
+            ).httpResponse
         }
 
         let (width, height) = OrientationGeometry.physicalScreenSize()
@@ -139,7 +149,9 @@ struct TapHandler: HTTPHandler {
             return HTTPResponse(statusCode: .ok)
         } catch {
             NSLog("Error tapping: \(error)")
-            return ServerError(message: "Error tapping point: \(error.localizedDescription)").httpResponse
+            return ServerError(
+                message: "Error tapping point: \(error.localizedDescription)"
+            ).httpResponse
         }
     }
 }

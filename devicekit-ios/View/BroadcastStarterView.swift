@@ -38,7 +38,8 @@ import SwiftUI
 struct BroadcastStarterView: View {
 
     /// The bundle identifier of the ReplayKit Broadcast Upload Extension.
-    let preferredExtension = "com.mobilenext.devicekit-ios.BroadcastUploadExtension"
+    let preferredExtension =
+        "com.mobilenext.devicekit-ios.BroadcastUploadExtension"
 
     var body: some View {
         BroadcastPickerView(preferredExtension: preferredExtension)
@@ -57,9 +58,12 @@ struct BroadcastStarterView: View {
     /// - Sends `.touchUpInside` to the picker's button.
     private func autoTapPickerButton() {
         DispatchQueue.main.async {
-            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                  let window = windowScene.windows.first,
-                  let picker = findPicker(in: window) else {
+            guard
+                let windowScene = UIApplication.shared.connectedScenes.first
+                    as? UIWindowScene,
+                let window = windowScene.windows.first,
+                let picker = findPicker(in: window)
+            else {
                 return
             }
 

@@ -26,11 +26,16 @@ struct PointerEventPath {
     ///   - point: The initial touch-down location.
     ///   - offset: Initial time offset in seconds.
     /// - Returns: A new pointer event path.
-    static func pathForTouch(at point: CGPoint, offset: TimeInterval = 0) -> Self {
-        let alloced = objc_lookUpClass("XCPointerEventPath")!.alloc() as! NSObject
+    static func pathForTouch(at point: CGPoint, offset: TimeInterval = 0)
+        -> Self
+    {
+        let alloced =
+            objc_lookUpClass("XCPointerEventPath")!.alloc() as! NSObject
         let selector = NSSelectorFromString("initForTouchAtPoint:offset:")
         let imp = alloced.method(for: selector)
-        typealias Method = @convention(c) (NSObject, Selector, CGPoint, TimeInterval) -> NSObject
+        typealias Method =
+            @convention(c) (NSObject, Selector, CGPoint, TimeInterval) ->
+            NSObject
         let method = unsafeBitCast(imp, to: Method.self)
         let path = method(alloced, selector, point, offset)
         return Self(path: path, offset: offset)
@@ -53,7 +58,8 @@ struct PointerEventPath {
     mutating func liftUp() {
         let selector = NSSelectorFromString("liftUpAtOffset:")
         let imp = path.method(for: selector)
-        typealias Method = @convention(c) (NSObject, Selector, TimeInterval) -> ()
+        typealias Method =
+            @convention(c) (NSObject, Selector, TimeInterval) -> Void
         let method = unsafeBitCast(imp, to: Method.self)
         method(path, selector, offset)
     }

@@ -1,5 +1,5 @@
-import Foundation
 import FlyingFox
+import Foundation
 
 // MARK: - Error Types
 

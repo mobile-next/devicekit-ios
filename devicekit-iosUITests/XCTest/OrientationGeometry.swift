@@ -45,7 +45,9 @@ struct OrientationGeometry {
     static func physicalScreenSize() -> (Float, Float) {
         let springboardBundleId = "com.apple.springboard"
 
-        let app = RunningApp.getForegroundApp() ?? XCUIApplication(bundleIdentifier: springboardBundleId)
+        let app =
+            RunningApp.getForegroundApp()
+            ?? XCUIApplication(bundleIdentifier: springboardBundleId)
 
         do {
             let currentAppBundleId = app.bundleID
@@ -63,9 +65,12 @@ struct OrientationGeometry {
             let axFrame = AXElement(dict).frame
 
             // Safely unwrap width/height
-            guard let width = axFrame["Width"], let height = axFrame["Height"] else {
+            guard let width = axFrame["Width"], let height = axFrame["Height"]
+            else {
                 NSLog("Frame keys missing, falling back to SpringBoard.")
-                let springboard = XCUIApplication(bundleIdentifier: springboardBundleId)
+                let springboard = XCUIApplication(
+                    bundleIdentifier: springboardBundleId
+                )
                 let size = springboard.frame.size
                 return (Float(size.width), Float(size.height))
             }
@@ -80,9 +85,12 @@ struct OrientationGeometry {
 
             return size
         } catch let error {
-            NSLog("Failure while getting screen size: \(error), falling back to get springboard size.")
+            NSLog(
+                "Failure while getting screen size: \(error), falling back to get springboard size."
+            )
             let application = XCUIApplication(
-                bundleIdentifier: springboardBundleId)
+                bundleIdentifier: springboardBundleId
+            )
             let screenSize = application.frame.size
             return (Float(screenSize.width), Float(screenSize.height))
         }
@@ -118,7 +126,9 @@ struct OrientationGeometry {
     ///   - point: The point to transform.
     /// - Returns: The transformed point for the current orientation.
     static func orientationAwarePoint(
-        width: Float, height: Float, point: CGPoint
+        width: Float,
+        height: Float,
+        point: CGPoint
     ) -> CGPoint {
         let orientation = actualOrientation()
 
@@ -141,9 +151,9 @@ struct OrientationGeometry {
             )
 
         case .portraitUpsideDown,
-             .faceUp,
-             .faceDown,
-             .unknown:
+            .faceUp,
+            .faceDown,
+            .unknown:
             // Treat all of these as portrait
             return point
 

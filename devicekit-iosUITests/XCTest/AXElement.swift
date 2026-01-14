@@ -137,7 +137,7 @@ struct AXElement: Codable {
 
     /// Display identifier for multi-display setups.
     let displayID: Int
-    
+
     // MARK: - Initializers
 
     /// Creates a container element with only children.
@@ -182,10 +182,21 @@ struct AXElement: Codable {
     ///   - windowContextID: Window context.
     ///   - children: Child elements.
     init(
-        identifier: String, frame: AXFrame, value: String?, title: String?, label: String,
-        elementType: Int, enabled: Bool, horizontalSizeClass: Int,
-        verticalSizeClass: Int, placeholderValue: String?, selected: Bool,
-        hasFocus: Bool, displayID: Int, windowContextID: Double, children: [AXElement]?
+        identifier: String,
+        frame: AXFrame,
+        value: String?,
+        title: String?,
+        label: String,
+        elementType: Int,
+        enabled: Bool,
+        horizontalSizeClass: Int,
+        verticalSizeClass: Int,
+        placeholderValue: String?,
+        selected: Bool,
+        hasFocus: Bool,
+        displayID: Int,
+        windowContextID: Double,
+        children: [AXElement]?
     ) {
         self.identifier = identifier
         self.frame = frame
@@ -211,7 +222,7 @@ struct AXElement: Codable {
         func valueFor(_ name: String) -> Any {
             dict[XCUIElement.AttributeName(rawValue: name)] as Any
         }
-        
+
         self.label = valueFor("label") as? String ?? ""
         self.elementType = valueFor("elementType") as? Int ?? 0
         self.identifier = valueFor("identifier") as? String ?? ""
@@ -226,10 +237,11 @@ struct AXElement: Codable {
         self.frame = valueFor("frame") as? AXFrame ?? .zero
         self.enabled = valueFor("enabled") as? Bool ?? false
         self.title = valueFor("title") as? String
-        let childrenDictionaries = valueFor("children") as? [[XCUIElement.AttributeName: Any]]
+        let childrenDictionaries =
+            valueFor("children") as? [[XCUIElement.AttributeName: Any]]
         self.children = childrenDictionaries?.map { AXElement($0) } ?? []
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.identifier, forKey: .identifier)
@@ -239,16 +251,22 @@ struct AXElement: Codable {
         try container.encode(self.label, forKey: .label)
         try container.encode(self.elementType, forKey: .elementType)
         try container.encode(self.enabled, forKey: .enabled)
-        try container.encode(self.horizontalSizeClass, forKey: .horizontalSizeClass)
+        try container.encode(
+            self.horizontalSizeClass,
+            forKey: .horizontalSizeClass
+        )
         try container.encode(self.verticalSizeClass, forKey: .verticalSizeClass)
-        try container.encodeIfPresent(self.placeholderValue, forKey: .placeholderValue)
+        try container.encodeIfPresent(
+            self.placeholderValue,
+            forKey: .placeholderValue
+        )
         try container.encode(self.selected, forKey: .selected)
         try container.encode(self.hasFocus, forKey: .hasFocus)
         try container.encodeIfPresent(self.children, forKey: .children)
         try container.encode(self.windowContextID, forKey: .windowContextID)
         try container.encode(self.displayID, forKey: .displayID)
     }
-    
+
     // MARK: - Methods
 
     /// Calculates the maximum depth of the element tree.
@@ -258,7 +276,8 @@ struct AXElement: Codable {
         guard let children = children
         else { return 1 }
 
-        let max = children
+        let max =
+            children
             .map { child in child.depth() + 1 }
             .max()
 
