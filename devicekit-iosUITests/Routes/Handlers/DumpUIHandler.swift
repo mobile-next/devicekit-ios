@@ -3,7 +3,7 @@ import XCTest
 import os
 
 @MainActor
-struct ViewHierarchyHandler: HTTPHandler {
+struct DumpUIHandler: HTTPHandler {
 
     private let springboardApplication = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     private let snapshotMaxDepth = 60
@@ -14,7 +14,7 @@ struct ViewHierarchyHandler: HTTPHandler {
     )
 
     func handleRequest(_ request: FlyingFox.HTTPRequest) async throws -> HTTPResponse {
-        guard let requestBody = try? await JSONDecoder().decode(ViewHierarchyRequest.self, from: request.bodyData) else {
+        guard let requestBody = try? await JSONDecoder().decode(DumpUIRequest.self, from: request.bodyData) else {
             return AppError(type: .precondition, message: "incorrect request body provided").httpResponse
         }
 

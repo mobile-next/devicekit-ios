@@ -1,6 +1,6 @@
 import Foundation
 
-struct TouchRequest : Codable {
+struct TapRequest : Codable {
     let x: Float
     let y: Float
     let duration: TimeInterval?

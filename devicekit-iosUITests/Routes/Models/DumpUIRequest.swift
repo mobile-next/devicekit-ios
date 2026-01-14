@@ -1,6 +1,6 @@
 import Foundation
 
-struct ViewHierarchyRequest: Codable {
+struct DumpUIRequest: Codable {
     let appIds: [String]
     let excludeKeyboardElements: Bool
 }
