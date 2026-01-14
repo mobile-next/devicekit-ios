@@ -18,7 +18,7 @@ struct AXClientSwizzler {
 
     static let setup: Void = {
         let axClientiOSClass: AnyClass = objc_getClass("XCAXClient_iOS") as! AnyClass
-        let defaultParametersSelector = Selector(("defaultParameters"))
+        let defaultParametersSelector = #selector(XCAXClient_iOS.defaultParameters)
         let original = class_getInstanceMethod(axClientiOSClass, defaultParametersSelector)!
 
         let replaced = class_getInstanceMethod(
@@ -31,7 +31,7 @@ struct AXClientSwizzler {
 
 @objc private class AXClientiOS_Standin: NSObject {
     func originalDefaultParameters() -> NSDictionary {
-        let selector = Selector(("defaultParameters"))
+        let selector = #selector(XCAXClient_iOS.defaultParameters)
         let swizzeledSelector = #selector(swizzledDefaultParameters)
         let imp = class_getMethodImplementation(AXClientiOS_Standin.self, swizzeledSelector)
         typealias Method = @convention(c) (NSObject, Selector) -> NSDictionary

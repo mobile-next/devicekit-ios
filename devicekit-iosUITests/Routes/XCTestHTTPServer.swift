@@ -10,6 +10,12 @@ enum Route: String, CaseIterable {
     }
 }
 
+extension String {
+    func toUInt16() -> UInt16? {
+        return UInt16(self)
+    }
+}
+
 private let defaultTimeout: TimeInterval = 100
 private let defaultPort: UInt16 = 12004
 private let localhost = "127.0.0.1"
