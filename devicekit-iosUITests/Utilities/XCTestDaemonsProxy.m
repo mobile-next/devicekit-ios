@@ -11,13 +11,12 @@
 
 #pragma mark - Public Methods
 
-+ (id<XCTestManager_ManagerInterface>)testRunnerProxy
-{
++ (id<XCTestManager_ManagerInterface>)testRunnerProxy {
     static id<XCTestManager_ManagerInterface> proxy = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [FBLogger logFmt:@"Using singleton test manager"];
-        proxy = [self.class retrieveTestRunnerProxy];
+      [FBLogger logFmt:@"Using singleton test manager"];
+      proxy = [self.class retrieveTestRunnerProxy];
     });
     return proxy;
 }
@@ -28,9 +27,9 @@
  * Retrieves the daemon proxy from XCTRunnerDaemonSession.
  * @return The daemon proxy instance.
  */
-+ (id<XCTestManager_ManagerInterface>)retrieveTestRunnerProxy
-{
-    return ((XCTRunnerDaemonSession *)[XCTRunnerDaemonSession sharedSession]).daemonProxy;
++ (id<XCTestManager_ManagerInterface>)retrieveTestRunnerProxy {
+    return ((XCTRunnerDaemonSession *)[XCTRunnerDaemonSession sharedSession])
+        .daemonProxy;
 }
 
 @end

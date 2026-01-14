@@ -34,7 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
  * - **animationCoolOffTimeout**: Controls waiting after events like rotation
  *   changes or gesture synthesis for animations to settle.
  *
- * @note These timeouts are used by XCUIApplicationProcess+FBQuiescence swizzling.
+ * @note These timeouts are used by XCUIApplicationProcess+FBQuiescence
+ * swizzling.
  */
 @interface FBConfiguration : NSObject
 

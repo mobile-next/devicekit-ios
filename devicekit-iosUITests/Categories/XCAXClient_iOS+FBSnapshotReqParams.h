@@ -31,7 +31,8 @@ extern NSString *const FBSnapshotMaxDepthKey;
  * Custom parameters are merged with default parameters when
  * XCAXClient_iOS.defaultParameters is called.
  *
- * @param name  The parameter name (e.g., "maxDepth", "snapshotKeyHonorModalViews").
+ * @param name  The parameter name (e.g., "maxDepth",
+ * "snapshotKeyHonorModalViews").
  * @param value The parameter value.
  *
  * @code

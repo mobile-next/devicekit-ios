@@ -9,15 +9,16 @@
 
 /**
  * @file XCAXClient_iOS+FBSnapshotReqParams.m
- * @brief Implementation of snapshot parameter customization via method swizzling.
+ * @brief Implementation of snapshot parameter customization via method
+ * swizzling.
  *
  * This file implements the FBSnapshotReqParams category on XCAXClient_iOS,
  * enabling custom parameters for accessibility element snapshots.
  *
  * ## Method Swizzling
  *
- * At load time (when `snapshotKeyHonorModalViews=false` environment variable is set),
- * this category swizzles two methods:
+ * At load time (when `snapshotKeyHonorModalViews=false` environment variable is
+ * set), this category swizzles two methods:
  * - `XCAXClient_iOS.defaultParameters` - to merge custom parameters
  * - `XCTElementQuery.snapshotParameters` - to capture additional parameters
  *
@@ -32,8 +33,9 @@
  *
  * ## Usage
  *
- * Set the `snapshotKeyHonorModalViews` environment variable to "false" to enable
- * this swizzling. This makes elements behind modal dialogs visible in snapshots.
+ * Set the `snapshotKeyHonorModalViews` environment variable to "false" to
+ * enable this swizzling. This makes elements behind modal dialogs visible in
+ * snapshots.
  */
 
 #import "XCAXClient_iOS+FBSnapshotReqParams.h"
@@ -134,12 +136,17 @@ static id swizzledSnapshotParameters(id self, SEL _cmd) {
  * methods to enable visibility of elements behind modal dialogs.
  */
 + (void)load {
-    // snapshotKeyHonorModalViews to false to make modals and dialogs visible that are invisible otherwise
-    NSString *snapshotKeyHonorModalViewsKey = [[NSProcessInfo processInfo] environment][@"snapshotKeyHonorModalViews"];
-    NSLog(@"snapshotKeyHonorModalViews configured to value: %@", snapshotKeyHonorModalViewsKey);
+    // snapshotKeyHonorModalViews to false to make modals and dialogs visible
+    // that are invisible otherwise
+    NSString *snapshotKeyHonorModalViewsKey = [[NSProcessInfo processInfo]
+        environment][@"snapshotKeyHonorModalViews"];
+    NSLog(@"snapshotKeyHonorModalViews configured to value: %@",
+          snapshotKeyHonorModalViewsKey);
     if ([snapshotKeyHonorModalViewsKey isEqualToString:@"false"]) {
-        NSLog(@"Disabling snapshotKeyHonorModalViews to make elements behind modals visible");
-        FBSetCustomParameterForElementSnapshot(@"snapshotKeyHonorModalViews", @0);
+        NSLog(@"Disabling snapshotKeyHonorModalViews to make elements behind "
+              @"modals visible");
+        FBSetCustomParameterForElementSnapshot(@"snapshotKeyHonorModalViews",
+                                               @0);
 
         Method original_defaultParametersMethod =
             class_getInstanceMethod(self.class, @selector(defaultParameters));
@@ -147,9 +154,12 @@ static id swizzledSnapshotParameters(id self, SEL _cmd) {
         original_defaultParameters = (id(*)(id, SEL))method_setImplementation(
             original_defaultParametersMethod, swizzledDefaultParametersImp);
 
-        Method original_snapshotParametersMethod = class_getInstanceMethod(NSClassFromString(@"XCTElementQuery"), NSSelectorFromString(@"snapshotParameters"));
+        Method original_snapshotParametersMethod = class_getInstanceMethod(
+            NSClassFromString(@"XCTElementQuery"),
+            NSSelectorFromString(@"snapshotParameters"));
         IMP swizzledSnapshotParametersImp = (IMP)swizzledSnapshotParameters;
-        original_snapshotParameters = (id(*)(id, SEL))method_setImplementation(original_snapshotParametersMethod, swizzledSnapshotParametersImp);
+        original_snapshotParameters = (id(*)(id, SEL))method_setImplementation(
+            original_snapshotParametersMethod, swizzledSnapshotParametersImp);
     }
 }
 

@@ -25,8 +25,8 @@
  * @endcode
  */
 
-#import <XCTest/XCTest.h>
 #import "XCUIApplication.h"
+#import <XCTest/XCTest.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @note This property mirrors the underlying XCUIApplicationProcess property.
  */
-@property (nonatomic, assign) BOOL fb_shouldWaitForQuiescence;
+@property(nonatomic, assign) BOOL fb_shouldWaitForQuiescence;
 
 @end
 

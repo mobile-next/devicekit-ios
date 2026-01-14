@@ -1,6 +1,7 @@
 /**
  * @file XCAccessibilityElement.h
- * @brief Protocol declaration for XCTest's private accessibility element interface.
+ * @brief Protocol declaration for XCTest's private accessibility element
+ * interface.
  *
  * This header declares the XCAccessibilityElement protocol which mirrors
  * XCTest's internal accessibility element representation used for
@@ -13,7 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @protocol XCAccessibilityElement
- * @brief Protocol representing an accessibility element in XCTest's internal API.
+ * @brief Protocol representing an accessibility element in XCTest's internal
+ * API.
  *
  * This protocol defines the interface for accessibility elements used by
  * XCTest for UI automation. Elements can represent applications, UI controls,

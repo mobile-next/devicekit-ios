@@ -6,8 +6,8 @@
  * enabling access to active applications and default snapshot parameters.
  */
 
-#import <XCTest/XCTest.h>
 #import "XCAccessibilityElement.h"
+#import <XCTest/XCTest.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

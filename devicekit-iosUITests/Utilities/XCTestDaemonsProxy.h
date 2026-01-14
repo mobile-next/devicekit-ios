@@ -7,6 +7,7 @@
  */
 
 #import <XCTest/XCTest.h>
+
 #import "XCSynthesizedEventRecord.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -26,8 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @note Uses XCTRunnerDaemonSession private API.
  *
  * @code
- * id<XCTestManager_ManagerInterface> proxy = [XCTestDaemonsProxy testRunnerProxy];
- * [proxy _XCT_requestBundleIDForPID:pid reply:^(NSString *bundleID, NSError *error) {
+ * id<XCTestManager_ManagerInterface> proxy = [XCTestDaemonsProxy
+ * testRunnerProxy]; [proxy _XCT_requestBundleIDForPID:pid reply:^(NSString
+ * *bundleID, NSError *error) {
  *     // Handle response
  * }];
  * @endcode

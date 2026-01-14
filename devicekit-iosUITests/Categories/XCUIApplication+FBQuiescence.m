@@ -15,21 +15,21 @@
 #import "XCUIApplication+FBQuiescence.h"
 
 #import "XCUIApplicationImpl.h"
-#import "XCUIApplicationProcess.h"
 #import "XCUIApplicationProcess+FBQuiescence.h"
+#import "XCUIApplicationProcess.h"
 
 @implementation XCUIApplication (FBQuiescence)
 
 #pragma mark - Property Accessors
 
-- (BOOL)fb_shouldWaitForQuiescence
-{
-    return [[self applicationImpl] currentProcess].fb_shouldWaitForQuiescence.boolValue;
+- (BOOL)fb_shouldWaitForQuiescence {
+    return [[self applicationImpl] currentProcess]
+        .fb_shouldWaitForQuiescence.boolValue;
 }
 
-- (void)setFb_shouldWaitForQuiescence:(BOOL)value
-{
-    [[self applicationImpl] currentProcess].fb_shouldWaitForQuiescence = @(value);
+- (void)setFb_shouldWaitForQuiescence:(BOOL)value {
+    [[self applicationImpl] currentProcess].fb_shouldWaitForQuiescence =
+        @(value);
 }
 
 @end

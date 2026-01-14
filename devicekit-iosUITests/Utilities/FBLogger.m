@@ -21,17 +21,15 @@
 
 #pragma mark - Standard Logging
 
-+ (void)log:(NSString *)message
-{
-  NSLog(@"%@", message);
++ (void)log:(NSString *)message {
+    NSLog(@"%@", message);
 }
 
-+ (void)logFmt:(NSString *)format, ...
-{
-  va_list args;
-  va_start(args, format);
-  NSLogv(format, args);
-  va_end(args);
++ (void)logFmt:(NSString *)format, ... {
+    va_list args;
+    va_start(args, format);
+    NSLogv(format, args);
+    va_end(args);
 }
 
 @end

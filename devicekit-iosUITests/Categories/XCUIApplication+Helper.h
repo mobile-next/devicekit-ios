@@ -36,7 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return Array of dictionaries, each containing:
  *         - @"pid": NSNumber with the process identifier
- *         - @"bundleId": NSString with the bundle identifier (or "unknowBundleId" if unavailable)
+ *         - @"bundleId": NSString with the bundle identifier (or
+ * "unknowBundleId" if unavailable)
  */
 + (NSArray<NSDictionary<NSString *, id> *> *)activeAppsInfo;
 

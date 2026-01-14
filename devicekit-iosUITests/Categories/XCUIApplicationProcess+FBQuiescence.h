@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @note Default value is YES. Uses associated objects for storage.
  */
-@property (nonatomic) NSNumber *fb_shouldWaitForQuiescence;
+@property(nonatomic) NSNumber *fb_shouldWaitForQuiescence;
 
 @end
 

@@ -59,10 +59,11 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ... Variable arguments for format substitution.
  *
  * @code
- * [FBLogger logFmt:@"Found %lu elements matching %@", (unsigned long)count, query];
+ * [FBLogger logFmt:@"Found %lu elements matching %@", (unsigned long)count,
+ * query];
  * @endcode
  */
-+ (void)logFmt:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
++ (void)logFmt:(NSString *)format, ... NS_FORMAT_FUNCTION(1, 2);
 
 @end
 

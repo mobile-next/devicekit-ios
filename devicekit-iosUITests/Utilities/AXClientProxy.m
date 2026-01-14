@@ -14,22 +14,20 @@ static id AXClient = nil;
 
 #pragma mark - Singleton
 
-+ (instancetype)sharedClient
-{
++ (instancetype)sharedClient {
     static AXClientProxy *instance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        instance = [[self alloc] init];
-        // Access private accessibilityInterface property from XCUIDevice
-        AXClient = [XCUIDevice.sharedDevice accessibilityInterface];
+      instance = [[self alloc] init];
+      // Access private accessibilityInterface property from XCUIDevice
+      AXClient = [XCUIDevice.sharedDevice accessibilityInterface];
     });
     return instance;
 }
 
 #pragma mark - Public Methods
 
-- (NSArray<id<XCAccessibilityElement>> *)activeApplications
-{
+- (NSArray<id<XCAccessibilityElement>> *)activeApplications {
     return [AXClient activeApplications];
 }
 
