@@ -1,11 +1,12 @@
 import XCTest
+import FlyingFox
+import os
 
 /// Default timeout used when waiting for UI elements to appear.
 private let defaultExistenceTimeout: TimeInterval = 5
 
 /// Convenience helpers for interacting with system alerts in UI tests.
 extension XCUIApplication {
-
     /// Closes the “Broadcast Failed” alert if it appears.
     ///
     /// This method:
@@ -40,20 +41,25 @@ extension XCUIApplication {
 /// - UI tests involving ReplayKit are inherently fragile due to system UI timing.
 /// - `sleep(3)` is used as a stabilization delay; replacing it with expectations would be more robust.
 final class devicekit_iosUITests: XCTestCase {
+   
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: "devicekit_iosUITests"
+    )
 
-    /// Called before each test method.
-    ///
-    /// This method:
-    /// - Disables continuation after failure.
-    /// - Leaves room for additional environment setup if needed.
+    private static var swizzledOutIdle = false
+
     override func setUpWithError() throws {
-        continueAfterFailure = false
+        // XCTest internals sometimes use XCTAssert* instead of exceptions.
+        // Setting `continueAfterFailure` so that the xctest runner does not stop
+        // when an XCTest internal error happes (eg: when using .allElementsBoundByIndex
+        // on a ReactNative app)
+        continueAfterFailure = true
     }
 
-    /// Called after each test method.
-    ///
-    /// Currently unused, but available for cleanup logic.
-    override func tearDownWithError() throws {}
+    override class func setUp() {
+        logger.trace("setUp")
+    }
 
     /// Tests the full ReplayKit broadcast start flow.
     ///
@@ -71,7 +77,7 @@ final class devicekit_iosUITests: XCTestCase {
     /// - Relies on SpringBoard UI structure, which may differ across devices or OS versions.
     /// - `recorderApp.tap()` may not always bring the app to the foreground reliably.
     @MainActor
-    func testStartStreaming() throws {
+    func testRunAutomation() async throws {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         springboard.closeBroadcastFailedAlertIfNeeded()
 
@@ -117,17 +123,15 @@ final class devicekit_iosUITests: XCTestCase {
 
         returnToHomeScreen()
         springboard.closeBroadcastFailedAlertIfNeeded()
+        
+        
+        let server = XCTestHTTPServer()
+        devicekit_iosUITests.logger.info("Will start HTTP server")
+        try await server.start()
     }
 
-    /// Measures the application launch performance.
-    ///
-    /// This test uses `XCTApplicationLaunchMetric` to measure how long it takes
-    /// for the app to launch from a cold state.
-    @MainActor
-    func testLaunchPerformance() throws {
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
+    override class func tearDown() {
+        logger.trace("tearDown")
     }
     
     /// Returns to the iOS home screen by simulating three Home button presses.
