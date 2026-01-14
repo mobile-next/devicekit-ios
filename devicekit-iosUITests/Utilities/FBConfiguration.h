@@ -41,26 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Idle Timeout
 
 /**
- * Sets the timeout for waiting until the application becomes idle.
- *
- * If the timeout expires, the driver proceeds with the operation even if
- * the application is still animating or processing events.
- *
- * @param timeout The timeout value in seconds. Set to 0 to disable idle checks.
- *
- * @note Default value is 10 seconds.
- *
- * @code
- * // Set a 5 second idle timeout
- * [FBConfiguration setWaitForIdleTimeout:5.0];
- *
- * // Disable idle waiting entirely
- * [FBConfiguration setWaitForIdleTimeout:0];
- * @endcode
- */
-+ (void)setWaitForIdleTimeout:(NSTimeInterval)timeout;
-
-/**
  * Gets the current idle timeout value.
  *
  * @return The timeout value in seconds.

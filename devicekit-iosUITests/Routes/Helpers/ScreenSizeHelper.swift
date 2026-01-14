@@ -104,32 +104,6 @@ struct ScreenSizeHelper {
         return orientation
     }
 
-    /// Returns the screen size adjusted for current device orientation.
-    ///
-    /// - Returns: A tuple of (width, height, orientation) where dimensions
-    ///   are swapped for landscape orientations.
-    /// - Throws: `AppError` if the orientation is unsupported.
-    static func actualScreenSize() throws -> (Float, Float, UIDeviceOrientation)
-    {
-        let orientation = actualOrientation()
-
-        let (width, height) = physicalScreenSize()
-        let (actualWidth, actualHeight) =
-            switch orientation {
-            case .portrait, .portraitUpsideDown: (width, height)
-            case .landscapeLeft, .landscapeRight: (height, width)
-            case .faceDown, .faceUp: (width, height)
-            case .unknown:
-                throw AppError(
-                    message: "Unsupported orientation: \(orientation)")
-            @unknown default:
-                throw AppError(
-                    message: "Unsupported orientation: \(orientation)")
-            }
-
-        return (actualWidth, actualHeight, orientation)
-    }
-
     /// Transforms a point to account for device orientation.
     ///
     /// Coordinates provided in portrait orientation are transformed to match

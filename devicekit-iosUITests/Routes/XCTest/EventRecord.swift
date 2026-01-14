@@ -17,14 +17,6 @@ import UIKit
 /// // Create a long-press event (2 seconds)
 /// let longPress = EventRecord(orientation: .portrait)
 /// _ = longPress.addPointerTouchEvent(at: CGPoint(x: 100, y: 200), touchUpAfter: 2.0)
-///
-/// // Create a swipe event
-/// let swipe = EventRecord(orientation: .portrait)
-/// _ = swipe.addSwipeEvent(
-///     start: CGPoint(x: 100, y: 500),
-///     end: CGPoint(x: 100, y: 100),
-///     duration: 0.3
-/// )
 /// ```
 ///
 /// ## Implementation Details
@@ -71,22 +63,6 @@ final class EventRecord: NSObject {
     func addPointerTouchEvent(at point: CGPoint, touchUpAfter: TimeInterval?) -> Self {
         var path = PointerEventPath.pathForTouch(at: point)
         path.offset += touchUpAfter ?? Self.defaultTapDuration
-        path.liftUp()
-        return add(path)
-    }
-
-    /// Adds a swipe gesture from start to end point.
-    ///
-    /// - Parameters:
-    ///   - start: Starting point of the swipe.
-    ///   - end: Ending point of the swipe.
-    ///   - duration: Duration of the swipe animation.
-    /// - Returns: Self for method chaining.
-    func addSwipeEvent(start: CGPoint, end: CGPoint, duration: TimeInterval) -> Self {
-        var path = PointerEventPath.pathForTouch(at: start)
-        path.offset += Self.defaultTapDuration
-        path.moveTo(point: end)
-        path.offset += duration
         path.liftUp()
         return add(path)
     }

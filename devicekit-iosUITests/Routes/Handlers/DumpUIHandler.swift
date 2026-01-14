@@ -114,7 +114,7 @@ struct DumpUIHandler: HTTPHandler {
     /// - Returns: HTTP response with JSON view hierarchy or error.
     func handleRequest(_ request: FlyingFox.HTTPRequest) async throws -> HTTPResponse {
         guard let requestBody = try? await JSONDecoder().decode(DumpUIRequest.self, from: request.bodyData) else {
-            return AppError(type: .precondition, message: "incorrect request body provided").httpResponse
+            return ServerError(type: .precondition, message: "incorrect request body provided").httpResponse
         }
 
         do {
@@ -135,12 +135,12 @@ struct DumpUIHandler: HTTPHandler {
             NSLog("[Done] View hierarchy snapshot for \(foregroundApp) ")
             let body = try JSONEncoder().encode(viewHierarchy)
             return HTTPResponse(statusCode: .ok, body: body)
-        } catch let error as AppError {
+        } catch let error as ServerError {
             NSLog("AppError in handleRequest, Error:\(error)");
             return error.httpResponse
         } catch let error {
             NSLog("Error in handleRequest, Error:\(error)");
-            return AppError(message: "Snapshot failure while getting view hierarchy. Error: \(error.localizedDescription)").httpResponse
+            return ServerError(message: "Snapshot failure while getting view hierarchy. Error: \(error.localizedDescription)").httpResponse
         }
     }
 
@@ -237,7 +237,7 @@ struct DumpUIHandler: HTTPHandler {
     ///
     /// - Parameter element: The XCUIElement to snapshot.
     /// - Returns: The `AXElement` representation of the hierarchy.
-    /// - Throws: `AppError` if snapshot fails due to timeout or other unrecoverable errors.
+    /// - Throws: `ServerError` if snapshot fails due to timeout or other unrecoverable errors.
     func getHierarchyWithFallback(_ element: XCUIElement) throws -> AXElement {
         logger.info("Starting getHierarchyWithFallback for element.")
 
@@ -263,14 +263,14 @@ struct DumpUIHandler: HTTPHandler {
                    nsError.domain == "com.apple.dt.XCTest.XCTFuture",
                    nsError.code == 1000,
                    nsError.localizedDescription.contains("Timed out while evaluating UI query") {
-                    throw AppError(type: .timeout, message: error.localizedDescription)
+                    throw ServerError(type: .timeout, message: error.localizedDescription)
                 } else if let nsError = error as NSError?,
                            nsError.domain == "com.apple.dt.xctest.automation-support.error",
                            nsError.code == 6,
                            nsError.localizedDescription.contains("Unable to perform work on main run loop, process main thread busy for") {
-                    throw AppError(type: .timeout, message: nsError.localizedDescription)
+                    throw ServerError(type: .timeout, message: nsError.localizedDescription)
                 } else {
-                    throw AppError(message: error.localizedDescription)
+                    throw ServerError(message: error.localizedDescription)
                 }
             }
 

@@ -12,7 +12,7 @@ import FlyingFox
 /// | `internal` | 500 | Internal server error |
 /// | `precondition` | 400 | Bad request / invalid input |
 /// | `timeout` | 408 | Request timeout |
-enum AppErrorType: String, Codable {
+enum ServerErrorType: String, Codable {
 
     /// Internal server error (HTTP 500).
     case `internal`
@@ -42,10 +42,10 @@ enum AppErrorType: String, Codable {
 /// - `internal` → HTTP 500 Internal Server Error
 /// - `precondition` → HTTP 400 Bad Request
 /// - `timeout` → HTTP 408 Request Timeout
-struct AppError: Error, Codable {
+struct ServerError: Error, Codable {
 
     /// Error category determining the HTTP status code.
-    let type: AppErrorType
+    let type: ServerErrorType
 
     /// Human-readable error description.
     let message: String
@@ -70,7 +70,7 @@ struct AppError: Error, Codable {
     /// - Parameters:
     ///   - type: Error category (defaults to `.internal`).
     ///   - message: Error description.
-    init(type: AppErrorType = .internal, message: String) {
+    init(type: ServerErrorType = .internal, message: String) {
         self.type = type
         self.message = message
     }

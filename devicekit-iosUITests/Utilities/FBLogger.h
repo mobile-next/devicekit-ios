@@ -64,31 +64,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (void)logFmt:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
 
-#pragma mark - Verbose Logging
-
-/**
- * Logs a message when verbose mode is enabled.
- *
- * Use for debug-level information that is helpful during development
- * but may be too noisy for normal operation.
- *
- * @param message The message string to log.
- *
- * @note Currently verbose logging always outputs. Future versions may
- *       support conditional verbose output based on configuration.
- */
-+ (void)verboseLog:(NSString *)message;
-
-/**
- * Logs a formatted message when verbose mode is enabled.
- *
- * @param format The format string (supports NSLog format specifiers).
- * @param ... Variable arguments for format substitution.
- *
- * @note Currently verbose logging always outputs.
- */
-+ (void)verboseLogFmt:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
-
 @end
 
 NS_ASSUME_NONNULL_END

@@ -193,30 +193,4 @@ static char XCUIAPPLICATIONPROCESS_SHOULD_WAIT_FOR_QUIESCENCE;
   objc_setAssociatedObject(self, &XCUIAPPLICATIONPROCESS_SHOULD_WAIT_FOR_QUIESCENCE, value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-#pragma mark - Public Methods
-
-/**
- * Waits for the application process to become idle.
- *
- * This method provides a version-agnostic wrapper around the internal quiescence
- * methods. It automatically detects which method is available on the current
- * iOS version and calls it appropriately.
- *
- * @param waitForAnimations YES to also wait for animations to complete,
- *                          NO to only wait for general quiescence.
- *
- * @throws NSException with name "NoApiFound" if no compatible quiescence method exists.
- */
-- (void)fb_waitForQuiescenceIncludingAnimationsIdle:(bool)waitForAnimations
-{
-  if ([self respondsToSelector:@selector(waitForQuiescenceIncludingAnimationsIdle:)]) {
-    [self waitForQuiescenceIncludingAnimationsIdle:waitForAnimations];
-  } else if ([self respondsToSelector:@selector(waitForQuiescenceIncludingAnimationsIdle:isPreEvent:)]) {
-    [self waitForQuiescenceIncludingAnimationsIdle:waitForAnimations isPreEvent:NO];
-  } else {
-      @throw [NSException exceptionWithName: @"NoApiFound" reason:@"The current driver build is not compatible to your device OS version" userInfo:@{}];
-  }
-}
-
-
 @end

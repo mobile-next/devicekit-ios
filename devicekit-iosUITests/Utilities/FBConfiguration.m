@@ -39,11 +39,6 @@ static NSTimeInterval FBAnimationCoolOffTimeout;
   return FBWaitForIdleTimeout;
 }
 
-+ (void)setWaitForIdleTimeout:(NSTimeInterval)timeout
-{
-  FBWaitForIdleTimeout = timeout;
-}
-
 #pragma mark - Animation Cool-Off Timeout
 
 + (NSTimeInterval)animationCoolOffTimeout

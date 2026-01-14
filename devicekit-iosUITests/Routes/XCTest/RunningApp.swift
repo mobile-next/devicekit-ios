@@ -31,22 +31,6 @@ struct RunningApp {
 
     private init() {}
 
-    /// Returns the bundle ID of the foreground app from a list of candidates.
-    ///
-    /// - Parameter appIds: Array of bundle identifiers to check.
-    /// - Returns: The bundle ID of the foreground app, or SpringBoard if none found.
-    static func getForegroundAppId(_ appIds: [String]) -> String {
-        if appIds.isEmpty {
-            logger.info("Empty installed apps found")
-            return ""
-        }
-        
-        return appIds.first { appId in
-            let app = XCUIApplication(bundleIdentifier: appId)
-            
-            return app.state == .runningForeground
-        } ?? RunningApp.springboardBundleId
-    }
     
     /// Returns the current foreground application.
     ///

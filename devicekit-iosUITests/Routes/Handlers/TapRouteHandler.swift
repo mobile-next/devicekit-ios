@@ -68,7 +68,7 @@ struct TapRouteHandler: HTTPHandler {
 
         guard let requestBody = try? await decoder.decode(TapRequest.self, from: request.bodyData) else {
             NSLog("Invalid request for tapping")
-            return AppError(type: .precondition, message: "incorrect request body provided for tap route").httpResponse
+            return ServerError(type: .precondition, message: "incorrect request body provided for tap route").httpResponse
         }
 
         let (width, height) = ScreenSizeHelper.physicalScreenSize()
@@ -98,7 +98,7 @@ struct TapRouteHandler: HTTPHandler {
             return HTTPResponse(statusCode: .ok)
         } catch {
             NSLog("Error tapping: \(error)")
-            return AppError(message: "Error tapping point: \(error.localizedDescription)").httpResponse
+            return ServerError(message: "Error tapping point: \(error.localizedDescription)").httpResponse
         }
     }
 }

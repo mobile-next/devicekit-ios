@@ -47,19 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) NSNumber *fb_shouldWaitForQuiescence;
 
-/**
- * Waits for the application process to become idle.
- *
- * This method provides a safe wrapper around the internal quiescence
- * methods, handling different iOS versions automatically.
- *
- * @param waitForAnimations YES to also wait for animations to complete,
- *                          NO to only wait for general quiescence.
- *
- * @throws NSException if no compatible quiescence API is found.
- */
-- (void)fb_waitForQuiescenceIncludingAnimationsIdle:(bool)waitForAnimations;
-
 @end
 
 NS_ASSUME_NONNULL_END

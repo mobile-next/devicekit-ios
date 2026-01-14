@@ -18,9 +18,9 @@ import Foundation
 /// ## curl Example
 /// ```bash
 /// # Simple tap
-/// curl -X POST http://127.0.0.1:12004/tap \
-///     -H "Content-Type: application/json" \
-///     -d '{"x": 100.0, "y": 200.0}'
+// curl -X POST http://127.0.0.1:12004/tap \
+//     -H "Content-Type: application/json" \
+//     -d '{"x": 100.0, "y": 200.0}'
 ///
 /// # Long-press for 1.5 seconds
 /// curl -X POST http://127.0.0.1:12004/tap \
