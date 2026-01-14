@@ -83,10 +83,7 @@
 		78F6891E2F17EE190025C8AC /* BroadcastUploadExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 78F689062F17EE190025C8AC /* BroadcastUploadExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		78F689312F17EE5C0025C8AC /* H264Codec in Frameworks */ = {isa = PBXBuildFile; productRef = 78F689302F17EE5C0025C8AC /* H264Codec */; };
 		78F689332F17EE5C0025C8AC /* TCP in Frameworks */ = {isa = PBXBuildFile; productRef = 78F689322F17EE5C0025C8AC /* TCP */; };
-		78F689382F17EF1B0025C8AC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F689362F17EF1B0025C8AC /* ContentView.swift */; };
 		78F689392F17EF1B0025C8AC /* devicekit_iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F689372F17EF1B0025C8AC /* devicekit_iosApp.swift */; };
-		78F6893A2F17EF1B0025C8AC /* BroadcastPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F689342F17EF1B0025C8AC /* BroadcastPickerView.swift */; };
-		78F6893B2F17EF1B0025C8AC /* BroadcastStarterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F689352F17EF1B0025C8AC /* BroadcastStarterView.swift */; };
 		9407362E2940CA1600A72E99 /* GetRunningAppRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9407362D2940CA1600A72E99 /* GetRunningAppRequest.swift */; };
 		941AE8EF2A77D4B20097C02A /* TimeoutHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941AE8EE2A77D4B20097C02A /* TimeoutHelper.swift */; };
 		94256BAD298D39DE00CDB55D /* ScreenDiffHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94256BAC298D39DE00CDB55D /* ScreenDiffHandler.swift */; };
@@ -311,9 +308,6 @@
 		78F689072F17EE190025C8AC /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		78F689112F17EE190025C8AC /* BroadcastUploadExtensionSetupUI.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BroadcastUploadExtensionSetupUI.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		78F689132F17EE190025C8AC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		78F689342F17EF1B0025C8AC /* BroadcastPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BroadcastPickerView.swift; sourceTree = "<group>"; };
-		78F689352F17EF1B0025C8AC /* BroadcastStarterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BroadcastStarterView.swift; sourceTree = "<group>"; };
-		78F689362F17EF1B0025C8AC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		78F689372F17EF1B0025C8AC /* devicekit_iosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = devicekit_iosApp.swift; sourceTree = "<group>"; };
 		9407362D2940CA1600A72E99 /* GetRunningAppRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetRunningAppRequest.swift; sourceTree = "<group>"; };
 		941AE8EE2A77D4B20097C02A /* TimeoutHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutHelper.swift; sourceTree = "<group>"; };
@@ -349,6 +343,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		787C95D52F17F59E00AB3BF1 /* View */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = View; sourceTree = "<group>"; };
 		78F689092F17EE190025C8AC /* BroadcastUploadExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (78F6891F2F17EE190025C8AC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = BroadcastUploadExtension; sourceTree = "<group>"; };
 		78F689152F17EE190025C8AC /* BroadcastUploadExtensionSetupUI */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (78F689232F17EE190025C8AC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = BroadcastUploadExtensionSetupUI; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -419,9 +414,7 @@
 			isa = PBXGroup;
 			children = (
 				787C95972F17F23500AB3BF1 /* Assets.xcassets */,
-				78F689342F17EF1B0025C8AC /* BroadcastPickerView.swift */,
-				78F689352F17EF1B0025C8AC /* BroadcastStarterView.swift */,
-				78F689362F17EF1B0025C8AC /* ContentView.swift */,
+				787C95D52F17F59E00AB3BF1 /* View */,
 				78F689372F17EF1B0025C8AC /* devicekit_iosApp.swift */,
 			);
 			path = "devicekit-ios";
@@ -745,6 +738,9 @@
 				78F6891A2F17EE190025C8AC /* PBXTargetDependency */,
 				78F6891D2F17EE190025C8AC /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				787C95D52F17F59E00AB3BF1 /* View */,
+			);
 			name = "devicekit-ios";
 			packageProductDependencies = (
 			);
@@ -909,10 +905,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78F689382F17EF1B0025C8AC /* ContentView.swift in Sources */,
 				78F689392F17EF1B0025C8AC /* devicekit_iosApp.swift in Sources */,
-				78F6893A2F17EF1B0025C8AC /* BroadcastPickerView.swift in Sources */,
-				78F6893B2F17EF1B0025C8AC /* BroadcastStarterView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

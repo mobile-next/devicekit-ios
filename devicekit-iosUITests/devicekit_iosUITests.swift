@@ -117,14 +117,14 @@ final class devicekit_iosUITests: XCTestCase {
         }
 
         startBroadcastButton.tap()
+        devicekit_iosUITests.logger.info("Started broadcast")
 
         // Allow time for the broadcast to initialize. It takes exactly 3 seconds.
         sleep(3)
 
         returnToHomeScreen()
         springboard.closeBroadcastFailedAlertIfNeeded()
-        
-        
+
         let server = XCTestHTTPServer()
         devicekit_iosUITests.logger.info("Will start HTTP server")
         try await server.start()
