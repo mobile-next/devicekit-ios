@@ -148,13 +148,33 @@ struct ScreenSizeHelper {
     ) -> CGPoint {
         let orientation = actualOrientation()
 
-        return switch orientation {
-        case .portrait: point
+        switch orientation {
+        case .portrait:
+            return point
+
         case .landscapeLeft:
-            CGPoint(x: CGFloat(width) - point.y, y: CGFloat(point.x))
+            // 90° clockwise
+            return CGPoint(
+                x: CGFloat(width) - point.y,
+                y: point.x
+            )
+
         case .landscapeRight:
-            CGPoint(x: CGFloat(point.y), y: CGFloat(height) - point.x)
-        default: fatalError("Not implemented yet")
+            // 90° counter‑clockwise
+            return CGPoint(
+                x: point.y,
+                y: CGFloat(height) - point.x
+            )
+
+        case .portraitUpsideDown,
+             .faceUp,
+             .faceDown,
+             .unknown:
+            // Treat all of these as portrait
+            return point
+
+        @unknown default:
+            return point
         }
     }
 }
