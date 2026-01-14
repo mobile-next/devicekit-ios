@@ -7,23 +7,29 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+/**
+ * @file XCUIApplication+FBQuiescence.m
+ * @brief Implementation of XCUIApplication quiescence category.
+ */
+
 #import "XCUIApplication+FBQuiescence.h"
 
 #import "XCUIApplicationImpl.h"
 #import "XCUIApplicationProcess.h"
 #import "XCUIApplicationProcess+FBQuiescence.h"
 
-
 @implementation XCUIApplication (FBQuiescence)
+
+#pragma mark - Property Accessors
 
 - (BOOL)fb_shouldWaitForQuiescence
 {
-  return [[self applicationImpl] currentProcess].fb_shouldWaitForQuiescence.boolValue;
+    return [[self applicationImpl] currentProcess].fb_shouldWaitForQuiescence.boolValue;
 }
 
 - (void)setFb_shouldWaitForQuiescence:(BOOL)value
 {
-  [[self applicationImpl] currentProcess].fb_shouldWaitForQuiescence = @(value);
+    [[self applicationImpl] currentProcess].fb_shouldWaitForQuiescence = @(value);
 }
 
 @end

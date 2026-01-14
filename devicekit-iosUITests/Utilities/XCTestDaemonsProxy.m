@@ -1,8 +1,15 @@
+/**
+ * @file XCTestDaemonsProxy.m
+ * @brief Implementation of XCTestDaemonsProxy singleton.
+ */
+
 #import "XCTestDaemonsProxy.h"
 #import "FBLogger.h"
 #import "XCTRunnerDaemonSession.h"
 
 @implementation XCTestDaemonsProxy
+
+#pragma mark - Public Methods
 
 + (id<XCTestManager_ManagerInterface>)testRunnerProxy
 {
@@ -15,10 +22,15 @@
     return proxy;
 }
 
+#pragma mark - Private Methods
+
+/**
+ * Retrieves the daemon proxy from XCTRunnerDaemonSession.
+ * @return The daemon proxy instance.
+ */
 + (id<XCTestManager_ManagerInterface>)retrieveTestRunnerProxy
 {
     return ((XCTRunnerDaemonSession *)[XCTRunnerDaemonSession sharedSession]).daemonProxy;
 }
-
 
 @end

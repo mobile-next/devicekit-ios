@@ -7,9 +7,19 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+/**
+ * @file FBLogger.m
+ * @brief Implementation of FBLogger logging utility.
+ *
+ * Simple wrapper around NSLog/NSLogv for consistent logging output.
+ * Both standard and verbose methods currently log to stdout.
+ */
+
 #import "FBLogger.h"
 
 @implementation FBLogger
+
+#pragma mark - Standard Logging
 
 + (void)log:(NSString *)message
 {
@@ -23,6 +33,8 @@
   NSLogv(format, args);
   va_end(args);
 }
+
+#pragma mark - Verbose Logging
 
 + (void)verboseLog:(NSString *)message
 {

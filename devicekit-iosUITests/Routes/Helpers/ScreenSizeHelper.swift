@@ -1,11 +1,47 @@
 import XCTest
 
+// MARK: - Screen Size Helper
+
+/// Utility for determining device screen dimensions with orientation awareness.
+///
+/// This helper provides accurate screen size information by:
+/// - Caching screen dimensions to avoid repeated snapshots
+/// - Handling device orientation changes
+/// - Falling back to SpringBoard dimensions when app snapshots fail
+///
+/// ## Usage
+/// ```swift
+/// // Get physical screen size (portrait dimensions)
+/// let (width, height) = ScreenSizeHelper.physicalScreenSize()
+///
+/// // Get orientation-aware size
+/// let (w, h, orientation) = try ScreenSizeHelper.actualScreenSize()
+///
+/// // Transform coordinates for current orientation
+/// let adjustedPoint = ScreenSizeHelper.orientationAwarePoint(
+///     width: width,
+///     height: height,
+///     point: CGPoint(x: 100, y: 200)
+/// )
+/// ```
 struct ScreenSizeHelper {
 
+    /// Cached screen dimensions to avoid repeated snapshots.
     private static var cachedSize: (Float, Float)?
+
+    /// Bundle ID of the app when cache was last updated.
     private static var lastAppBundleId: String?
+
+    /// Device orientation when cache was last updated.
     private static var lastOrientation: UIDeviceOrientation?
 
+    /// Returns the physical screen size in points.
+    ///
+    /// This method caches the result and only recalculates when:
+    /// - The foreground app changes
+    /// - The device orientation changes
+    ///
+    /// - Returns: A tuple of (width, height) in points.
     static func physicalScreenSize() -> (Float, Float) {
         let springboardBundleId = "com.apple.springboard"
 
@@ -52,18 +88,27 @@ struct ScreenSizeHelper {
         }
     }
 
+    /// Returns the actual device orientation, defaulting to portrait if unknown.
+    ///
+    /// Works around a known issue where `XCUIDevice.shared.orientation` may
+    /// return `.unknown` in certain scenarios.
+    ///
+    /// - Returns: The current device orientation.
+    /// - SeeAlso: https://stackoverflow.com/q/78932288/7009800
     private static func actualOrientation() -> UIDeviceOrientation {
         let orientation = XCUIDevice.shared.orientation
         if orientation == .unknown {
-            // If orientation is "unknown", we assume it is "portrait" to
-            // work around https://stackoverflow.com/q/78932288/7009800
             return UIDeviceOrientation.portrait
         }
 
         return orientation
     }
 
-    /// Takes device orientation into account.
+    /// Returns the screen size adjusted for current device orientation.
+    ///
+    /// - Returns: A tuple of (width, height, orientation) where dimensions
+    ///   are swapped for landscape orientations.
+    /// - Throws: `AppError` if the orientation is unsupported.
     static func actualScreenSize() throws -> (Float, Float, UIDeviceOrientation)
     {
         let orientation = actualOrientation()
@@ -85,6 +130,19 @@ struct ScreenSizeHelper {
         return (actualWidth, actualHeight, orientation)
     }
 
+    /// Transforms a point to account for device orientation.
+    ///
+    /// Coordinates provided in portrait orientation are transformed to match
+    /// the current device orientation:
+    /// - **Portrait**: No transformation
+    /// - **Landscape Left**: Point rotated 90° clockwise
+    /// - **Landscape Right**: Point rotated 90° counter-clockwise
+    ///
+    /// - Parameters:
+    ///   - width: Screen width in portrait orientation.
+    ///   - height: Screen height in portrait orientation.
+    ///   - point: The point to transform.
+    /// - Returns: The transformed point for the current orientation.
     static func orientationAwarePoint(
         width: Float, height: Float, point: CGPoint
     ) -> CGPoint {

@@ -7,17 +7,32 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+/**
+ * @file FBConfiguration.m
+ * @brief Implementation of FBConfiguration global settings.
+ *
+ * Stores timeout values in static variables for global access throughout
+ * the test driver.
+ */
+
 #import "FBConfiguration.h"
 
 #include "TargetConditionals.h"
 #import "XCTestConfiguration.h"
 
+#pragma mark - Static Storage
+
+/** Timeout for waiting until application becomes idle (quiescence). */
 static NSTimeInterval FBWaitForIdleTimeout;
+
+/** Timeout for animation cool-off after events. */
 static NSTimeInterval FBAnimationCoolOffTimeout;
+
+#pragma mark - Implementation
 
 @implementation FBConfiguration
 
-#pragma mark Public
+#pragma mark - Idle Timeout
 
 + (NSTimeInterval)waitForIdleTimeout
 {
@@ -28,6 +43,8 @@ static NSTimeInterval FBAnimationCoolOffTimeout;
 {
   FBWaitForIdleTimeout = timeout;
 }
+
+#pragma mark - Animation Cool-Off Timeout
 
 + (NSTimeInterval)animationCoolOffTimeout
 {

@@ -1,44 +1,152 @@
-
 import Foundation
 import XCTest
 
-struct ViewHierarchy : Codable {
+// MARK: - Response Models
+
+/// Response wrapper for the `/dumpUI` endpoint.
+///
+/// Contains the root accessibility element and the maximum depth of the tree.
+///
+/// ## JSON Format
+/// ```json
+/// {
+///   "axElement": { ... },
+///   "depth": 15
+/// }
+/// ```
+struct ViewHierarchy: Codable {
+
+    /// Root element of the accessibility tree.
     let axElement: AXElement
+
+    /// Maximum depth of the hierarchy tree.
     let depth: Int
 }
 
+/// Represents frame offset adjustments for non-standard window sizes.
 struct WindowOffset: Codable {
+
+    /// Horizontal offset in points.
     let offsetX: Double
+
+    /// Vertical offset in points.
     let offsetY: Double
 }
 
+// MARK: - Frame Type
+
+/// Dictionary representing an element's frame with X, Y, Width, and Height.
+///
+/// ## JSON Format
+/// ```json
+/// {"X": 0, "Y": 0, "Width": 390, "Height": 844}
+/// ```
 typealias AXFrame = [String: Double]
+
 extension AXFrame {
+    /// Returns a zero-sized frame at origin.
     static var zero: Self {
         ["X": 0, "Y": 0, "Width": 0, "Height": 0]
     }
 }
 
+// MARK: - Accessibility Element
+
+/// Represents a UI accessibility element in the view hierarchy.
+///
+/// This model mirrors the XCUIElement accessibility properties and forms
+/// a recursive tree structure for the complete view hierarchy.
+///
+/// ## JSON Format
+/// ```json
+/// {
+///   "identifier": "login_button",
+///   "frame": {"X": 50, "Y": 100, "Width": 200, "Height": 44},
+///   "label": "Login",
+///   "elementType": 9,
+///   "enabled": true,
+///   "selected": false,
+///   "hasFocus": false,
+///   "value": null,
+///   "title": "Login",
+///   "placeholderValue": null,
+///   "horizontalSizeClass": 2,
+///   "verticalSizeClass": 2,
+///   "windowContextID": 12345.0,
+///   "displayID": 0,
+///   "children": []
+/// }
+/// ```
+///
+/// ## Element Types
+/// Common `elementType` values (from `XCUIElement.ElementType`):
+/// - `0`: Any
+/// - `1`: Other
+/// - `2`: Application
+/// - `9`: Button
+/// - `10`: RadioButton
+/// - `12`: RadioGroup
+/// - `13`: CheckBox
+/// - `46`: StaticText
+/// - `47`: TextField
+/// - `48`: SecureTextField
+/// - `52`: Image
 struct AXElement: Codable {
+
+    /// Accessibility identifier set by the developer.
     let identifier: String
+
+    /// Element's frame rectangle with X, Y, Width, Height.
     let frame: AXFrame
+
+    /// Current value of the element (e.g., text field content).
     let value: String?
+
+    /// Element's title attribute.
     let title: String?
+
+    /// Accessibility label for VoiceOver.
     let label: String
+
+    /// Element type as raw integer from `XCUIElement.ElementType`.
     let elementType: Int
+
+    /// Whether the element is enabled for interaction.
     let enabled: Bool
+
+    /// Horizontal size class (compact: 1, regular: 2).
     let horizontalSizeClass: Int
+
+    /// Vertical size class (compact: 1, regular: 2).
     let verticalSizeClass: Int
+
+    /// Placeholder text for input fields.
     let placeholderValue: String?
+
+    /// Whether the element is currently selected.
     let selected: Bool
+
+    /// Whether the element has keyboard focus.
     let hasFocus: Bool
+
+    /// Child elements in the hierarchy.
     var children: [AXElement]?
+
+    /// Window context identifier.
     let windowContextID: Double
+
+    /// Display identifier for multi-display setups.
     let displayID: Int
     
+    // MARK: - Initializers
+
+    /// Creates a container element with only children.
+    ///
+    /// Used for grouping elements without a corresponding XCUIElement.
+    /// - Parameter children: Array of child elements.
     init(children: [AXElement]) {
         self.children = children
-        
+
         self.label = ""
         self.elementType = 0
         self.identifier = ""
@@ -54,7 +162,25 @@ struct AXElement: Codable {
         self.enabled = false
         self.title = nil
     }
-    
+
+    /// Creates a fully specified accessibility element.
+    ///
+    /// - Parameters:
+    ///   - identifier: Accessibility identifier.
+    ///   - frame: Element frame rectangle.
+    ///   - value: Current value.
+    ///   - title: Element title.
+    ///   - label: Accessibility label.
+    ///   - elementType: Element type raw value.
+    ///   - enabled: Whether enabled.
+    ///   - horizontalSizeClass: Horizontal size class.
+    ///   - verticalSizeClass: Vertical size class.
+    ///   - placeholderValue: Placeholder text.
+    ///   - selected: Selection state.
+    ///   - hasFocus: Focus state.
+    ///   - displayID: Display identifier.
+    ///   - windowContextID: Window context.
+    ///   - children: Child elements.
     init(
         identifier: String, frame: AXFrame, value: String?, title: String?, label: String,
         elementType: Int, enabled: Bool, horizontalSizeClass: Int,
@@ -77,7 +203,10 @@ struct AXElement: Codable {
         self.windowContextID = windowContextID
         self.children = children
     }
-    
+
+    /// Creates an element from an XCUIElement snapshot dictionary.
+    ///
+    /// - Parameter dict: Dictionary representation from `XCUIElementSnapshot.dictionaryRepresentation`.
     init(_ dict: [XCUIElement.AttributeName: Any]) {
         func valueFor(_ name: String) -> Any {
             dict[XCUIElement.AttributeName(rawValue: name)] as Any
@@ -120,18 +249,28 @@ struct AXElement: Codable {
         try container.encode(self.displayID, forKey: .displayID)
     }
     
+    // MARK: - Methods
+
+    /// Calculates the maximum depth of the element tree.
+    ///
+    /// - Returns: The depth as an integer (1 for leaf nodes).
     func depth() -> Int {
         guard let children = children
         else { return 1 }
-        
+
         let max = children
             .map { child in child.depth() + 1 }
             .max()
-        
+
         return max ?? 1
     }
-    
-    
+
+    /// Filters out elements that intersect with the keyboard bounds.
+    ///
+    /// Used when `excludeKeyboardElements` is `true` in the request.
+    ///
+    /// - Parameter keyboardFrame: The keyboard's frame rectangle.
+    /// - Returns: Array of elements not intersecting with the keyboard.
     func filterAllChildrenNotInKeyboardBounds(_ keyboardFrame: CGRect) -> [AXElement] {
         var filteredChildren = [AXElement]()
         

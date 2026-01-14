@@ -2,7 +2,15 @@ import FlyingFox
 import XCTest
 import os
 
+// MARK: - Logger Extension
+
 extension Logger {
+    /// Measures and logs the execution time of a block.
+    ///
+    /// - Parameters:
+    ///   - message: Description of the operation being measured.
+    ///   - block: The block to execute and measure.
+    /// - Returns: The result of the block execution.
     func measure<T>(message: String, _ block: () throws -> T) rethrows -> T {
         let start = Date()
         info("\(message) - start")
@@ -16,10 +24,83 @@ extension Logger {
     }
 }
 
+// MARK: - DumpUI Handler
+
+/// HTTP handler for capturing the complete UI view hierarchy.
+///
+/// This handler processes POST requests to the `/dumpUI` endpoint and returns
+/// a JSON representation of the accessibility element tree for the foreground app.
+///
+/// ## Endpoint
+/// - **Method**: POST
+/// - **Path**: `/dumpUI`
+/// - **Content-Type**: `application/json`
+///
+/// ## Request Format
+/// ```json
+/// {
+///   "appIds": [],
+///   "excludeKeyboardElements": false
+/// }
+/// ```
+///
+/// | Field | Type | Required | Description |
+/// |-------|------|----------|-------------|
+/// | `appIds` | [String] | Yes | Bundle IDs to target (can be empty) |
+/// | `excludeKeyboardElements` | Bool | Yes | Filter out keyboard elements |
+///
+/// ## Response Format
+/// ```json
+/// {
+///   "axElement": {
+///     "identifier": "element_id",
+///     "frame": {"X": 0, "Y": 0, "Width": 390, "Height": 844},
+///     "label": "Accessibility Label",
+///     "elementType": 1,
+///     "enabled": true,
+///     "children": [...]
+///   },
+///   "depth": 15
+/// }
+/// ```
+///
+/// ## Response Codes
+/// - **200 OK**: View hierarchy captured successfully
+/// - **400 Bad Request**: Invalid request body
+/// - **408 Request Timeout**: Snapshot operation timed out
+/// - **500 Internal Server Error**: Snapshot failure
+///
+/// ## curl Examples
+/// ```bash
+/// # Basic UI dump
+/// curl -X POST http://127.0.0.1:12004/dumpUI \
+///     -H "Content-Type: application/json" \
+///     -d '{"appIds": [], "excludeKeyboardElements": false}'
+///
+/// # Exclude keyboard elements
+/// curl -X POST http://127.0.0.1:12004/dumpUI \
+///     -H "Content-Type: application/json" \
+///     -d '{"appIds": [], "excludeKeyboardElements": true}'
+///
+/// # Pretty-print with jq
+/// curl -X POST http://127.0.0.1:12004/dumpUI \
+///     -H "Content-Type: application/json" \
+///     -d '{"appIds": [], "excludeKeyboardElements": false}' | jq .
+/// ```
+///
+/// ## Implementation Details
+/// - Automatically detects the foreground application
+/// - Handles deep view hierarchies with fallback mechanisms (max depth: 60)
+/// - Includes status bar, keyboard, and alert elements
+/// - Supports Safari WebView capture on iOS 26+
+/// - Adjusts frame offsets for non-standard window sizes
 @MainActor
 struct DumpUIHandler: HTTPHandler {
 
+    /// SpringBoard application for system UI access.
     private let springboardApplication = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+
+    /// Maximum depth for view hierarchy traversal to prevent stack overflow.
     private let snapshotMaxDepth = 60
 
     private let logger = Logger(
@@ -27,6 +108,10 @@ struct DumpUIHandler: HTTPHandler {
         category: String(describing: Self.self)
     )
 
+    /// Handles incoming dumpUI requests.
+    ///
+    /// - Parameter request: The HTTP request containing dump parameters.
+    /// - Returns: HTTP response with JSON view hierarchy or error.
     func handleRequest(_ request: FlyingFox.HTTPRequest) async throws -> HTTPResponse {
         guard let requestBody = try? await JSONDecoder().decode(DumpUIRequest.self, from: request.bodyData) else {
             return AppError(type: .precondition, message: "incorrect request body provided").httpResponse
@@ -59,6 +144,17 @@ struct DumpUIHandler: HTTPHandler {
         }
     }
 
+    /// Builds the complete view hierarchy for the foreground application.
+    ///
+    /// This method assembles the view hierarchy from multiple sources:
+    /// - Main application view tree
+    /// - Status bar elements
+    /// - Safari WebView content (iOS 26+)
+    ///
+    /// - Parameters:
+    ///   - foregroundApp: The application to capture.
+    ///   - excludeKeyboardElements: Whether to filter out keyboard UI.
+    /// - Returns: A composite `AXElement` containing the full hierarchy.
     func getAppViewHierarchy(foregroundApp: XCUIApplication, excludeKeyboardElements: Bool) throws -> AXElement {
         SystemPermissionHelper.handleSystemPermissionAlertIfNeeded(foregroundApp: foregroundApp)
         let appHierarchy = try getHierarchyWithFallback(foregroundApp)
@@ -133,6 +229,15 @@ struct DumpUIHandler: HTTPHandler {
         )
     }
 
+    /// Retrieves the view hierarchy with automatic fallback for deep hierarchies.
+    ///
+    /// When encountering `kAXErrorIllegalArgument` errors (common with deep view trees),
+    /// this method applies a fallback strategy by limiting snapshot depth and recursively
+    /// processing child elements.
+    ///
+    /// - Parameter element: The XCUIElement to snapshot.
+    /// - Returns: The `AXElement` representation of the hierarchy.
+    /// - Throws: `AppError` if snapshot fails due to timeout or other unrecoverable errors.
     func getHierarchyWithFallback(_ element: XCUIElement) throws -> AXElement {
         logger.info("Starting getHierarchyWithFallback for element.")
 

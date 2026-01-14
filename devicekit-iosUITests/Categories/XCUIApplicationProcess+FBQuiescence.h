@@ -7,19 +7,56 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+/**
+ * @file XCUIApplicationProcess+FBQuiescence.h
+ * @brief Category for controlling process-level quiescence behavior.
+ *
+ * This category extends XCUIApplicationProcess to provide fine-grained
+ * control over quiescence (idle state) checking. It swizzles the internal
+ * quiescence methods to add custom timeout handling via FBConfiguration.
+ *
+ * Quiescence checking ensures the application is idle before performing
+ * UI operations, but can cause slowdowns. This category allows:
+ * - Disabling quiescence checks entirely
+ * - Configuring custom timeout values
+ * - Controlling whether to wait for animations
+ */
+
 #import <XCTest/XCTest.h>
 
 #import "XCUIApplicationProcess.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * @category XCUIApplicationProcess (FBQuiescence)
+ * @brief Process-level quiescence control with method swizzling.
+ *
+ * This category swizzles waitForQuiescenceIncludingAnimationsIdle: to add
+ * custom timeout handling based on FBConfiguration settings.
+ */
 @interface XCUIApplicationProcess (FBQuiescence)
 
-/*! Defines wtether the process should perform quiescence checks. YES by default */
-@property (nonatomic) NSNumber* fb_shouldWaitForQuiescence;
+/**
+ * Controls whether this process should perform quiescence checks.
+ *
+ * When set to NO, quiescence checks are skipped entirely, making
+ * the process believe it is always idle.
+ *
+ * @note Default value is YES. Uses associated objects for storage.
+ */
+@property (nonatomic) NSNumber *fb_shouldWaitForQuiescence;
 
 /**
- @param waitForAnimations Set it to YES if XCTest should also wait for application animations to complete
+ * Waits for the application process to become idle.
+ *
+ * This method provides a safe wrapper around the internal quiescence
+ * methods, handling different iOS versions automatically.
+ *
+ * @param waitForAnimations YES to also wait for animations to complete,
+ *                          NO to only wait for general quiescence.
+ *
+ * @throws NSException if no compatible quiescence API is found.
  */
 - (void)fb_waitForQuiescenceIncludingAnimationsIdle:(bool)waitForAnimations;
 
