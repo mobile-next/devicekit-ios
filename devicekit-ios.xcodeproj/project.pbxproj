@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		32ECCB262980449200A1A0A0 /* TapRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ECCB252980449200A1A0A0 /* TapRequest.swift */; };
-		32ECCB28298044C200A1A0A0 /* TapRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ECCB27298044C200A1A0A0 /* TapRouteHandler.swift */; };
+		32ECCB28298044C200A1A0A0 /* TapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ECCB27298044C200A1A0A0 /* TapHandler.swift */; };
 		52049BF8293503A200807AA3 /* devicekit_iosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52049BF7293503A200807AA3 /* devicekit_iosUITests.swift */; };
 		521C1F032D8014410024EE42 /* AXClientProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 521C1F022D8014340024EE42 /* AXClientProxy.h */; };
 		521C1F052D8016950024EE42 /* XCAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 521C1F042D8016950024EE42 /* XCAccessibilityElement.h */; };
@@ -42,7 +41,6 @@
 		52E35D432A654F67001D97A8 /* RunningApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E35D422A654F67001D97A8 /* RunningApp.swift */; };
 		610D58F92A45B5DA00B4BBEB /* DumpUIHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610D58F82A45B5DA00B4BBEB /* DumpUIHandler.swift */; };
 		610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */; };
-		6124329C2A4B368100F5F619 /* DumpUIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6124329B2A4B368100F5F619 /* DumpUIRequest.swift */; };
 		6124329E2A4DA5BB00F5F619 /* AXElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6124329D2A4DA5BB00F5F619 /* AXElement.swift */; };
 		612DE40229801F71003C2BE0 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 612DE40129801F71003C2BE0 /* XCTest.framework */; };
 		612DE4122984114B003C2BE0 /* RunnerDaemonProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612DE4112984114B003C2BE0 /* RunnerDaemonProxy.swift */; };
@@ -58,9 +56,9 @@
 		78F689332F17EE5C0025C8AC /* TCP in Frameworks */ = {isa = PBXBuildFile; productRef = 78F689322F17EE5C0025C8AC /* TCP */; };
 		78F689392F17EF1B0025C8AC /* devicekit_iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F689372F17EF1B0025C8AC /* devicekit_iosApp.swift */; };
 		943A9081293F5C2500C85136 /* RouteHandlerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943A9080293F5C2500C85136 /* RouteHandlerFactory.swift */; };
-		94826F4429DB082100795E9B /* SystemPermissionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94826F4329DB082100795E9B /* SystemPermissionHelper.swift */; };
+		94826F4429DB082100795E9B /* SystemPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94826F4329DB082100795E9B /* SystemPermissionManager.swift */; };
 		949535FC299FD67E00FD0159 /* XCTestHTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949535FB299FD67E00FD0159 /* XCTestHTTPServer.swift */; };
-		9811C9092C49751D00DDACA0 /* ScreenSizeHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811C9082C49751D00DDACA0 /* ScreenSizeHelper.swift */; };
+		9811C9092C49751D00DDACA0 /* OrientationGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811C9082C49751D00DDACA0 /* OrientationGeometry.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,8 +101,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		32ECCB252980449200A1A0A0 /* TapRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapRequest.swift; sourceTree = "<group>"; };
-		32ECCB27298044C200A1A0A0 /* TapRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapRouteHandler.swift; sourceTree = "<group>"; };
+		32ECCB27298044C200A1A0A0 /* TapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapHandler.swift; sourceTree = "<group>"; };
 		52049BD32935039F00807AA3 /* devicekit-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "devicekit-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		52049BF3293503A200807AA3 /* devicekit-iosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "devicekit-iosUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		52049BF7293503A200807AA3 /* devicekit_iosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = devicekit_iosUITests.swift; sourceTree = "<group>"; };
@@ -233,7 +230,6 @@
 		52E35D422A654F67001D97A8 /* RunningApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningApp.swift; sourceTree = "<group>"; };
 		610D58F82A45B5DA00B4BBEB /* DumpUIHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DumpUIHandler.swift; sourceTree = "<group>"; };
 		610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AXClientSwizzler.swift; sourceTree = "<group>"; };
-		6124329B2A4B368100F5F619 /* DumpUIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DumpUIRequest.swift; sourceTree = "<group>"; };
 		6124329D2A4DA5BB00F5F619 /* AXElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXElement.swift; sourceTree = "<group>"; };
 		612DE40129801F71003C2BE0 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		612DE4112984114B003C2BE0 /* RunnerDaemonProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerDaemonProxy.swift; sourceTree = "<group>"; };
@@ -246,9 +242,9 @@
 		78F689132F17EE190025C8AC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		78F689372F17EF1B0025C8AC /* devicekit_iosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = devicekit_iosApp.swift; sourceTree = "<group>"; };
 		943A9080293F5C2500C85136 /* RouteHandlerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteHandlerFactory.swift; sourceTree = "<group>"; };
-		94826F4329DB082100795E9B /* SystemPermissionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemPermissionHelper.swift; sourceTree = "<group>"; };
+		94826F4329DB082100795E9B /* SystemPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemPermissionManager.swift; sourceTree = "<group>"; };
 		949535FB299FD67E00FD0159 /* XCTestHTTPServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestHTTPServer.swift; sourceTree = "<group>"; };
-		9811C9082C49751D00DDACA0 /* ScreenSizeHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSizeHelper.swift; sourceTree = "<group>"; };
+		9811C9082C49751D00DDACA0 /* OrientationGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationGeometry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -349,6 +345,7 @@
 		52049BF6293503A200807AA3 /* devicekit-iosUITests */ = {
 			isa = PBXGroup;
 			children = (
+				612DE410298410F9003C2BE0 /* XCTest */,
 				52D8FAA92D6DD3850015FAB3 /* Utilities */,
 				52D8FA8E2D6DCF010015FAB3 /* Categories */,
 				52D8F8F12D6DCC150015FAB3 /* PrivateHeaders */,
@@ -521,6 +518,9 @@
 		612DE410298410F9003C2BE0 /* XCTest */ = {
 			isa = PBXGroup;
 			children = (
+				9811C9082C49751D00DDACA0 /* OrientationGeometry.swift */,
+				94826F4329DB082100795E9B /* SystemPermissionManager.swift */,
+				6124329D2A4DA5BB00F5F619 /* AXElement.swift */,
 				610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */,
 				612DE4112984114B003C2BE0 /* RunnerDaemonProxy.swift */,
 				612DE413298426EF003C2BE0 /* EventRecord.swift */,
@@ -530,23 +530,11 @@
 			path = XCTest;
 			sourceTree = "<group>";
 		};
-		9407362C2940C9F900A72E99 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				32ECCB252980449200A1A0A0 /* TapRequest.swift */,
-				6124329B2A4B368100F5F619 /* DumpUIRequest.swift */,
-				6124329D2A4DA5BB00F5F619 /* AXElement.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		943A907A293F5AF400C85136 /* Routes */ = {
 			isa = PBXGroup;
 			children = (
-				94826F4229DB080E00795E9B /* Helpers */,
-				612DE410298410F9003C2BE0 /* XCTest */,
-				9407362C2940C9F900A72E99 /* Models */,
 				943A9082293F5CA700C85136 /* Handlers */,
+				522785802A54410D008DBC0A /* ServerError.swift */,
 				943A9080293F5C2500C85136 /* RouteHandlerFactory.swift */,
 				949535FB299FD67E00FD0159 /* XCTestHTTPServer.swift */,
 			);
@@ -557,19 +545,9 @@
 			isa = PBXGroup;
 			children = (
 				610D58F82A45B5DA00B4BBEB /* DumpUIHandler.swift */,
-				32ECCB27298044C200A1A0A0 /* TapRouteHandler.swift */,
+				32ECCB27298044C200A1A0A0 /* TapHandler.swift */,
 			);
 			path = Handlers;
-			sourceTree = "<group>";
-		};
-		94826F4229DB080E00795E9B /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				94826F4329DB082100795E9B /* SystemPermissionHelper.swift */,
-				522785802A54410D008DBC0A /* ServerError.swift */,
-				9811C9082C49751D00DDACA0 /* ScreenSizeHelper.swift */,
-			);
-			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -796,19 +774,17 @@
 			files = (
 				610D58F92A45B5DA00B4BBEB /* DumpUIHandler.swift in Sources */,
 				612DE4122984114B003C2BE0 /* RunnerDaemonProxy.swift in Sources */,
-				94826F4429DB082100795E9B /* SystemPermissionHelper.swift in Sources */,
+				94826F4429DB082100795E9B /* SystemPermissionManager.swift in Sources */,
 				52D8FAAC2D6DD3A20015FAB3 /* FBLogger.m in Sources */,
 				521C1F072D8017480024EE42 /* AXClientProxy.m in Sources */,
-				32ECCB262980449200A1A0A0 /* TapRequest.swift in Sources */,
 				5261117A2DE5E8E7007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m in Sources */,
 				610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */,
 				521C1F102D8051FC0024EE42 /* XCTestDaemonsProxy.m in Sources */,
 				613E87D7299A64BD00FF8551 /* PointerEventPath.swift in Sources */,
-				9811C9092C49751D00DDACA0 /* ScreenSizeHelper.swift in Sources */,
+				9811C9092C49751D00DDACA0 /* OrientationGeometry.swift in Sources */,
 				612DE414298426EF003C2BE0 /* EventRecord.swift in Sources */,
-				32ECCB28298044C200A1A0A0 /* TapRouteHandler.swift in Sources */,
+				32ECCB28298044C200A1A0A0 /* TapHandler.swift in Sources */,
 				943A9081293F5C2500C85136 /* RouteHandlerFactory.swift in Sources */,
-				6124329C2A4B368100F5F619 /* DumpUIRequest.swift in Sources */,
 				521C1F0B2D801A360024EE42 /* XCUIApplication+Helper.m in Sources */,
 				949535FC299FD67E00FD0159 /* XCTestHTTPServer.swift in Sources */,
 				52D8FA9D2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.m in Sources */,
@@ -1041,6 +1017,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -1055,6 +1032,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "devicekit-iosUITests/Categories/devicekit-iosUITests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1068,6 +1047,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -1082,6 +1062,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "devicekit-iosUITests/Categories/devicekit-iosUITests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -1095,6 +1077,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -1131,6 +1114,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -1166,6 +1150,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -1202,6 +1187,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";

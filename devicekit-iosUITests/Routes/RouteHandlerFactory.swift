@@ -12,7 +12,7 @@ import FlyingFox
 ///
 /// | Route | Handler | Description |
 /// |-------|---------|-------------|
-/// | `/tap` | `TapRouteHandler` | Touch event synthesis |
+/// | `/tap` | `TapHandler` | Touch event synthesis |
 /// | `/dumpUI` | `DumpUIHandler` | View hierarchy capture |
 ///
 /// ## Usage
@@ -33,7 +33,7 @@ final class RouteHandlerFactory {
     static func createRouteHandler(route: Route) -> HTTPHandler {
         switch route {
         case .tap:
-            return TapRouteHandler()
+            return TapHandler()
         case .dumpUI:
             return DumpUIHandler()
         }

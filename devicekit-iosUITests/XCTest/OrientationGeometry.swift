@@ -12,19 +12,19 @@ import XCTest
 /// ## Usage
 /// ```swift
 /// // Get physical screen size (portrait dimensions)
-/// let (width, height) = ScreenSizeHelper.physicalScreenSize()
+/// let (width, height) = OrientationGeometry.physicalScreenSize()
 ///
 /// // Get orientation-aware size
-/// let (w, h, orientation) = try ScreenSizeHelper.actualScreenSize()
+/// let (w, h, orientation) = try OrientationGeometry.actualScreenSize()
 ///
 /// // Transform coordinates for current orientation
-/// let adjustedPoint = ScreenSizeHelper.orientationAwarePoint(
+/// let adjustedPoint = OrientationGeometry.orientationAwarePoint(
 ///     width: width,
 ///     height: height,
 ///     point: CGPoint(x: 100, y: 200)
 /// )
 /// ```
-struct ScreenSizeHelper {
+struct OrientationGeometry {
 
     /// Cached screen dimensions to avoid repeated snapshots.
     private static var cachedSize: (Float, Float)?

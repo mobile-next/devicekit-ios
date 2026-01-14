@@ -51,9 +51,9 @@ enum PermissionValue: String, Codable {
 ///
 /// ## Usage
 /// ```swift
-/// SystemPermissionHelper.handleSystemPermissionAlertIfNeeded(foregroundApp: app)
+/// SystemPermissionManager.handleSystemPermissionAlertIfNeeded(foregroundApp: app)
 /// ```
-final class SystemPermissionHelper {
+final class SystemPermissionManager {
 
     /// Label text used to identify notification permission alerts.
     private static let notificationsPermissionLabel = "Would Like to Send You Notifications"
