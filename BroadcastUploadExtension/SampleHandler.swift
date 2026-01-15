@@ -21,6 +21,25 @@ import ReplayKit
 /// - Audio handling is stubbed out and can be implemented if needed.
 class SampleHandler: RPBroadcastSampleHandler {
 
+    // MARK: - Default Configuration Constants
+
+    /// Default TCP port for streaming
+    private static let defaultPort: UInt16 = 12005
+
+    /// Default scale factor for output resolution (0.5 = half size)
+    private static let defaultScaleFactor: Float = 0.5
+
+    /// Default JPEG compression quality (0.0-1.0)
+    private static let defaultQualityFactor: Float = 0.8
+
+    /// Default target frame rate in frames per second
+    private static let defaultExpectedFrameRate: Int = 30
+
+    /// Default H.264 average bitrate in bits per second
+    private static let defaultAverageBitRate: Int = 8_000_000
+
+    // MARK: - Properties
+
     /// Core Image context used for rotation and pixel buffer processing.
     private var context: CIContext?
 
@@ -40,16 +59,13 @@ class SampleHandler: RPBroadcastSampleHandler {
     /// - `averageBitRate` default is extremely low (`8`), likely unintended.
     /// - Resolution is square (`rect.scaledSide`), which may not match screen aspect ratio.
     override func broadcastStarted(withSetupInfo setupInfo: [String: NSObject]?) {
-        let port = setupInfo?["port"] as? UInt16 ?? 12005
-        let usesActualResolution =
-            setupInfo?["usesActualResolution"] as? Bool ?? true
-        let rect: CGRect =
-            usesActualResolution
-            ? .actualResolutionScreen : .logicalResolutionScreen
-        let scaleFactor = setupInfo?["scaleFactor"] as? Float ?? 0.5
-        let qualityFactor = setupInfo?["qualityFactor"] as? Float ?? 0.5
-        let expectedFrameRate = setupInfo?["expectedFrameRate"] as? Int ?? 20
-        let averageBitRate = setupInfo?["averageBitRate"] as? Int ?? 8
+        let port = setupInfo?["port"] as? UInt16 ?? Self.defaultPort
+        let usesActualResolution = setupInfo?["usesActualResolution"] as? Bool ?? true
+        let rect: CGRect = usesActualResolution ? .actualResolutionScreen : .logicalResolutionScreen
+        let scaleFactor = setupInfo?["scaleFactor"] as? Float ?? Self.defaultScaleFactor
+        let qualityFactor = setupInfo?["qualityFactor"] as? Float ?? Self.defaultQualityFactor
+        let expectedFrameRate = setupInfo?["expectedFrameRate"] as? Int ?? Self.defaultExpectedFrameRate
+        let averageBitRate = setupInfo?["averageBitRate"] as? Int ?? Self.defaultAverageBitRate
         let isLetterbox = setupInfo?["isLetterbox"] as? Bool ?? true
         let isRealTime = setupInfo?["isRealTime"] as? Bool ?? false
 
