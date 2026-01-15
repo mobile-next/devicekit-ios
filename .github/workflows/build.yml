@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install SwiftLint
+      run: brew install swiftlint
+
+    - name: Run lint
+      run: make lint || true
+
+    - name: Build unsigned IPA
+      run: make ipa-unsigned
+
+    - name: Upload unsigned IPA
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: devicekit-ios-unsigned-ipa
+        path: build/export/*-unsigned.ipa
+        retention-days: 4
