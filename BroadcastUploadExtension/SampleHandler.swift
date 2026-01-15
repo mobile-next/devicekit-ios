@@ -39,17 +39,20 @@ class SampleHandler: RPBroadcastSampleHandler {
     /// - Uses `fatalError` on failure, which immediately terminates the broadcast.
     /// - `averageBitRate` default is extremely low (`8`), likely unintended.
     /// - Resolution is square (`rect.scaledSide`), which may not match screen aspect ratio.
-    override func broadcastStarted(withSetupInfo setupInfo: [String : NSObject]?) {
+    override func broadcastStarted(withSetupInfo setupInfo: [String: NSObject]?) {
         let port = setupInfo?["port"] as? UInt16 ?? 12005
-        let usesActualResolution = setupInfo?["usesActualResolution"] as? Bool ?? true
-        let rect: CGRect = usesActualResolution ? .actualResolutionScreen : .logicalResolutionScreen
+        let usesActualResolution =
+            setupInfo?["usesActualResolution"] as? Bool ?? true
+        let rect: CGRect =
+            usesActualResolution
+            ? .actualResolutionScreen : .logicalResolutionScreen
         let scaleFactor = setupInfo?["scaleFactor"] as? Float ?? 0.5
         let qualityFactor = setupInfo?["qualityFactor"] as? Float ?? 0.5
         let expectedFrameRate = setupInfo?["expectedFrameRate"] as? Int ?? 20
         let averageBitRate = setupInfo?["averageBitRate"] as? Int ?? 8
         let isLetterbox = setupInfo?["isLetterbox"] as? Bool ?? true
         let isRealTime = setupInfo?["isRealTime"] as? Bool ?? false
-        
+
         context = CIContext()
         screenStreamer = ScreenStreamer()
 
@@ -68,21 +71,21 @@ class SampleHandler: RPBroadcastSampleHandler {
             fatalError(error.localizedDescription)
         }
     }
-    
+
     /// Called when the user pauses the broadcast.
     ///
     /// ReplayKit stops delivering sample buffers until the broadcast is resumed.
     override func broadcastPaused() {
         // User has requested to pause the broadcast. Samples will stop being delivered.
     }
-    
+
     /// Called when the user resumes the broadcast.
     ///
     /// ReplayKit resumes delivering sample buffers.
     override func broadcastResumed() {
         // User has requested to resume the broadcast. Samples delivery will resume.
     }
-    
+
     /// Called when the broadcast ends.
     ///
     /// This method:
@@ -92,7 +95,7 @@ class SampleHandler: RPBroadcastSampleHandler {
         screenStreamer?.stop()
         context?.clearCaches()
     }
-    
+
     /// Processes incoming sample buffers from ReplayKit.
     ///
     /// ReplayKit delivers three types of buffers:
@@ -119,7 +122,7 @@ class SampleHandler: RPBroadcastSampleHandler {
         case .video:
             guard let context = context else { return }
             guard let orientation = sampleBuffer.orientation else { return }
-            
+
             screenStreamer?.encode(
                 sampleBuffer: sampleBuffer,
                 context: context,
