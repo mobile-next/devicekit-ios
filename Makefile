@@ -102,7 +102,7 @@ ipa: archive
 ipa-unsigned:
 	@echo "Building unsigned app for arm64 iOS devices..."
 	xcodebuild build \
-		-workspace devicekit-ios.xcworkspace \
+		-project devicekit-ios.xcodeproj \
 		-scheme $(SCHEME) \
 		-configuration $(CONFIGURATION) \
 		-destination 'generic/platform=iOS' \
