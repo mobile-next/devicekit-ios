@@ -30,3 +30,13 @@ jobs:
         name: devicekit-ios-unsigned-ipa
         path: build/export/*-unsigned.ipa
         retention-days: 4
+
+    - name: Upload to GitHub Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+      with:
+        name: Version ${{ github.ref_name }}
+        files: build/export/*-unsigned.ipa
+
