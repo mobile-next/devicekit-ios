@@ -6,9 +6,9 @@ DeviceKit iOS is a screen streaming and UI automation framework for iOS devices.
 
 ---
 
-## HTTP Automation API
+## JSON-RPC 2.0 API (Recommended)
 
-The HTTP server runs on `127.0.0.1:12004` by default and provides endpoints for UI automation.
+The server provides a JSON-RPC 2.0 interface on `127.0.0.1:12004` with support for both HTTP and WebSocket transports.
 
 ### Server Configuration
 
@@ -17,6 +17,227 @@ The HTTP server runs on `127.0.0.1:12004` by default and provides endpoints for 
 | Host | `127.0.0.1` | - |
 | Port | `12004` | `PORT` |
 | Timeout | `100s` | - |
+
+### Endpoints
+
+| Transport | Endpoint | Description |
+|-----------|----------|-------------|
+| HTTP POST | `POST /rpc` | Single request/response |
+| WebSocket | `GET /rpc` | Persistent bidirectional connection |
+| HTTP GET | `GET /health` | Health check |
+
+### Available Methods
+
+| Method | Description |
+|--------|-------------|
+| `tap` | Perform tap or long-press gesture |
+| `dumpUI` | Capture UI view hierarchy |
+
+---
+
+### HTTP POST Examples (curl)
+
+#### Tap
+
+```bash
+# Simple tap at coordinates (100, 200)
+curl -X POST http://127.0.0.1:12004/rpc \
+    -H "Content-Type: application/json" \
+    -d '{
+        "jsonrpc": "2.0",
+        "method": "tap",
+        "params": {"x": 100.0, "y": 200.0},
+        "id": 1
+    }'
+
+# Response:
+# {"jsonrpc":"2.0","result":{"success":true},"id":1}
+```
+
+```bash
+# Long-press for 2 seconds
+curl -X POST http://127.0.0.1:12004/rpc \
+    -H "Content-Type: application/json" \
+    -d '{
+        "jsonrpc": "2.0",
+        "method": "tap",
+        "params": {"x": 150.0, "y": 300.0, "duration": 2.0},
+        "id": 2
+    }'
+```
+
+#### DumpUI
+
+```bash
+# Capture UI hierarchy
+curl -X POST http://127.0.0.1:12004/rpc \
+    -H "Content-Type: application/json" \
+    -d '{
+        "jsonrpc": "2.0",
+        "method": "dumpUI",
+        "params": {"appIds": [], "excludeKeyboardElements": false},
+        "id": 3
+    }'
+
+# Response:
+# {"jsonrpc":"2.0","result":{"axElement":{...},"depth":15},"id":3}
+```
+
+```bash
+# Capture UI hierarchy excluding keyboard, pretty-printed
+curl -X POST http://127.0.0.1:12004/rpc \
+    -H "Content-Type: application/json" \
+    -d '{
+        "jsonrpc": "2.0",
+        "method": "dumpUI",
+        "params": {"appIds": [], "excludeKeyboardElements": true},
+        "id": 4
+    }' | jq .
+```
+
+---
+
+### WebSocket Examples
+
+WebSocket provides a persistent connection for lower latency when sending multiple commands.
+
+#### Using websocat
+
+Install [websocat](https://github.com/vi/websocat):
+```bash
+# macOS
+brew install websocat
+
+# or cargo
+cargo install websocat
+```
+
+Interactive session:
+```bash
+websocat ws://127.0.0.1:12004/rpc
+```
+
+Then type JSON-RPC requests:
+```json
+{"jsonrpc": "2.0", "method": "tap", "params": {"x": 100, "y": 200}, "id": 1}
+{"jsonrpc": "2.0", "method": "dumpUI", "params": {"appIds": [], "excludeKeyboardElements": false}, "id": 2}
+```
+
+One-liner with websocat:
+```bash
+echo '{"jsonrpc": "2.0", "method": "tap", "params": {"x": 100, "y": 200}, "id": 1}' | websocat ws://127.0.0.1:12004/rpc
+```
+
+#### Using wscat
+
+Install [wscat](https://github.com/websockets/wscat):
+```bash
+npm install -g wscat
+```
+
+Interactive session:
+```bash
+wscat -c ws://127.0.0.1:12004/rpc
+```
+
+#### Using Python
+
+```python
+import asyncio
+import websockets
+import json
+
+async def main():
+    async with websockets.connect("ws://127.0.0.1:12004/rpc") as ws:
+        # Tap
+        await ws.send(json.dumps({
+            "jsonrpc": "2.0",
+            "method": "tap",
+            "params": {"x": 100, "y": 200},
+            "id": 1
+        }))
+        response = await ws.recv()
+        print(f"Tap response: {response}")
+
+        # DumpUI
+        await ws.send(json.dumps({
+            "jsonrpc": "2.0",
+            "method": "dumpUI",
+            "params": {"appIds": [], "excludeKeyboardElements": False},
+            "id": 2
+        }))
+        response = await ws.recv()
+        print(f"DumpUI response: {response}")
+
+asyncio.run(main())
+```
+
+#### Using JavaScript/Node.js
+
+```javascript
+const WebSocket = require('ws');
+
+const ws = new WebSocket('ws://127.0.0.1:12004/rpc');
+
+ws.on('open', () => {
+    // Tap
+    ws.send(JSON.stringify({
+        jsonrpc: '2.0',
+        method: 'tap',
+        params: { x: 100, y: 200 },
+        id: 1
+    }));
+});
+
+ws.on('message', (data) => {
+    const response = JSON.parse(data);
+    console.log('Response:', response);
+
+    if (response.id === 1) {
+        // After tap, request UI dump
+        ws.send(JSON.stringify({
+            jsonrpc: '2.0',
+            method: 'dumpUI',
+            params: { appIds: [], excludeKeyboardElements: false },
+            id: 2
+        }));
+    } else {
+        ws.close();
+    }
+});
+```
+
+---
+
+### JSON-RPC Error Codes
+
+| Code | Message | Description |
+|------|---------|-------------|
+| -32700 | Parse error | Invalid JSON |
+| -32600 | Invalid Request | Not a valid JSON-RPC request |
+| -32601 | Method not found | Method does not exist |
+| -32602 | Invalid params | Invalid method parameters |
+| -32603 | Internal error | Internal server error |
+| -32000 | Timeout | Operation timed out |
+| -32001 | Precondition failed | Invalid request (e.g., bad coordinates) |
+
+Error response example:
+```json
+{
+    "jsonrpc": "2.0",
+    "error": {
+        "code": -32601,
+        "message": "Method not found"
+    },
+    "id": 1
+}
+```
+
+---
+
+## Legacy HTTP REST API
+
+> **Note:** The JSON-RPC API above is recommended. The REST API below is kept for backward compatibility.
 
 ### Available Endpoints
 

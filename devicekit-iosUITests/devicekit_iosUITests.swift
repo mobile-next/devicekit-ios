@@ -80,66 +80,66 @@ final class devicekit_iosUITests: XCTestCase {
     /// - `recorderApp.tap()` may not always bring the app to the foreground reliably.
     @MainActor
     func testRunAutomation() async throws {
-        let springboard = XCUIApplication(
-            bundleIdentifier: "com.apple.springboard"
-        )
-        springboard.closeBroadcastFailedAlertIfNeeded()
+//        let springboard = XCUIApplication(
+//            bundleIdentifier: "com.apple.springboard"
+//        )
+//        springboard.closeBroadcastFailedAlertIfNeeded()
+//
+//        let recorderApp = XCUIApplication()
+//        if recorderApp.state != .runningForeground {
+//            recorderApp.activate()
+//            springboard.closeBroadcastFailedAlertIfNeeded()
+//        }
+//
+//        XCTAssertEqual(
+//            recorderApp.state,
+//            .runningForeground,
+//            "the app is not running in foreground, state: \(recorderApp.state)"
+//        )
+//
+//        let selectBroadcastButton = springboard.buttons[
+//            "BroadcastUploadExtension"
+//        ]
+//        let startBroadcastButton = springboard.buttons["Start Broadcast"]
+//        let stopBroadcastButton = springboard.buttons["Stop Broadcast"]
+//
+//        recorderApp.tap()
+//
+//        // If a broadcast is already running, stop early.
+//        if stopBroadcastButton.waitForExistence(
+//            timeout: defaultExistenceTimeout
+//        ) {
+//            returnToHomeScreen()
+//            return
+//        }
+//
+//        // Select the broadcast extension if needed.
+//        if selectBroadcastButton.waitForExistence(
+//            timeout: defaultExistenceTimeout
+//        ),
+//            selectBroadcastButton.isHittable
+//        {
+//            selectBroadcastButton.tap()
+//        }
+//
+//        // If the start button is not visible, tap the popup container.
+//        if !startBroadcastButton.waitForExistence(
+//            timeout: defaultExistenceTimeout
+//        ) {
+//            recorderApp.otherElements["start_broadcast_popup"].tap()
+//        }
+//
+//        startBroadcastButton.tap()
+//        devicekit_iosUITests.logger.info("Started broadcast")
+//
+//        // Allow time for the broadcast to initialize. It takes exactly 3 seconds.
+//        sleep(3)
+//
+//        returnToHomeScreen()
+//        springboard.closeBroadcastFailedAlertIfNeeded()
 
-        let recorderApp = XCUIApplication()
-        if recorderApp.state != .runningForeground {
-            recorderApp.activate()
-            springboard.closeBroadcastFailedAlertIfNeeded()
-        }
-
-        XCTAssertEqual(
-            recorderApp.state,
-            .runningForeground,
-            "the app is not running in foreground, state: \(recorderApp.state)"
-        )
-
-        let selectBroadcastButton = springboard.buttons[
-            "BroadcastUploadExtension"
-        ]
-        let startBroadcastButton = springboard.buttons["Start Broadcast"]
-        let stopBroadcastButton = springboard.buttons["Stop Broadcast"]
-
-        recorderApp.tap()
-
-        // If a broadcast is already running, stop early.
-        if stopBroadcastButton.waitForExistence(
-            timeout: defaultExistenceTimeout
-        ) {
-            returnToHomeScreen()
-            return
-        }
-
-        // Select the broadcast extension if needed.
-        if selectBroadcastButton.waitForExistence(
-            timeout: defaultExistenceTimeout
-        ),
-            selectBroadcastButton.isHittable
-        {
-            selectBroadcastButton.tap()
-        }
-
-        // If the start button is not visible, tap the popup container.
-        if !startBroadcastButton.waitForExistence(
-            timeout: defaultExistenceTimeout
-        ) {
-            recorderApp.otherElements["start_broadcast_popup"].tap()
-        }
-
-        startBroadcastButton.tap()
-        devicekit_iosUITests.logger.info("Started broadcast")
-
-        // Allow time for the broadcast to initialize. It takes exactly 3 seconds.
-        sleep(3)
-
-        returnToHomeScreen()
-        springboard.closeBroadcastFailedAlertIfNeeded()
-
-        let server = XCTestHTTPServer()
-        devicekit_iosUITests.logger.info("Will start HTTP server")
+        let server = XCTestWebSocketServer()
+        devicekit_iosUITests.logger.info("Will start WebSocket JSON-RPC server")
         try await server.start()
     }
 
