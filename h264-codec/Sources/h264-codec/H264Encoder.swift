@@ -53,7 +53,6 @@ public final class H264Encoder: NSObject {
     /// - Parameters:
     ///   - width: Frame width in pixels.
     ///   - height: Frame height in pixels.
-    ///   - isLetterbox: Whether to use letterbox scaling mode.
     ///   - isRealTime: Whether to optimize for real‑time encoding.
     ///   - expectedFrameRate: Expected frame rate (used for keyframe interval and rate control).
     ///   - averageBitRate: Target average bitrate in bits per second.
@@ -73,7 +72,6 @@ public final class H264Encoder: NSObject {
     public func configureCompressSession(
         width: Int32,
         height: Int32,
-        isLetterbox: Bool,
         isRealTime: Bool,
         expectedFrameRate: Int,
         averageBitRate: Int,
@@ -99,7 +97,7 @@ public final class H264Encoder: NSObject {
 
         let propertyDictionary = [
             kVTCompressionPropertyKey_PixelTransferProperties: [
-                kVTPixelTransferPropertyKey_ScalingMode: isLetterbox ? kVTScalingMode_Letterbox : kVTScalingMode_Normal
+                kVTPixelTransferPropertyKey_ScalingMode: kVTScalingMode_Normal
             ],
             kVTCompressionPropertyKey_ProfileLevel: kVTProfileLevel_H264_Baseline_AutoLevel,
             kVTCompressionPropertyKey_MaxKeyFrameInterval: expectedFrameRate,

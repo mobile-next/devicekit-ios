@@ -57,7 +57,6 @@ class SampleHandler: RPBroadcastSampleHandler {
     /// ## Potential Issues
     /// - Uses `fatalError` on failure, which immediately terminates the broadcast.
     /// - `averageBitRate` default is extremely low (`8`), likely unintended.
-    /// - Resolution is square (`rect.scaledSide`), which may not match screen aspect ratio.
     override func broadcastStarted(withSetupInfo setupInfo: [String: NSObject]?) {
         let port = setupInfo?["port"] as? UInt16 ?? Self.defaultPort
         let usesActualResolution = setupInfo?["usesActualResolution"] as? Bool ?? true
@@ -66,7 +65,6 @@ class SampleHandler: RPBroadcastSampleHandler {
         let qualityFactor = setupInfo?["qualityFactor"] as? Float ?? Self.defaultQualityFactor
         let expectedFrameRate = setupInfo?["expectedFrameRate"] as? Int ?? Self.defaultExpectedFrameRate
         let averageBitRate = setupInfo?["averageBitRate"] as? Int ?? Self.defaultAverageBitRate
-        let isLetterbox = setupInfo?["isLetterbox"] as? Bool ?? true
         let isRealTime = setupInfo?["isRealTime"] as? Bool ?? false
 
         context = CIContext()
@@ -80,7 +78,6 @@ class SampleHandler: RPBroadcastSampleHandler {
                 qualityFactor: qualityFactor,
                 expectedFrameRate: expectedFrameRate,
                 averageBitRate: averageBitRate,
-                isLetterbox: isLetterbox,
                 isRealTime: isRealTime
             )
         } catch {

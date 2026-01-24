@@ -54,21 +54,19 @@ final class ScreenStreamer {
     /// - Parameters:
     ///   - port: TCP port to listen on.
     ///   - rect: A rectangle representing the capture region.
-    ///   - scaleFactor: Multiplier applied to the longest side of `rect`.
+    ///   - scaleFactor: Multiplier applied to both width and height of `rect`.
     ///   - qualityFactor: Encoder quality hint (0.0–1.0).
     ///   - expectedFrameRate: Target frame rate for encoding.
     ///   - averageBitRate: Target bitrate in bits per second.
-    ///   - isLetterbox: Whether to use letterbox scaling.
     ///   - isRealTime: Whether to optimize for real‑time encoding.
     ///
     /// ## Behavior
     /// - Starts the TCP server.
-    /// - Computes encoder width/height from `rect.scaledSide(scaleFactor)`.
+    /// - Computes encoder width/height from `rect.scaledDimensions(scaleFactor)`.
     /// - Configures the encoder with the provided parameters.
     /// - Forwards encoded NAL units to the TCP server.
     ///
     /// ## Potential Issues
-    /// - Width and height are forced to be equal (square output).
     /// - If the TCP client disconnects, NAL units may be dropped silently.
     /// - If encoder configuration fails, the TCP server remains running.
     func start(
@@ -78,16 +76,14 @@ final class ScreenStreamer {
         qualityFactor: Float,
         expectedFrameRate: Int,
         averageBitRate: Int,
-        isLetterbox: Bool,
         isRealTime: Bool
     ) throws {
         try tcpServer.start(port: port)
 
-        let side = rect.scaledSide(scaleFactor)
+        let dimensions = rect.scaledDimensions(scaleFactor)
         try h264Encoder.configureCompressSession(
-            width: side,
-            height: side,
-            isLetterbox: isLetterbox,
+            width: dimensions.width,
+            height: dimensions.height,
             isRealTime: isRealTime,
             expectedFrameRate: expectedFrameRate,
             averageBitRate: averageBitRate,
