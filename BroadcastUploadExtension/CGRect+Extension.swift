@@ -39,7 +39,7 @@ extension CGRect {
 
     /// Scales the longest side of the rectangle by the given factor.
     ///
-    /// - Parameter factor: A multiplier applied to the rectangle’s longest side.
+    /// - Parameter factor: A multiplier applied to the rectangle's longest side.
     /// - Returns: The scaled side as an `Int32`.
     ///
     /// ## Example
@@ -47,6 +47,20 @@ extension CGRect {
     /// this returns `960`.
     func scaledSide(_ factor: Float) -> Int32 {
         Int32(nativeSide * factor)
+    }
+
+    /// Scales both width and height by the given factor, preserving aspect ratio.
+    ///
+    /// - Parameter factor: A multiplier applied to both dimensions.
+    /// - Returns: A tuple containing scaled width and height as `Int32` values.
+    ///
+    /// ## Example
+    /// If the rectangle is `1920×1080` and factor is `0.5`,
+    /// this returns `(width: 960, height: 540)`.
+    func scaledDimensions(_ factor: Float) -> (width: Int32, height: Int32) {
+        let scaledWidth = Int32(Float(width) * factor)
+        let scaledHeight = Int32(Float(height) * factor)
+        return (width: scaledWidth, height: scaledHeight)
     }
 
     /// The longest side of the rectangle as a `Float`.
