@@ -3,12 +3,13 @@ import CoreMedia
 import H264Codec
 import TCP
 
-/// A high‑level component that captures frames, encodes them as H.264,
-/// and streams the resulting NAL units over TCP.
+/// A high‑level component that encodes screen frames as H.264 and
+/// system audio as Opus, streaming both over TCP.
 ///
 /// `ScreenStreamer` coordinates two subsystems:
 /// - `H264Encoder` — performs hardware‑accelerated H.264 encoding.
 /// - `TCPServer` — streams encoded NAL units to a connected client.
+/// - `OpusAudioEncoder` — encodes PCM audio into Opus frames for streaming.
 ///
 /// This class does **not** capture frames itself; instead, it exposes `encode(...)`
 /// methods that accept `CMSampleBuffer` or `CVImageBuffer` inputs from an external
@@ -18,6 +19,7 @@ import TCP
 /// - Configure the encoder and TCP server.
 /// - Convert screen geometry into encoder dimensions.
 /// - Forward encoded NAL units to the TCP server.
+/// - Forward encoded Opus audio frames to the audio TCP server.
 /// - Handle incoming JSON-RPC control messages.
 /// - Provide simple start/stop lifecycle management.
 ///
@@ -35,6 +37,12 @@ final class ScreenStreamer {
     /// The TCP server used to stream encoded NAL units.
     private let tcpServer: TCPServer
 
+    /// Opus audio encoder for system audio sample buffers.
+    private var audioEncoder: OpusAudioEncoder
+
+    /// TCP server for Opus audio frames.
+    private let audioServer: TCPServer
+
     /// Buffer for assembling partial JSON-RPC messages received over TCP.
     private var messageBuffer = Data()
 
@@ -43,6 +51,9 @@ final class ScreenStreamer {
 
     /// Whether the streamer has been stopped.
     private var isStopped = false
+
+    /// Whether we've already logged that no audio client is connected.
+    private var loggedMissingAudioClient = false
 
     /// Creates a new screen streamer with optional dependency injection.
     ///
@@ -54,10 +65,14 @@ final class ScreenStreamer {
     /// encoder/server implementations if needed.
     init(
         videoEncoder: H264Encoder = H264Encoder(),
-        tcpServer: TCPServer = TCPServer()
+        tcpServer: TCPServer = TCPServer(),
+        audioEncoder: OpusAudioEncoder = OpusAudioEncoder(),
+        audioServer: TCPServer = TCPServer()
     ) {
         self.h264Encoder = videoEncoder
         self.tcpServer = tcpServer
+        self.audioEncoder = audioEncoder
+        self.audioServer = audioServer
     }
 
     /// Starts the TCP server and configures the H.264 encoder.
@@ -87,7 +102,9 @@ final class ScreenStreamer {
         qualityFactor: Float,
         expectedFrameRate: Int,
         averageBitRate: Int,
-        isRealTime: Bool
+        isRealTime: Bool,
+        audioPort: UInt16?,
+        audioBitRate: Int
     ) throws {
         isPaused = false
         isStopped = false
@@ -108,6 +125,25 @@ final class ScreenStreamer {
         h264Encoder.naluHandling = { [weak self] data in
             guard let self else { return }
             tcpServer.dataHandler?(data)
+        }
+
+        if let audioPort {
+            audioEncoder.updateBitRate(audioBitRate)
+            try audioServer.start(port: audioPort)
+            audioEncoder.opusHandling = { [weak self] data in
+                guard let self else { return }
+                guard let dataHandler = audioServer.dataHandler else {
+                    if !self.loggedMissingAudioClient {
+                        self.loggedMissingAudioClient = true
+                        NSLog("[ScreenStreamer] Opus frame ready but no audio client connected")
+                    }
+                    return
+                }
+                dataHandler(self.lengthPrefixed(data))
+            }
+        } else {
+            audioEncoder.opusHandling = nil
+            audioServer.stop()
         }
 
         // Handle incoming JSON-RPC messages from the TCP client.
@@ -284,6 +320,14 @@ final class ScreenStreamer {
         )
     }
 
+    /// Encodes system audio sample buffers into Opus and sends them over TCP.
+    ///
+    /// - Parameter sampleBuffer: The captured audio sample buffer.
+    func encodeAudio(sampleBuffer: CMSampleBuffer) {
+        guard !isPaused, !isStopped else { return }
+        audioEncoder.encode(sampleBuffer: sampleBuffer)
+    }
+
     /// Stops streaming by shutting down the TCP server and invalidating the encoder.
     ///
     /// ## Behavior
@@ -296,5 +340,15 @@ final class ScreenStreamer {
         isStopped = true
         tcpServer.stop()
         h264Encoder.invalidateCompressionSession()
+        audioServer.stop()
+        audioEncoder.invalidate()
+    }
+
+    private func lengthPrefixed(_ data: Data) -> Data {
+        var length = UInt32(data.count).bigEndian
+        var packet = Data()
+        packet.append(Data(bytes: &length, count: MemoryLayout.size(ofValue: length)))
+        packet.append(data)
+        return packet
     }
 }
