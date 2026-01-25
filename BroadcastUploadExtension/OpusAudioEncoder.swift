@@ -58,7 +58,7 @@ final class OpusAudioEncoder {
             return
         }
 
-        NSLog("[OpusAudioEncoder] PCM samples: \(pcm.count)")
+        // NSLog("[OpusAudioEncoder] PCM samples: \(pcm.count)")
         pendingPCM.append(contentsOf: pcm)
         encodePendingFrames()
     }
