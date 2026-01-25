@@ -1096,6 +1096,14 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/ThirdParty/opus/include",
+					"$(SRCROOT)/ThirdParty/opus/src",
+					"$(SRCROOT)/ThirdParty/opus/celt",
+					"$(SRCROOT)/ThirdParty/opus/silk",
+					"$(SRCROOT)/ThirdParty/opus/silk/float",
+				);
 				INFOPLIST_FILE = BroadcastUploadExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BroadcastUploadExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -1107,6 +1115,11 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DOPUS_BUILD",
+					"-DVAR_ARRAYS",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-ios.BroadcastUploadExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1115,6 +1128,8 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT)/ThirdParty/opus/include $(SRCROOT)/ThirdParty/opus/src $(SRCROOT)/ThirdParty/opus/celt $(SRCROOT)/ThirdParty/opus/silk $(SRCROOT)/ThirdParty/opus/silk/float";
+				SWIFT_OBJC_BRIDGING_HEADER = "BroadcastUploadExtension/BroadcastUploadExtension-Bridging-Header.h";				
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1133,6 +1148,14 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/ThirdParty/opus/include",
+					"$(SRCROOT)/ThirdParty/opus/src",
+					"$(SRCROOT)/ThirdParty/opus/celt",
+					"$(SRCROOT)/ThirdParty/opus/silk",
+					"$(SRCROOT)/ThirdParty/opus/silk/float",
+				);			
 				INFOPLIST_FILE = BroadcastUploadExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BroadcastUploadExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -1144,6 +1167,11 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DOPUS_BUILD",
+					"-DVAR_ARRAYS",
+				);			
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-ios.BroadcastUploadExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1151,6 +1179,8 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT)/ThirdParty/opus/include $(SRCROOT)/ThirdParty/opus/src $(SRCROOT)/ThirdParty/opus/celt $(SRCROOT)/ThirdParty/opus/silk $(SRCROOT)/ThirdParty/opus/silk/float";
+				SWIFT_OBJC_BRIDGING_HEADER = "BroadcastUploadExtension/BroadcastUploadExtension-Bridging-Header.h";				
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
