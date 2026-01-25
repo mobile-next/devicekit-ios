@@ -2,9 +2,9 @@ import os
 
 // MARK: - Tap Request Model
 
-/// Request body for the `/tap` endpoint.
+/// Request body for the `/io_tap` endpoint.
 ///
-/// This model represents the JSON payload for tap and long-press gestures.
+/// This model represents the JSON payload for tap gestures.
 ///
 /// ## JSON Format
 /// ```json
@@ -15,35 +15,20 @@ import os
 /// }
 /// ```
 ///
-/// ## curl Example
-/// ```bash
-/// # Simple tap
-// curl -X POST http://127.0.0.1:12004/tap \
-//     -H "Content-Type: application/json" \
-//     -d '{"x": 100.0, "y": 200.0}'
-///
-/// # Long-press for 1.5 seconds
-/// curl -X POST http://127.0.0.1:12004/tap \
-///     -H "Content-Type: application/json" \
-///     -d '{"x": 100.0, "y": 200.0, "duration": 1.5}'
-/// ```
-struct TapRequest: Codable {
+struct IOTapRequest: Codable {
+    /// The target device identifier.
+    let deviceId: String
 
     /// X coordinate in screen points.
     let x: Float
 
     /// Y coordinate in screen points.
     let y: Float
-
-    /// Duration in seconds for long-press gestures.
-    /// - `nil` or omitted: Performs a simple tap.
-    /// - Non-nil value: Performs a long-press for the specified duration.
-    let duration: TimeInterval?
 }
 
 // MARK: - Tap Method Handler
 
-/// JSON-RPC handler for the `tap` method.
+/// JSON-RPC handler for the `io_tap` method.
 ///
 /// Performs tap or long-press gestures at screen coordinates.
 ///
@@ -61,17 +46,22 @@ struct TapRequest: Codable {
 /// {"success": true}
 /// ```
 @MainActor
-struct TapMethodHandler: RPCMethodHandler {
-    static let methodName = "tap"
+struct IOTapMethodHandler: RPCMethodHandler {
+    static let methodName = "io_tap"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: Self.self)
     )
 
+    /// Executes the `io_tap` JSON‑RPC method.
+    ///
+    /// - Parameter params: The JSON‑RPC parameters containing tap coordinates.
+    /// - Returns: A JSON object `{ "success": true }` on success.
+    /// - Throws: `RPCMethodError` if decoding fails or the gesture cannot be synthesized.
     func execute(params: JSONValue?) async throws -> JSONValue {
         guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for tap method")
+            throw RPCMethodError.invalidParams("Missing parameters for io_tap method")
         }
 
         let paramsData: Data
@@ -81,11 +71,11 @@ struct TapMethodHandler: RPCMethodHandler {
             throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
         }
 
-        let request: TapRequest
+        let request: IOTapRequest
         do {
-            request = try JSONDecoder().decode(TapRequest.self, from: paramsData)
+            request = try JSONDecoder().decode(IOTapRequest.self, from: paramsData)
         } catch {
-            throw RPCMethodError.invalidParams("Invalid tap parameters: \(error.localizedDescription)")
+            throw RPCMethodError.invalidParams("Invalid io_tap parameters: \(error.localizedDescription)")
         }
 
         let (width, height) = OrientationGeometry.physicalScreenSize()
@@ -96,25 +86,19 @@ struct TapMethodHandler: RPCMethodHandler {
         )
         let (x, y) = (point.x, point.y)
 
-        if request.duration != nil {
-            NSLog("Long pressing \(x), \(y) for \(request.duration!)s")
-        } else {
-            NSLog("Tapping \(x), \(y)")
-        }
-
         do {
             let eventRecord = EventRecord(orientation: .portrait)
             _ = eventRecord.addPointerTouchEvent(
                 at: CGPoint(x: CGFloat(x), y: CGFloat(y)),
-                touchUpAfter: request.duration
+                touchUpAfter: nil
             )
             let start = Date()
             try await RunnerDaemonProxy().synthesize(eventRecord: eventRecord)
             let duration = Date().timeIntervalSince(start)
-            NSLog("Tapping took \(duration)")
+            logger.info("Tapping took \(duration)")
             return .object(["success": .bool(true)])
         } catch {
-            NSLog("Error tapping: \(error)")
+            logger.error("Error tapping: \(error)")
             throw RPCMethodError.internalError("Error tapping point: \(error.localizedDescription)")
         }
     }
