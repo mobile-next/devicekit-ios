@@ -18,12 +18,14 @@ import TCP
 /// - Configure the encoder and TCP server.
 /// - Convert screen geometry into encoder dimensions.
 /// - Forward encoded NAL units to the TCP server.
+/// - Handle incoming JSON-RPC control messages.
 /// - Provide simple start/stop lifecycle management.
 ///
 /// ## Important Notes
 /// - Only one TCP client is supported at a time (based on `TCPServer` design).
 /// - The encoder output is forwarded directly to `tcpServer.dataHandler`.
 /// - The encoded stream uses Annex‑B start‑code‑prefixed NAL units.
+/// - Supports bidirectional communication for encoder configuration updates.
 /// - The encoder session is invalidated on `stop()`, but not recreated automatically.
 final class ScreenStreamer {
 
@@ -32,6 +34,15 @@ final class ScreenStreamer {
 
     /// The TCP server used to stream encoded NAL units.
     private let tcpServer: TCPServer
+
+    /// Buffer for assembling partial JSON-RPC messages received over TCP.
+    private var messageBuffer = Data()
+
+    /// Whether encoding is paused by a JSON-RPC control message.
+    private var isPaused = false
+
+    /// Whether the streamer has been stopped.
+    private var isStopped = false
 
     /// Creates a new screen streamer with optional dependency injection.
     ///
@@ -78,6 +89,9 @@ final class ScreenStreamer {
         averageBitRate: Int,
         isRealTime: Bool
     ) throws {
+        isPaused = false
+        isStopped = false
+
         try tcpServer.start(port: port)
 
         let dimensions = rect.scaledDimensions(scaleFactor)
@@ -95,6 +109,136 @@ final class ScreenStreamer {
             guard let self else { return }
             tcpServer.dataHandler?(data)
         }
+
+        // Handle incoming JSON-RPC messages from the TCP client.
+        tcpServer.messageHandler = { [weak self] data in
+            guard let self else { return }
+            self.handleIncomingData(data)
+        }
+    }
+
+    /// Handles incoming data from the TCP connection.
+    ///
+    /// This method assembles length-prefixed JSON-RPC messages from the TCP stream.
+    /// Each message has a 4-byte big-endian length prefix followed by JSON payload.
+    ///
+    /// ## Protocol
+    /// - Message format: [4-byte length][JSON payload]
+    /// - Length is big-endian uint32
+    /// - Messages are distinguished from H.264 NAL units by the first 4 bytes
+    ///
+    /// ## Important Notes
+    /// - Partial messages are buffered in `messageBuffer`
+    /// - Multiple messages in a single TCP read are handled correctly
+    private func handleIncomingData(_ data: Data) {
+        messageBuffer.append(data)
+
+        while messageBuffer.count >= 4 {
+            // Read 4-byte length prefix (big-endian)
+            let lengthBytes = messageBuffer.prefix(4)
+            let length = Int(UInt32(bigEndian: lengthBytes.withUnsafeBytes { $0.load(as: UInt32.self) }))
+
+            // Check if we have the complete message
+            guard messageBuffer.count >= 4 + length else { break }
+
+            // Extract message
+            let messageData = messageBuffer.subdata(in: 4..<(4 + length))
+            messageBuffer.removeFirst(4 + length)
+
+            // Parse and handle JSON-RPC
+            handleJSONRPC(messageData)
+        }
+    }
+
+    /// Parses and handles a JSON-RPC message.
+    ///
+    /// - Parameter data: The JSON-RPC message data.
+    ///
+    /// ## Supported Methods
+    /// - `screencapture.setConfiguration` - Update encoder bitrate and frame rate
+    /// - `screencapture.pause` - Pause encoding
+    /// - `screencapture.resume` - Resume encoding
+    /// - `screencapture.stop` - Stop streaming and encoder
+    private func handleJSONRPC(_ data: Data) {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let method = json["method"] as? String else {
+            print("[ScreenStreamer] Invalid JSON-RPC message")
+            return
+        }
+
+        switch method {
+        case "screencapture.setConfiguration":
+            handleSetConfiguration(params: json["params"] as? [String: Any])
+        case "screencapture.pause":
+            handlePause()
+        case "screencapture.resume":
+            handleResume()
+        case "screencapture.stop":
+            handleStop()
+        default:
+            print("[ScreenStreamer] Unknown method: \(method)")
+        }
+    }
+
+    /// Handles the `screencapture.setConfiguration` method.
+    ///
+    /// - Parameter params: The method parameters containing bitrate and optional frame rate.
+    ///
+    /// ## Parameters
+    /// - `bitrate` (required): Target bitrate in bits per second (100000 - 8000000)
+    /// - `frameRate` (optional): Target frame rate (1 - 60)
+    ///
+    /// ## Behavior
+    /// - Validates parameter ranges
+    /// - Updates the H.264 encoder settings dynamically
+    /// - Logs success or error
+    private func handleSetConfiguration(params: [String: Any]?) {
+        guard let params = params,
+              let bitrate = params["bitrate"] as? Int else {
+            print("[ScreenStreamer] Invalid params for setConfiguration")
+            return
+        }
+
+        let frameRate = params["frameRate"] as? Int
+
+        // Validate bitrate range: 100 kbps to 8 Mbps
+        guard bitrate >= 100_000 && bitrate <= 8_000_000 else {
+            print("[ScreenStreamer] Bitrate out of range: \(bitrate) (must be 100000-8000000)")
+            return
+        }
+
+        // Validate frame rate if provided
+        if let fr = frameRate, (fr < 1 || fr > 60) {
+            print("[ScreenStreamer] Frame rate out of range: \(fr) (must be 1-60)")
+            return
+        }
+
+        // Update encoder
+        do {
+            try h264Encoder.updateEncoderSettings(newBitrate: bitrate, newFrameRate: frameRate)
+            print("[ScreenStreamer] ✓ Configuration updated: bitrate=\(bitrate) bps" +
+                  (frameRate != nil ? ", frameRate=\(frameRate!)" : ""))
+        } catch {
+            print("[ScreenStreamer] ✗ Failed to update encoder: \(error)")
+        }
+    }
+
+    /// Handles the `screencapture.pause` method.
+    private func handlePause() {
+        isPaused = true
+        print("[ScreenStreamer] ✓ Paused")
+    }
+
+    /// Handles the `screencapture.resume` method.
+    private func handleResume() {
+        isPaused = false
+        print("[ScreenStreamer] ✓ Resumed")
+    }
+
+    /// Handles the `screencapture.stop` method.
+    private func handleStop() {
+        stop()
+        print("[ScreenStreamer] ✓ Stopped")
     }
 
     /// Encodes a `CMSampleBuffer` and forwards the result to the TCP server.
@@ -110,6 +254,7 @@ final class ScreenStreamer {
         context: CIContext,
         orientation: CGImagePropertyOrientation
     ) {
+        guard !isPaused, !isStopped else { return }
         h264Encoder.encode(
             sampleBuffer: sampleBuffer,
             context: context,
@@ -130,6 +275,7 @@ final class ScreenStreamer {
         context: CIContext,
         orientation: CGImagePropertyOrientation
     ) {
+        guard !isPaused, !isStopped else { return }
         h264Encoder.encode(
             imageBuffer: imageBuffer,
             timestamp: timestamp,
@@ -147,6 +293,7 @@ final class ScreenStreamer {
     /// ## Potential Issues
     /// - Does not clear `naluHandling`; if restarted, the closure will be overwritten.
     func stop() {
+        isStopped = true
         tcpServer.stop()
         h264Encoder.invalidateCompressionSession()
     }
