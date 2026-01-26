@@ -13,11 +13,6 @@ private enum Constants {
 /// The request contains the device identifier and the start/end coordinates
 /// of the swipe in screen space.
 struct IOSwipeRequest: Decodable {
-
-    enum CodingKeys: String, CodingKey {
-        case deviceId, x1, y1, x2, y2
-    }
-
     /// The target device identifier.
     let deviceId: String
 
@@ -32,25 +27,6 @@ struct IOSwipeRequest: Decodable {
 
     /// Ending Y coordinate of the swipe.
     let y2: Int
-
-    /// Creates a swipe request with explicit parameters.
-    init(deviceId: String, x1: Int, y1: Int, x2: Int, y2: Int) {
-        self.deviceId = deviceId
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
-    }
-
-    /// Decodes the request from a JSON‑RPC payload.
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        deviceId = try container.decode(String.self, forKey: .deviceId)
-        x1 = try container.decode(Int.self, forKey: .x1)
-        y1 = try container.decode(Int.self, forKey: .y1)
-        x2 = try container.decode(Int.self, forKey: .x2)
-        y2 = try container.decode(Int.self, forKey: .y2)
-    }
 }
 
 /// JSON‑RPC method handler for performing swipe gestures on an iOS device.

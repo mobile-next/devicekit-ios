@@ -16,6 +16,8 @@ import os
 /// ```
 ///
 struct IOLongpressRequest: Codable {
+    /// The target device identifier.
+    let deviceId: String
 
     /// X coordinate in screen points.
     let x: Float

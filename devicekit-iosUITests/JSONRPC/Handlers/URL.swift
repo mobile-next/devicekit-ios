@@ -27,6 +27,9 @@ import os
 /// }
 /// ```
 struct OpenURLRequest: Codable {
+    /// The target device identifier.
+    let deviceId: String
+
     /// The URL to open in the default application.
     let url: String
 }
