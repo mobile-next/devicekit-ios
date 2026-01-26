@@ -88,6 +88,31 @@ struct PointerEventPath {
         method(path, selector, offset)
     }
 
+    /// Moves the active touch in the pointer event path to a new screen coordinate.
+    ///
+    /// This method dynamically invokes the private XCTest selector
+    /// `moveToPoint:atOffset:` on the underlying `PointerEventPath` instance.
+    /// The selector updates the touch location at the current gesture time offset,
+    /// effectively extending the gesture with a movement segment.
+    ///
+    /// Because the selector is not exposed in Swift, the implementation retrieves
+    /// the Objective‑C method IMP at runtime and bridges it to a callable function
+    /// using `unsafeBitCast`.
+    ///
+    /// - Parameter point: The new touch location in screen coordinates.
+    ///
+    /// - Note:
+    ///   The movement occurs at the current `offset` value, which represents the
+    ///   accumulated gesture time. Callers are responsible for adjusting `offset`
+    ///   before invoking this method to control the timing of the gesture.
+    mutating func moveTo(point: CGPoint) {
+        let selector = NSSelectorFromString("moveToPoint:atOffset:")
+        let imp = path.method(for: selector)
+        typealias Method = @convention(c) (NSObject, Selector, CGPoint, TimeInterval) -> ()
+        let method = unsafeBitCast(imp, to: Method.self)
+        method(path, selector, point, offset)
+    }
+
     /// Synthesizes keyboard events to type the specified text.
     ///
     /// Uses XCTest's private `typeText:atOffset:typingSpeed:shouldRedact:` API
