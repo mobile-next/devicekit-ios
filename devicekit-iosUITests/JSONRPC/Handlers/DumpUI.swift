@@ -20,9 +20,9 @@ extension Logger {
     }
 }
 
-// MARK: - DumpUI Request Model
+// MARK: - dump_ui Request Model
 
-/// Request body for the `/dumpUI` endpoint.
+/// Request body for the `/dump_ui` endpoint.
 ///
 /// This model represents the JSON payload for capturing the UI view hierarchy.
 ///
@@ -37,17 +37,17 @@ extension Logger {
 /// ## curl Examples
 /// ```bash
 /// # Capture full UI hierarchy
-/// curl -X POST http://127.0.0.1:12004/dumpUI \
+/// curl -X POST http://127.0.0.1:12004/dump_ui \
 ///     -H "Content-Type: application/json" \
 ///     -d '{"appIds": [], "excludeKeyboardElements": false}'
 ///
 /// # Exclude keyboard from hierarchy
-/// curl -X POST http://127.0.0.1:12004/dumpUI \
+/// curl -X POST http://127.0.0.1:12004/dump_ui \
 ///     -H "Content-Type: application/json" \
 ///     -d '{"appIds": [], "excludeKeyboardElements": true}'
 ///
 /// # Pretty-print JSON output
-/// curl -X POST http://127.0.0.1:12004/dumpUI \
+/// curl -X POST http://127.0.0.1:12004/dump_ui \
 ///     -H "Content-Type: application/json" \
 ///     -d '{"appIds": [], "excludeKeyboardElements": false}' | jq .
 /// ```
@@ -64,9 +64,9 @@ struct DumpUIRequest: Codable {
     let excludeKeyboardElements: Bool
 }
 
-// MARK: - DumpUI Method Handler
+// MARK: - dump_ui Method Handler
 
-/// JSON-RPC handler for the `dumpUI` method.
+/// JSON-RPC handler for the `dump_ui` method.
 ///
 /// Captures the complete UI view hierarchy.
 ///
@@ -82,7 +82,7 @@ struct DumpUIRequest: Codable {
 /// Returns the view hierarchy as a nested JSON object.
 @MainActor
 struct DumpUIMethodHandler: RPCMethodHandler {
-    static let methodName = "dumpUI"
+    static let methodName = "dump_ui"
 
     private let springboardApplication = XCUIApplication(
         bundleIdentifier: "com.apple.springboard"
@@ -96,7 +96,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
 
     func execute(params: JSONValue?) async throws -> JSONValue {
         guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for dumpUI method")
+            throw RPCMethodError.invalidParams("Missing parameters for dump_ui method")
         }
 
         let paramsData: Data
@@ -110,7 +110,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         do {
             request = try JSONDecoder().decode(DumpUIRequest.self, from: paramsData)
         } catch {
-            throw RPCMethodError.invalidParams("Invalid dumpUI parameters: \(error.localizedDescription)")
+            throw RPCMethodError.invalidParams("Invalid dump_ui parameters: \(error.localizedDescription)")
         }
 
         do {

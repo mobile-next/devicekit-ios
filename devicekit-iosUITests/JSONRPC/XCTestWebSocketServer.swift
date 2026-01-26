@@ -40,11 +40,11 @@ extension String {
 /// {"jsonrpc": "2.0", "result": {"success": true}, "id": 1}
 /// ```
 ///
-/// ### dumpUI
+/// ### dump_ui
 /// Returns the complete view hierarchy.
 /// ```json
 /// // Request
-/// {"jsonrpc": "2.0", "method": "dumpUI", "params": {"appIds": [], "excludeKeyboardElements": false}, "id": 2}
+/// {"jsonrpc": "2.0", "method": "dump_ui", "params": {"appIds": [], "excludeKeyboardElements": false}, "id": 2}
 ///
 /// // Response
 /// {"jsonrpc": "2.0", "result": {"axElement": {...}, "depth": 15}, "id": 2}

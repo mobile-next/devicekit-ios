@@ -10,7 +10,7 @@ import os
 ///
 /// ## Supported Methods
 /// - `tap`: Performs tap/long-press gestures
-/// - `dumpUI`: Captures UI view hierarchy
+/// - `dump_ui`: Captures UI view hierarchy
 ///
 /// ## Usage
 /// ```swift
