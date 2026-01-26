@@ -70,6 +70,35 @@ final class EventRecord: NSObject {
         return add(path)
     }
 
+    /// Adds a synthesized swipe gesture to the event record.
+    ///
+    /// This method constructs a `PointerEventPath` beginning at the specified
+    /// starting coordinate, applies a short initial delay to mimic a natural
+    /// finger‑down contact, moves the touch to the ending coordinate over the
+    /// specified duration, and finally lifts the finger to complete the gesture.
+    ///
+    /// The resulting path is appended to the event record and returned.
+    ///
+    /// - Parameters:
+    ///   - start: The starting point of the swipe in screen coordinates.
+    ///   - end: The ending point of the swipe in screen coordinates.
+    ///   - duration: The duration of the swipe movement, excluding the initial
+    ///               tap‑down delay.
+    /// - Returns: The updated event record containing the synthesized swipe path.
+    ///
+    /// - Note:
+    ///   The gesture includes an implicit `defaultTapDuration` delay after the
+    ///   initial touch‑down to ensure compatibility with system gesture recognizers
+    ///   and to avoid dropped events on real devices.
+    func addSwipeEvent(start: CGPoint, end: CGPoint, duration: TimeInterval) -> Self {
+        var path = PointerEventPath.pathForTouch(at: start)
+        path.offset += Self.defaultTapDuration
+        path.moveTo(point: end)
+        path.offset += duration
+        path.liftUp()
+        return add(path)
+    }
+
     /// Adds a pointer event path to this event record.
     ///
     /// - Parameter path: The pointer event path to add.
