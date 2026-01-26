@@ -96,16 +96,11 @@ let package = Package(
             ]
         ),
         .target(
-            name: "Opus",
-            dependencies: ["Copus"]
+            name: "OpusEncoder",
+            dependencies: ["Copus"],
+            path: "Sources/OpusEncoder",
+            publicHeadersPath: "include",
         ),
-
-            .target(
-                name: "OpusEncoder",
-                dependencies: ["opus"],
-                path: "Sources/OpusEncoder",
-                publicHeadersPath: "include",
-            ),
         .target(
             name: "OpusCodec",
             dependencies: ["OpusEncoder"],
