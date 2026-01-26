@@ -27,6 +27,7 @@ DeviceKit iOS is a UI automation and screen streaming framework for iOS devices.
 - [WebSocket Examples](#websocket-examples)
 - [Error Codes](#json-rpc-error-codes)
 - [Screen Streaming](#screen-streaming)
+  - [screencapture.sh](#quick-start-screencapturesh-recommended)
 - [Building](#building)
 
 ---
@@ -701,9 +702,48 @@ ws.on('message', (data) => {
 
 DeviceKit iOS provides real-time H.264 video streaming via TCP on port 12005. The stream is compatible with standard video players and processing pipelines.
 
-### Connection Options
+### Quick Start: screencapture.sh (Recommended)
 
-#### Option 1: USB Port Forwarding (Recommended)
+The easiest way to view the device screen is using the included helper script:
+
+```bash
+# From the devicekit-ios directory
+./scripts/screencapture.sh --setup-iproxy
+```
+
+This script automatically:
+- Installs ffmpeg via Homebrew (if not present)
+- Sets up iproxy port forwarding (if `--setup-iproxy` flag is used)
+- Connects to the H.264 stream and displays it with ffplay
+
+#### Script Options
+
+```bash
+# Basic usage (requires iproxy already running or simulator)
+./scripts/screencapture.sh
+
+# Auto-setup iproxy for real devices
+./scripts/screencapture.sh --setup-iproxy
+
+# Connect to specific device by UDID
+./scripts/screencapture.sh --setup-iproxy --udid 00008030-001234567890402E
+
+# Connect over Wi-Fi (use device IP)
+./scripts/screencapture.sh --host 192.168.1.100
+
+# Record to file instead of displaying
+./scripts/screencapture.sh --record output.mp4
+
+# Low-latency mode (less buffering, may drop frames)
+./scripts/screencapture.sh --low-latency
+
+# Show all options
+./scripts/screencapture.sh --help
+```
+
+### Manual Connection Options
+
+#### Option 1: USB Port Forwarding
 
 Use `iproxy` for low-latency, reliable streaming over USB:
 
@@ -722,6 +762,16 @@ Connect directly over Wi-Fi (higher latency):
 
 1. Get device IP address: **Settings > Wi-Fi > (i) > IP Address**
 2. Use device IP directly in streaming commands
+
+### Using ffplay Directly
+
+```bash
+# Via USB (with iproxy running)
+nc 127.0.0.1 12005 | ffplay -fflags nobuffer -flags low_delay -f h264 -
+
+# Via Wi-Fi
+nc <DEVICE_IP> 12005 | ffplay -fflags nobuffer -flags low_delay -f h264 -
+```
 
 ### GStreamer Setup (Docker)
 
