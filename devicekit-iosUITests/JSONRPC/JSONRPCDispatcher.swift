@@ -9,8 +9,14 @@ import os
 /// incoming requests by looking up and invoking the corresponding handler.
 ///
 /// ## Supported Methods
-/// - `io_tap`: Performs tap/long-press gestures
+/// - `io_tap`: Performs tap gestures at screen coordinates
+/// - `io_longpress`: Performs long-press gestures
+/// - `io_swipe`: Performs swipe gestures
+/// - `io_text`: Types text into focused text fields
 /// - `dump_ui`: Captures UI view hierarchy
+/// - `screenshot`: Captures device screenshot
+/// - `apps_launch`: Launches applications by bundle ID
+/// - `open_url`: Opens URLs in the default application
 ///
 /// ## Usage
 /// ```swift
@@ -37,6 +43,7 @@ final class JSONRPCDispatcher {
         registerHandler(IOSwipeMethodHandler())
         registerHandler(IOLongpressMethodHandler())
         registerHandler(ScreenshotMethodHandler())
+        registerHandler(OpenURLMethodHandler())
     }
 
     /// Registers a method handler.
