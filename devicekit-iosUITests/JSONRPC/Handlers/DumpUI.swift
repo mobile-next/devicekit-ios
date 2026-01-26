@@ -29,57 +29,86 @@ extension Logger {
 /// ## JSON Format
 /// ```json
 /// {
-///   "appIds": [],
-///   "excludeKeyboardElements": false
+///   "deviceId": "device-uuid",
+///   "format": "json"
 /// }
 /// ```
 ///
+/// ## Format Options
+/// - `"json"` (default): Returns structured `ViewHierarchy` with metadata (depth, etc.)
+/// - `"raw"`: Returns raw `AXElement` hierarchy without wrapper metadata
+///
 /// ## curl Examples
 /// ```bash
-/// # Capture full UI hierarchy
-/// curl -X POST http://127.0.0.1:12004/dump_ui \
+/// # Capture UI hierarchy in JSON format (default)
+/// curl -X POST http://127.0.0.1:12004/rpc \
 ///     -H "Content-Type: application/json" \
-///     -d '{"appIds": [], "excludeKeyboardElements": false}'
+///     -d '{"jsonrpc":"2.0","method":"dump_ui","params":{"deviceId":"","format":"json"},"id":1}'
 ///
-/// # Exclude keyboard from hierarchy
-/// curl -X POST http://127.0.0.1:12004/dump_ui \
+/// # Capture UI hierarchy in raw format
+/// curl -X POST http://127.0.0.1:12004/rpc \
 ///     -H "Content-Type: application/json" \
-///     -d '{"appIds": [], "excludeKeyboardElements": true}'
-///
-/// # Pretty-print JSON output
-/// curl -X POST http://127.0.0.1:12004/dump_ui \
-///     -H "Content-Type: application/json" \
-///     -d '{"appIds": [], "excludeKeyboardElements": false}' | jq .
+///     -d '{"jsonrpc":"2.0","method":"dump_ui","params":{"deviceId":"","format":"raw"},"id":1}'
 /// ```
 struct DumpUIRequest: Codable {
+    /// The target device identifier (unused in direct device connection, kept for API compatibility).
+    let deviceId: String
 
-    /// Array of bundle identifiers to target.
-    /// - Empty array `[]`: Captures the current foreground application.
-    /// - Specific IDs: Targets the specified applications.
-    let appIds: [String]
+    /// Format of the output: "json" (default) or "raw".
+    /// - `json`: Returns `ViewHierarchy` with metadata (depth, axElement)
+    /// - `raw`: Returns raw `AXElement` hierarchy directly
+    let format: String?
+}
 
-    /// Whether to exclude keyboard UI elements from the hierarchy.
-    /// - `true`: Filters out all keyboard-related elements.
-    /// - `false`: Includes keyboard elements in the response.
-    let excludeKeyboardElements: Bool
+/// Supported output formats for dump_ui.
+private enum DumpUIFormat: String {
+    case json
+    case raw
+
+    /// Parses format string, defaults to `.json` if nil or unrecognized.
+    init(from string: String?) {
+        if let string = string?.lowercased(), let format = DumpUIFormat(rawValue: string) {
+            self = format
+        } else {
+            self = .json
+        }
+    }
 }
 
 // MARK: - dump_ui Method Handler
 
 /// JSON-RPC handler for the `dump_ui` method.
 ///
-/// Captures the complete UI view hierarchy.
+/// Captures the complete UI view hierarchy of the foreground application.
 ///
 /// ## Parameters
 /// ```json
 /// {
-///   "appIds": [],
-///   "excludeKeyboardElements": false
+///   "deviceId": "",
+///   "format": "json"
 /// }
 /// ```
 ///
-/// ## Result
-/// Returns the view hierarchy as a nested JSON object.
+/// ## Result Formats
+///
+/// ### JSON Format (default)
+/// Returns `ViewHierarchy` with metadata:
+/// ```json
+/// {
+///   "depth": 15,
+///   "axElement": { ... nested hierarchy ... }
+/// }
+/// ```
+///
+/// ### Raw Format
+/// Returns the raw `AXElement` hierarchy directly without wrapper:
+/// ```json
+/// {
+///   "identifier": "...",
+///   "frame": { "X": 0, "Y": 0, "Width": 390, "Height": 844 },
+///   "children": [ ... ]
+/// }
+/// ```
 @MainActor
 struct DumpUIMethodHandler: RPCMethodHandler {
     static let methodName = "dump_ui"
@@ -113,16 +142,15 @@ struct DumpUIMethodHandler: RPCMethodHandler {
             throw RPCMethodError.invalidParams("Invalid dump_ui parameters: \(error.localizedDescription)")
         }
 
+        let format = DumpUIFormat(from: request.format)
+        logger.info("dump_ui requested with format: \(format.rawValue)")
+
         do {
             let foregroundApp = RunningApp.getForegroundApp()
             guard let foregroundApp = foregroundApp else {
                 logger.warning("No foreground app found returning springboard app hierarchy")
                 let springboardHierarchy = try elementHierarchy(xcuiElement: springboardApplication)
-                let viewHierarchy = ViewHierarchy(
-                    axElement: springboardHierarchy,
-                    depth: springboardHierarchy.depth()
-                )
-                return try JSONValue.from(viewHierarchy)
+                return try formatResponse(axElement: springboardHierarchy, format: format)
             }
 
             logger.info("[Start] View hierarchy snapshot for \(foregroundApp)")
@@ -131,16 +159,12 @@ struct DumpUIMethodHandler: RPCMethodHandler {
             ) {
                 try getAppViewHierarchy(
                     foregroundApp: foregroundApp,
-                    excludeKeyboardElements: request.excludeKeyboardElements
+                    excludeKeyboardElements: false
                 )
             }
-            let viewHierarchy = ViewHierarchy(
-                axElement: appViewHierarchy,
-                depth: appViewHierarchy.depth()
-            )
 
             logger.info("[Done] View hierarchy snapshot for \(foregroundApp)")
-            return try JSONValue.from(viewHierarchy)
+            return try formatResponse(axElement: appViewHierarchy, format: format)
         } catch let error as RPCMethodError {
             throw error
         } catch let error as NSError {
@@ -159,6 +183,29 @@ struct DumpUIMethodHandler: RPCMethodHandler {
     }
 
     // MARK: - Private Helper Methods
+
+    /// Formats the AXElement hierarchy based on the requested format.
+    ///
+    /// - Parameters:
+    ///   - axElement: The accessibility element hierarchy to format.
+    ///   - format: The desired output format (.json or .raw).
+    /// - Returns: JSONValue representation of the hierarchy.
+    /// - Throws: Error if JSON encoding fails.
+    private func formatResponse(axElement: AXElement, format: DumpUIFormat) throws -> JSONValue {
+        switch format {
+        case .json:
+            // Wrap in ViewHierarchy with depth metadata
+            let viewHierarchy = ViewHierarchy(
+                axElement: axElement,
+                depth: axElement.depth()
+            )
+            return try JSONValue.from(viewHierarchy)
+
+        case .raw:
+            // Return raw AXElement directly without wrapper
+            return try JSONValue.from(axElement)
+        }
+    }
 
     private func getAppViewHierarchy(
         foregroundApp: XCUIApplication,
