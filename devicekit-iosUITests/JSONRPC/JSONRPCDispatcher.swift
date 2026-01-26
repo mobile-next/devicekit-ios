@@ -32,6 +32,7 @@ final class JSONRPCDispatcher {
     init() {
         registerHandler(IOTapMethodHandler())
         registerHandler(DumpUIMethodHandler())
+        registerHandler(IOTextMethodHandler())
     }
 
     /// Registers a method handler.

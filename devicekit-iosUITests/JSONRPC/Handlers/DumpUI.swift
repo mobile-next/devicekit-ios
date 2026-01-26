@@ -116,7 +116,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         do {
             let foregroundApp = RunningApp.getForegroundApp()
             guard let foregroundApp = foregroundApp else {
-                NSLog("No foreground app found returning springboard app hierarchy")
+                logger.warning("No foreground app found returning springboard app hierarchy")
                 let springboardHierarchy = try elementHierarchy(xcuiElement: springboardApplication)
                 let viewHierarchy = ViewHierarchy(
                     axElement: springboardHierarchy,
@@ -125,7 +125,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
                 return try JSONValue.from(viewHierarchy)
             }
 
-            NSLog("[Start] View hierarchy snapshot for \(foregroundApp)")
+            logger.info("[Start] View hierarchy snapshot for \(foregroundApp)")
             let appViewHierarchy = try logger.measure(
                 message: "View hierarchy snapshot for \(foregroundApp)"
             ) {
@@ -139,7 +139,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
                 depth: appViewHierarchy.depth()
             )
 
-            NSLog("[Done] View hierarchy snapshot for \(foregroundApp)")
+            logger.info("[Done] View hierarchy snapshot for \(foregroundApp)")
             return try JSONValue.from(viewHierarchy)
         } catch let error as RPCMethodError {
             throw error
@@ -265,7 +265,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
                 throw error
             }
 
-            NSLog("Snapshot failure, getting recovery element for fallback")
+            logger.error("Snapshot failure, getting recovery element for fallback")
             AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = snapshotMaxDepth
 
             let recoveryElement = try findRecoveryElement(element.children(matching: .any).firstMatch)
@@ -332,15 +332,15 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         let webViewCount = safariWebService.webViews.count
         guard webViewCount > 0 else { return nil }
 
-        NSLog("[Start] Fetching Safari WebView hierarchy (\(webViewCount) webview(s) detected)")
+        logger.info("[Start] Fetching Safari WebView hierarchy (\(webViewCount) webview(s) detected)")
 
         do {
             AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = snapshotMaxDepth
             let safariHierarchy = try elementHierarchy(xcuiElement: safariWebService)
-            NSLog("[Done] Safari WebView hierarchy fetched successfully")
+            logger.info("[Done] Safari WebView hierarchy fetched successfully")
             return safariHierarchy
         } catch {
-            NSLog("[Error] Failed to fetch Safari WebView hierarchy: \(error.localizedDescription)")
+            logger.error("[Error] Failed to fetch Safari WebView hierarchy: \(error.localizedDescription)")
             return nil
         }
     }

@@ -97,9 +97,9 @@ struct IOTapMethodHandler: RPCMethodHandler {
         let (x, y) = (point.x, point.y)
 
         if request.duration != nil {
-            NSLog("Long pressing \(x), \(y) for \(request.duration!)s")
+            logger.info("Long pressing \(x), \(y) for \(request.duration!)s")
         } else {
-            NSLog("Tapping \(x), \(y)")
+            logger.info("Tapping \(x), \(y)")
         }
 
         do {
@@ -111,10 +111,10 @@ struct IOTapMethodHandler: RPCMethodHandler {
             let start = Date()
             try await RunnerDaemonProxy().synthesize(eventRecord: eventRecord)
             let duration = Date().timeIntervalSince(start)
-            NSLog("Tapping took \(duration)")
+            logger.info("Tapping took \(duration)")
             return .object(["success": .bool(true)])
         } catch {
-            NSLog("Error tapping: \(error)")
+            logger.error("Error tapping: \(error)")
             throw RPCMethodError.internalError("Error tapping point: \(error.localizedDescription)")
         }
     }
