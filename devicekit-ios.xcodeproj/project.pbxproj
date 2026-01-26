@@ -46,6 +46,7 @@
 		78147F0F2F27AA6B00E61E3B /* IOText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78147F0E2F27AA6B00E61E3B /* IOText.swift */; };
 		78147F3D2F27BDBC00E61E3B /* AppsLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78147F3C2F27BDBC00E61E3B /* AppsLaunch.swift */; };
 		78147FCB2F27C04400E61E3B /* IOSwipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78147FCA2F27C03500E61E3B /* IOSwipe.swift */; };
+		7814800B2F27C56100E61E3B /* IOLongpress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814800A2F27C55500E61E3B /* IOLongpress.swift */; };
 		787C47972F227F6B0027A012 /* JSONRPCModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47932F227F6B0027A012 /* JSONRPCModels.swift */; };
 		787C47982F227F6B0027A012 /* RPCMethodHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47942F227F6B0027A012 /* RPCMethodHandler.swift */; };
 		787C47992F227F6B0027A012 /* XCTestWebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47952F227F6B0027A012 /* XCTestWebSocketServer.swift */; };
@@ -241,6 +242,7 @@
 		78147F0E2F27AA6B00E61E3B /* IOText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOText.swift; sourceTree = "<group>"; };
 		78147F3C2F27BDBC00E61E3B /* AppsLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsLaunch.swift; sourceTree = "<group>"; };
 		78147FCA2F27C03500E61E3B /* IOSwipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSwipe.swift; sourceTree = "<group>"; };
+		7814800A2F27C55500E61E3B /* IOLongpress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOLongpress.swift; sourceTree = "<group>"; };
 		787C47922F227F6B0027A012 /* JSONRPCDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCDispatcher.swift; sourceTree = "<group>"; };
 		787C47932F227F6B0027A012 /* JSONRPCModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCModels.swift; sourceTree = "<group>"; };
 		787C47942F227F6B0027A012 /* RPCMethodHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCMethodHandler.swift; sourceTree = "<group>"; };
@@ -559,6 +561,7 @@
 		787C47DE2F228B770027A012 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
+				7814800A2F27C55500E61E3B /* IOLongpress.swift */,
 				78147FCA2F27C03500E61E3B /* IOSwipe.swift */,
 				78147F3C2F27BDBC00E61E3B /* AppsLaunch.swift */,
 				78147F0E2F27AA6B00E61E3B /* IOText.swift */,
@@ -808,6 +811,7 @@
 				612DE414298426EF003C2BE0 /* EventRecord.swift in Sources */,
 				787C47972F227F6B0027A012 /* JSONRPCModels.swift in Sources */,
 				787C47982F227F6B0027A012 /* RPCMethodHandler.swift in Sources */,
+				7814800B2F27C56100E61E3B /* IOLongpress.swift in Sources */,
 				787C47992F227F6B0027A012 /* XCTestWebSocketServer.swift in Sources */,
 				787C479A2F227F6B0027A012 /* JSONRPCDispatcher.swift in Sources */,
 				521C1F0B2D801A360024EE42 /* XCUIApplication+Helper.m in Sources */,
