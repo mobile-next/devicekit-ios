@@ -1,1 +1,0 @@
-../../../ThirdParty/opus/celt/bands.c

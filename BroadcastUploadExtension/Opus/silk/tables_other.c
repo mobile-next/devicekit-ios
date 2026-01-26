@@ -1,1 +1,0 @@
-../../../ThirdParty/opus/silk/tables_other.c

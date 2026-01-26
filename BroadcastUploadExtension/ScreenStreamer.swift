@@ -1,6 +1,7 @@
 import CoreImage
 import CoreMedia
 import H264Codec
+import OpusCodec
 import TCP
 
 /// A high‑level component that encodes screen frames as H.264 and

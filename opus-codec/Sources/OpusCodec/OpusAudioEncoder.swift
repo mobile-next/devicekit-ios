@@ -4,10 +4,10 @@ import Foundation
 import OpusEncoder
 
 /// Encodes PCM audio sample buffers into Opus frames (48 kHz, mono, 20 ms).
-final class OpusAudioEncoder {
+public final class OpusAudioEncoder {
 
     /// Callback invoked for each encoded Opus frame.
-    var opusHandling: ((Data) -> Void)?
+    public var opusHandling: ((Data) -> Void)?
 
     private var encoder: OpusEncoderRef?
     private var audioConverter: AudioFormatConverter
@@ -19,7 +19,7 @@ final class OpusAudioEncoder {
     private let maxPacketSize: Int = 4000
     private var bitRate: Int
 
-    init(bitRate: Int = 64_000) {
+    public init(bitRate: Int = 64_000) {
         self.bitRate = bitRate
         self.audioConverter = AudioFormatConverter(sampleRate: outputSampleRate, channels: outputChannels)
     }
@@ -28,7 +28,7 @@ final class OpusAudioEncoder {
         invalidate()
     }
 
-    func invalidate() {
+    public func invalidate() {
         if let encoder {
             OpusEncoderDestroy(encoder)
         }
@@ -38,7 +38,7 @@ final class OpusAudioEncoder {
         pendingPCM.removeAll(keepingCapacity: true)
     }
 
-    func updateBitRate(_ newBitRate: Int) {
+    public func updateBitRate(_ newBitRate: Int) {
         bitRate = newBitRate
         if let encoder {
             let status = OpusEncoderSetBitrate(encoder, Int32(bitRate))
@@ -48,7 +48,7 @@ final class OpusAudioEncoder {
         }
     }
 
-    func encode(sampleBuffer: CMSampleBuffer) {
+    public func encode(sampleBuffer: CMSampleBuffer) {
         guard ensureEncoder() else {
             return
         }

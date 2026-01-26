@@ -1,1 +1,0 @@
-../../../ThirdParty/opus/silk/sigm_Q15.c
