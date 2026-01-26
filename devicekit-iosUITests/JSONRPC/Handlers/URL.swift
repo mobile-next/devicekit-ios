@@ -26,7 +26,7 @@ import os
 ///   "id": 1
 /// }
 /// ```
-struct OpenURLRequest: Codable {
+struct URLRequest: Codable {
     /// The target device identifier.
     let deviceId: String
 
@@ -69,7 +69,7 @@ struct OpenURLRequest: Codable {
 /// - `maps:` - Opens Maps app
 /// - Custom app URL schemes
 @MainActor
-struct OpenURLMethodHandler: RPCMethodHandler {
+struct URLMethodHandler: RPCMethodHandler {
 
     /// The JSON-RPC method name this handler responds to.
     static let methodName = "open_url"
@@ -97,9 +97,9 @@ struct OpenURLMethodHandler: RPCMethodHandler {
             throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
         }
 
-        let request: OpenURLRequest
+        let request: URLRequest
         do {
-            request = try JSONDecoder().decode(OpenURLRequest.self, from: paramsData)
+            request = try JSONDecoder().decode(URLRequest.self, from: paramsData)
         } catch {
             throw RPCMethodError.invalidParams("Invalid open_url parameters: \(error.localizedDescription)")
         }
@@ -153,7 +153,7 @@ struct OpenURLMethodHandler: RPCMethodHandler {
                     continuation.resume(throwing: error)
                 } else if !success {
                     continuation.resume(throwing: NSError(
-                        domain: "OpenURLMethodHandler",
+                        domain: "URLMethodHandler",
                         code: 1,
                         userInfo: [NSLocalizedDescriptionKey: "Failed to open URL"]
                     ))

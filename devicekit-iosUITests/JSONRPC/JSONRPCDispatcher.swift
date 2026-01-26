@@ -43,7 +43,8 @@ final class JSONRPCDispatcher {
         registerHandler(IOSwipeMethodHandler())
         registerHandler(IOLongpressMethodHandler())
         registerHandler(ScreenshotMethodHandler())
-        registerHandler(OpenURLMethodHandler())
+        registerHandler(URLMethodHandler())
+        registerHandler(IOGestureMethodHandler())
     }
 
     /// Registers a method handler.

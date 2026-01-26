@@ -49,6 +49,7 @@
 		7814800B2F27C56100E61E3B /* IOLongpress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814800A2F27C55500E61E3B /* IOLongpress.swift */; };
 		781480372F27CEF000E61E3B /* Screenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480362F27CEF000E61E3B /* Screenshot.swift */; };
 		781480752F27D2BB00E61E3B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480742F27D2B900E61E3B /* URL.swift */; };
+		781480FF2F27DEE600E61E3B /* IOGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480FE2F27DEE600E61E3B /* IOGesture.swift */; };
 		787C47972F227F6B0027A012 /* JSONRPCModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47932F227F6B0027A012 /* JSONRPCModels.swift */; };
 		787C47982F227F6B0027A012 /* RPCMethodHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47942F227F6B0027A012 /* RPCMethodHandler.swift */; };
 		787C47992F227F6B0027A012 /* XCTestWebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47952F227F6B0027A012 /* XCTestWebSocketServer.swift */; };
@@ -247,6 +248,7 @@
 		7814800A2F27C55500E61E3B /* IOLongpress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOLongpress.swift; sourceTree = "<group>"; };
 		781480362F27CEF000E61E3B /* Screenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screenshot.swift; sourceTree = "<group>"; };
 		781480742F27D2B900E61E3B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
+		781480FE2F27DEE600E61E3B /* IOGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOGesture.swift; sourceTree = "<group>"; };
 		787C47922F227F6B0027A012 /* JSONRPCDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCDispatcher.swift; sourceTree = "<group>"; };
 		787C47932F227F6B0027A012 /* JSONRPCModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCModels.swift; sourceTree = "<group>"; };
 		787C47942F227F6B0027A012 /* RPCMethodHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCMethodHandler.swift; sourceTree = "<group>"; };
@@ -565,6 +567,7 @@
 		787C47DE2F228B770027A012 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
+				781480FE2F27DEE600E61E3B /* IOGesture.swift */,
 				781480742F27D2B900E61E3B /* URL.swift */,
 				781480362F27CEF000E61E3B /* Screenshot.swift */,
 				7814800A2F27C55500E61E3B /* IOLongpress.swift */,
@@ -800,6 +803,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				787C48462F228D8D0027A012 /* JSONRPCHTTPHandler.swift in Sources */,
+				781480FF2F27DEE600E61E3B /* IOGesture.swift in Sources */,
 				612DE4122984114B003C2BE0 /* RunnerDaemonProxy.swift in Sources */,
 				94826F4429DB082100795E9B /* SystemPermissionManager.swift in Sources */,
 				52D8FAAC2D6DD3A20015FAB3 /* FBLogger.m in Sources */,
