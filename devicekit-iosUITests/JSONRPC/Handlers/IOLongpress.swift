@@ -2,9 +2,9 @@ import os
 
 // MARK: - Tap Request Model
 
-/// Request body for the `/io_tap` endpoint.
+/// Request body for the `/io_longpress` endpoint.
 ///
-/// This model represents the JSON payload for tap gestures.
+/// This model represents the JSON payload for long-press gestures.
 ///
 /// ## JSON Format
 /// ```json
@@ -15,27 +15,32 @@ import os
 /// }
 /// ```
 ///
-struct IOTapRequest: Codable {
+struct IOLongpressRequest: Codable {
 
     /// X coordinate in screen points.
     let x: Float
 
     /// Y coordinate in screen points.
     let y: Float
+
+    /// Duration in seconds for long-press gestures.
+    /// - `nil` or omitted: Performs a simple tap.
+    /// - Non-nil value: Performs a long-press for the specified duration.
+    let duration: TimeInterval
 }
 
 // MARK: - Tap Method Handler
 
-/// JSON-RPC handler for the `io_tap` method.
+/// JSON-RPC handler for the `io_longpress` method.
 ///
 /// Performs tap or long-press gestures at screen coordinates.
 ///
 /// ## Parameters
 /// ```json
 /// {
-///   "x": 100.0,
-///   "y": 200.0,
-///   "duration": null
+///   "x": 100,
+///   "y": 200,
+///   "duration": 2
 /// }
 /// ```
 ///
@@ -44,17 +49,17 @@ struct IOTapRequest: Codable {
 /// {"success": true}
 /// ```
 @MainActor
-struct IOTapMethodHandler: RPCMethodHandler {
-    static let methodName = "io_tap"
+struct IOLongpressMethodHandler: RPCMethodHandler {
+    static let methodName = "io_longpress"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: Self.self)
     )
 
-    /// Executes the `io_tap` JSON‑RPC method.
+    /// Executes the `io_longpress` JSON‑RPC method.
     ///
-    /// - Parameter params: The JSON‑RPC parameters containing tap coordinates.
+    /// - Parameter params: The JSON‑RPC parameters containing longpress coordinates and duration.
     /// - Returns: A JSON object `{ "success": true }` on success.
     /// - Throws: `RPCMethodError` if decoding fails or the gesture cannot be synthesized.
     func execute(params: JSONValue?) async throws -> JSONValue {
@@ -69,9 +74,9 @@ struct IOTapMethodHandler: RPCMethodHandler {
             throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
         }
 
-        let request: IOTapRequest
+        let request: IOLongpressRequest
         do {
-            request = try JSONDecoder().decode(IOTapRequest.self, from: paramsData)
+            request = try JSONDecoder().decode(IOLongpressRequest.self, from: paramsData)
         } catch {
             throw RPCMethodError.invalidParams("Invalid io_tap parameters: \(error.localizedDescription)")
         }
@@ -84,11 +89,13 @@ struct IOTapMethodHandler: RPCMethodHandler {
         )
         let (x, y) = (point.x, point.y)
 
+        logger.info("Long pressing \(x), \(y) for \(request.duration)s")
+
         do {
             let eventRecord = EventRecord(orientation: .portrait)
             _ = eventRecord.addPointerTouchEvent(
                 at: CGPoint(x: CGFloat(x), y: CGFloat(y)),
-                touchUpAfter: nil
+                touchUpAfter: request.duration
             )
             let start = Date()
             try await RunnerDaemonProxy().synthesize(eventRecord: eventRecord)
@@ -101,4 +108,3 @@ struct IOTapMethodHandler: RPCMethodHandler {
         }
     }
 }
-
