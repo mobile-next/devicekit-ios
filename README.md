@@ -23,7 +23,7 @@ DeviceKit iOS is a UI automation and screen streaming framework for iOS devices.
   - [dump_ui](#dump_ui)
   - [screenshot](#screenshot)
   - [apps_launch](#apps_launch)
-  - [open_url](#open_url)
+  - [url](#url)
 - [WebSocket Examples](#websocket-examples)
 - [Error Codes](#json-rpc-error-codes)
 - [Screen Streaming](#screen-streaming)
@@ -148,7 +148,7 @@ The server provides a JSON-RPC 2.0 interface with support for both HTTP and WebS
 | [`dump_ui`](#dump_ui) | Capture UI accessibility hierarchy |
 | [`screenshot`](#screenshot) | Capture device screenshot |
 | [`apps_launch`](#apps_launch) | Launch app by bundle ID |
-| [`open_url`](#open_url) | Open URL in default app |
+| [`url`](#url) | Open URL in default app |
 
 ---
 
