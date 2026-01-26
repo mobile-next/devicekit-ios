@@ -30,11 +30,11 @@ extension String {
 ///
 /// ## JSON-RPC Methods
 ///
-/// ### tap
+/// ### io_tap
 /// Performs a tap or long-press at specified coordinates.
 /// ```json
 /// // Request
-/// {"jsonrpc": "2.0", "method": "tap", "params": {"x": 100.0, "y": 200.0}, "id": 1}
+/// {"jsonrpc": "2.0", "method": "io_tap", "params": {"x": 100.0, "y": 200.0}, "id": 1}
 ///
 /// // Response
 /// {"jsonrpc": "2.0", "result": {"success": true}, "id": 1}
@@ -56,7 +56,7 @@ extension String {
 /// ws.onopen = () => {
 ///     ws.send(JSON.stringify({
 ///         jsonrpc: '2.0',
-///         method: 'tap',
+///         method: 'io_tap',
 ///         params: { x: 100, y: 200 },
 ///         id: 1
 ///     }));

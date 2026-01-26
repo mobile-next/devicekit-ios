@@ -47,7 +47,7 @@
 		787C47982F227F6B0027A012 /* RPCMethodHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47942F227F6B0027A012 /* RPCMethodHandler.swift */; };
 		787C47992F227F6B0027A012 /* XCTestWebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47952F227F6B0027A012 /* XCTestWebSocketServer.swift */; };
 		787C479A2F227F6B0027A012 /* JSONRPCDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47922F227F6B0027A012 /* JSONRPCDispatcher.swift */; };
-		787C47DF2F228B770027A012 /* Tap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47DD2F228B770027A012 /* Tap.swift */; };
+		787C47DF2F228B770027A012 /* IOTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47DD2F228B770027A012 /* IOTap.swift */; };
 		787C47E02F228B770027A012 /* DumpUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47DC2F228B770027A012 /* DumpUI.swift */; };
 		787C48462F228D8D0027A012 /* JSONRPCHTTPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C48452F228D8C0027A012 /* JSONRPCHTTPHandler.swift */; };
 		787C48482F228D960027A012 /* JSONRPCMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C48472F228D950027A012 /* JSONRPCMessageHandler.swift */; };
@@ -240,7 +240,7 @@
 		787C47942F227F6B0027A012 /* RPCMethodHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCMethodHandler.swift; sourceTree = "<group>"; };
 		787C47952F227F6B0027A012 /* XCTestWebSocketServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestWebSocketServer.swift; sourceTree = "<group>"; };
 		787C47DC2F228B770027A012 /* DumpUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DumpUI.swift; sourceTree = "<group>"; };
-		787C47DD2F228B770027A012 /* Tap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tap.swift; sourceTree = "<group>"; };
+		787C47DD2F228B770027A012 /* IOTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOTap.swift; sourceTree = "<group>"; };
 		787C48452F228D8C0027A012 /* JSONRPCHTTPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCHTTPHandler.swift; sourceTree = "<group>"; };
 		787C48472F228D950027A012 /* JSONRPCMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCMessageHandler.swift; sourceTree = "<group>"; };
 		787C95972F17F23500AB3BF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -554,7 +554,7 @@
 			isa = PBXGroup;
 			children = (
 				787C47DC2F228B770027A012 /* DumpUI.swift */,
-				787C47DD2F228B770027A012 /* Tap.swift */,
+				787C47DD2F228B770027A012 /* IOTap.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -788,7 +788,7 @@
 				521C1F072D8017480024EE42 /* AXClientProxy.m in Sources */,
 				5261117A2DE5E8E7007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m in Sources */,
 				610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */,
-				787C47DF2F228B770027A012 /* Tap.swift in Sources */,
+				787C47DF2F228B770027A012 /* IOTap.swift in Sources */,
 				787C47E02F228B770027A012 /* DumpUI.swift in Sources */,
 				521C1F102D8051FC0024EE42 /* XCTestDaemonsProxy.m in Sources */,
 				613E87D7299A64BD00FF8551 /* PointerEventPath.swift in Sources */,
