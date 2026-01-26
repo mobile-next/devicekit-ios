@@ -20,9 +20,9 @@ extension Logger {
     }
 }
 
-// MARK: - DumpUI Request Model
+// MARK: - dump_ui Request Model
 
-/// Request body for the `/dumpUI` endpoint.
+/// Request body for the `/dump_ui` endpoint.
 ///
 /// This model represents the JSON payload for capturing the UI view hierarchy.
 ///
@@ -37,17 +37,17 @@ extension Logger {
 /// ## curl Examples
 /// ```bash
 /// # Capture full UI hierarchy
-/// curl -X POST http://127.0.0.1:12004/dumpUI \
+/// curl -X POST http://127.0.0.1:12004/dump_ui \
 ///     -H "Content-Type: application/json" \
 ///     -d '{"appIds": [], "excludeKeyboardElements": false}'
 ///
 /// # Exclude keyboard from hierarchy
-/// curl -X POST http://127.0.0.1:12004/dumpUI \
+/// curl -X POST http://127.0.0.1:12004/dump_ui \
 ///     -H "Content-Type: application/json" \
 ///     -d '{"appIds": [], "excludeKeyboardElements": true}'
 ///
 /// # Pretty-print JSON output
-/// curl -X POST http://127.0.0.1:12004/dumpUI \
+/// curl -X POST http://127.0.0.1:12004/dump_ui \
 ///     -H "Content-Type: application/json" \
 ///     -d '{"appIds": [], "excludeKeyboardElements": false}' | jq .
 /// ```
@@ -64,9 +64,9 @@ struct DumpUIRequest: Codable {
     let excludeKeyboardElements: Bool
 }
 
-// MARK: - DumpUI Method Handler
+// MARK: - dump_ui Method Handler
 
-/// JSON-RPC handler for the `dumpUI` method.
+/// JSON-RPC handler for the `dump_ui` method.
 ///
 /// Captures the complete UI view hierarchy.
 ///
@@ -82,7 +82,7 @@ struct DumpUIRequest: Codable {
 /// Returns the view hierarchy as a nested JSON object.
 @MainActor
 struct DumpUIMethodHandler: RPCMethodHandler {
-    static let methodName = "dumpUI"
+    static let methodName = "dump_ui"
 
     private let springboardApplication = XCUIApplication(
         bundleIdentifier: "com.apple.springboard"
@@ -96,7 +96,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
 
     func execute(params: JSONValue?) async throws -> JSONValue {
         guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for dumpUI method")
+            throw RPCMethodError.invalidParams("Missing parameters for dump_ui method")
         }
 
         let paramsData: Data
@@ -110,13 +110,13 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         do {
             request = try JSONDecoder().decode(DumpUIRequest.self, from: paramsData)
         } catch {
-            throw RPCMethodError.invalidParams("Invalid dumpUI parameters: \(error.localizedDescription)")
+            throw RPCMethodError.invalidParams("Invalid dump_ui parameters: \(error.localizedDescription)")
         }
 
         do {
             let foregroundApp = RunningApp.getForegroundApp()
             guard let foregroundApp = foregroundApp else {
-                NSLog("No foreground app found returning springboard app hierarchy")
+                logger.warning("No foreground app found returning springboard app hierarchy")
                 let springboardHierarchy = try elementHierarchy(xcuiElement: springboardApplication)
                 let viewHierarchy = ViewHierarchy(
                     axElement: springboardHierarchy,
@@ -125,7 +125,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
                 return try JSONValue.from(viewHierarchy)
             }
 
-            NSLog("[Start] View hierarchy snapshot for \(foregroundApp)")
+            logger.info("[Start] View hierarchy snapshot for \(foregroundApp)")
             let appViewHierarchy = try logger.measure(
                 message: "View hierarchy snapshot for \(foregroundApp)"
             ) {
@@ -139,7 +139,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
                 depth: appViewHierarchy.depth()
             )
 
-            NSLog("[Done] View hierarchy snapshot for \(foregroundApp)")
+            logger.info("[Done] View hierarchy snapshot for \(foregroundApp)")
             return try JSONValue.from(viewHierarchy)
         } catch let error as RPCMethodError {
             throw error
@@ -265,7 +265,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
                 throw error
             }
 
-            NSLog("Snapshot failure, getting recovery element for fallback")
+            logger.error("Snapshot failure, getting recovery element for fallback")
             AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = snapshotMaxDepth
 
             let recoveryElement = try findRecoveryElement(element.children(matching: .any).firstMatch)
@@ -332,15 +332,15 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         let webViewCount = safariWebService.webViews.count
         guard webViewCount > 0 else { return nil }
 
-        NSLog("[Start] Fetching Safari WebView hierarchy (\(webViewCount) webview(s) detected)")
+        logger.info("[Start] Fetching Safari WebView hierarchy (\(webViewCount) webview(s) detected)")
 
         do {
             AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = snapshotMaxDepth
             let safariHierarchy = try elementHierarchy(xcuiElement: safariWebService)
-            NSLog("[Done] Safari WebView hierarchy fetched successfully")
+            logger.info("[Done] Safari WebView hierarchy fetched successfully")
             return safariHierarchy
         } catch {
-            NSLog("[Error] Failed to fetch Safari WebView hierarchy: \(error.localizedDescription)")
+            logger.error("[Error] Failed to fetch Safari WebView hierarchy: \(error.localizedDescription)")
             return nil
         }
     }

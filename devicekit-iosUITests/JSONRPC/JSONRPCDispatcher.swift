@@ -9,8 +9,8 @@ import os
 /// incoming requests by looking up and invoking the corresponding handler.
 ///
 /// ## Supported Methods
-/// - `tap`: Performs tap/long-press gestures
-/// - `dumpUI`: Captures UI view hierarchy
+/// - `io_tap`: Performs tap/long-press gestures
+/// - `dump_ui`: Captures UI view hierarchy
 ///
 /// ## Usage
 /// ```swift
@@ -30,8 +30,9 @@ final class JSONRPCDispatcher {
 
     /// Initializes the dispatcher with default method handlers.
     init() {
-        registerHandler(TapMethodHandler())
+        registerHandler(IOTapMethodHandler())
         registerHandler(DumpUIMethodHandler())
+        registerHandler(IOTextMethodHandler())
     }
 
     /// Registers a method handler.

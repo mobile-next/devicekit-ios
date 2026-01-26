@@ -3,7 +3,7 @@ import XCTest
 
 // MARK: - Response Models
 
-/// Response wrapper for the `/dumpUI` endpoint.
+/// Response wrapper for the `/dump_ui` endpoint.
 ///
 /// Contains the root accessibility element and the maximum depth of the tree.
 ///

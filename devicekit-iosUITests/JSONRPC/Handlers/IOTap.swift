@@ -2,7 +2,7 @@ import os
 
 // MARK: - Tap Request Model
 
-/// Request body for the `/tap` endpoint.
+/// Request body for the `/io_tap` endpoint.
 ///
 /// This model represents the JSON payload for tap and long-press gestures.
 ///
@@ -18,16 +18,16 @@ import os
 /// ## curl Example
 /// ```bash
 /// # Simple tap
-// curl -X POST http://127.0.0.1:12004/tap \
+// curl -X POST http://127.0.0.1:12004/io_tap \
 //     -H "Content-Type: application/json" \
 //     -d '{"x": 100.0, "y": 200.0}'
 ///
 /// # Long-press for 1.5 seconds
-/// curl -X POST http://127.0.0.1:12004/tap \
+/// curl -X POST http://127.0.0.1:12004/io_tap \
 ///     -H "Content-Type: application/json" \
 ///     -d '{"x": 100.0, "y": 200.0, "duration": 1.5}'
 /// ```
-struct TapRequest: Codable {
+struct IOTapRequest: Codable {
 
     /// X coordinate in screen points.
     let x: Float
@@ -43,7 +43,7 @@ struct TapRequest: Codable {
 
 // MARK: - Tap Method Handler
 
-/// JSON-RPC handler for the `tap` method.
+/// JSON-RPC handler for the `io_tap` method.
 ///
 /// Performs tap or long-press gestures at screen coordinates.
 ///
@@ -61,8 +61,8 @@ struct TapRequest: Codable {
 /// {"success": true}
 /// ```
 @MainActor
-struct TapMethodHandler: RPCMethodHandler {
-    static let methodName = "tap"
+struct IOTapMethodHandler: RPCMethodHandler {
+    static let methodName = "io_tap"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -71,7 +71,7 @@ struct TapMethodHandler: RPCMethodHandler {
 
     func execute(params: JSONValue?) async throws -> JSONValue {
         guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for tap method")
+            throw RPCMethodError.invalidParams("Missing parameters for io_tap method")
         }
 
         let paramsData: Data
@@ -81,11 +81,11 @@ struct TapMethodHandler: RPCMethodHandler {
             throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
         }
 
-        let request: TapRequest
+        let request: IOTapRequest
         do {
-            request = try JSONDecoder().decode(TapRequest.self, from: paramsData)
+            request = try JSONDecoder().decode(IOTapRequest.self, from: paramsData)
         } catch {
-            throw RPCMethodError.invalidParams("Invalid tap parameters: \(error.localizedDescription)")
+            throw RPCMethodError.invalidParams("Invalid io_tap parameters: \(error.localizedDescription)")
         }
 
         let (width, height) = OrientationGeometry.physicalScreenSize()
@@ -97,9 +97,9 @@ struct TapMethodHandler: RPCMethodHandler {
         let (x, y) = (point.x, point.y)
 
         if request.duration != nil {
-            NSLog("Long pressing \(x), \(y) for \(request.duration!)s")
+            logger.info("Long pressing \(x), \(y) for \(request.duration!)s")
         } else {
-            NSLog("Tapping \(x), \(y)")
+            logger.info("Tapping \(x), \(y)")
         }
 
         do {
@@ -111,10 +111,10 @@ struct TapMethodHandler: RPCMethodHandler {
             let start = Date()
             try await RunnerDaemonProxy().synthesize(eventRecord: eventRecord)
             let duration = Date().timeIntervalSince(start)
-            NSLog("Tapping took \(duration)")
+            logger.info("Tapping took \(duration)")
             return .object(["success": .bool(true)])
         } catch {
-            NSLog("Error tapping: \(error)")
+            logger.error("Error tapping: \(error)")
             throw RPCMethodError.internalError("Error tapping point: \(error.localizedDescription)")
         }
     }

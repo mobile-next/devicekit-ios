@@ -45,7 +45,7 @@ enum JSONRPCId: Codable, Equatable {
 /// ```json
 /// {
 ///   "jsonrpc": "2.0",
-///   "method": "tap",
+///   "method": "io_tap",
 ///   "params": {"x": 100.0, "y": 200.0},
 ///   "id": 1
 /// }
