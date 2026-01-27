@@ -50,6 +50,7 @@
 		781480372F27CEF000E61E3B /* Screenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480362F27CEF000E61E3B /* Screenshot.swift */; };
 		781480752F27D2BB00E61E3B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480742F27D2B900E61E3B /* URL.swift */; };
 		781480FF2F27DEE600E61E3B /* IOGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480FE2F27DEE600E61E3B /* IOGesture.swift */; };
+		7844BCC12F28128A00F7E003 /* OpusCodec in Frameworks */ = {isa = PBXBuildFile; productRef = 7844BCC02F28128A00F7E003 /* OpusCodec */; };
 		787C47972F227F6B0027A012 /* JSONRPCModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47932F227F6B0027A012 /* JSONRPCModels.swift */; };
 		787C47982F227F6B0027A012 /* RPCMethodHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47942F227F6B0027A012 /* RPCMethodHandler.swift */; };
 		787C47992F227F6B0027A012 /* XCTestWebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47952F227F6B0027A012 /* XCTestWebSocketServer.swift */; };
@@ -313,6 +314,7 @@
 			files = (
 				78F689332F17EE5C0025C8AC /* TCP in Frameworks */,
 				78F689082F17EE190025C8AC /* ReplayKit.framework in Frameworks */,
+				7844BCC12F28128A00F7E003 /* OpusCodec in Frameworks */,
 				78F689312F17EE5C0025C8AC /* H264Codec in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -678,6 +680,7 @@
 			packageProductDependencies = (
 				78F689302F17EE5C0025C8AC /* H264Codec */,
 				78F689322F17EE5C0025C8AC /* TCP */,
+				7844BCC02F28128A00F7E003 /* OpusCodec */,
 			);
 			productName = BroadcastUploadExtension;
 			productReference = 78F689062F17EE190025C8AC /* BroadcastUploadExtension.appex */;
@@ -744,6 +747,7 @@
 				52049C062935E04D00807AA3 /* XCRemoteSwiftPackageReference "FlyingFox" */,
 				78F689002F17EDEB0025C8AC /* XCLocalSwiftPackageReference "h264-codec" */,
 				78F689012F17EDFA0025C8AC /* XCLocalSwiftPackageReference "tcp" */,
+				7844BCBF2F28128A00F7E003 /* XCLocalSwiftPackageReference "opus-codec" */,
 			);
 			productRefGroup = 52049BD42935039F00807AA3 /* Products */;
 			projectDirPath = "";
@@ -1124,6 +1128,14 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/ThirdParty/opus/include",
+					"$(SRCROOT)/ThirdParty/opus/src",
+					"$(SRCROOT)/ThirdParty/opus/celt",
+					"$(SRCROOT)/ThirdParty/opus/silk",
+					"$(SRCROOT)/ThirdParty/opus/silk/float",
+				);
 				INFOPLIST_FILE = BroadcastUploadExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BroadcastUploadExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -1135,6 +1147,11 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DOPUS_BUILD",
+					"-DVAR_ARRAYS",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-ios.BroadcastUploadExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1143,6 +1160,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT)/ThirdParty/opus/include $(SRCROOT)/ThirdParty/opus/src $(SRCROOT)/ThirdParty/opus/celt $(SRCROOT)/ThirdParty/opus/silk $(SRCROOT)/ThirdParty/opus/silk/float";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1161,6 +1179,14 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/ThirdParty/opus/include",
+					"$(SRCROOT)/ThirdParty/opus/src",
+					"$(SRCROOT)/ThirdParty/opus/celt",
+					"$(SRCROOT)/ThirdParty/opus/silk",
+					"$(SRCROOT)/ThirdParty/opus/silk/float",
+				);
 				INFOPLIST_FILE = BroadcastUploadExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BroadcastUploadExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -1172,6 +1198,11 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DOPUS_BUILD",
+					"-DVAR_ARRAYS",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilenext.devicekit-ios.BroadcastUploadExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1179,6 +1210,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT)/ThirdParty/opus/include $(SRCROOT)/ThirdParty/opus/src $(SRCROOT)/ThirdParty/opus/celt $(SRCROOT)/ThirdParty/opus/silk $(SRCROOT)/ThirdParty/opus/silk/float";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1309,6 +1341,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		7844BCBF2F28128A00F7E003 /* XCLocalSwiftPackageReference "opus-codec" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "opus-codec";
+		};
 		78F689002F17EDEB0025C8AC /* XCLocalSwiftPackageReference "h264-codec" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "h264-codec";
@@ -1335,6 +1371,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 52049C062935E04D00807AA3 /* XCRemoteSwiftPackageReference "FlyingFox" */;
 			productName = FlyingFox;
+		};
+		7844BCC02F28128A00F7E003 /* OpusCodec */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OpusCodec;
 		};
 		78F689302F17EE5C0025C8AC /* H264Codec */ = {
 			isa = XCSwiftPackageProductDependency;

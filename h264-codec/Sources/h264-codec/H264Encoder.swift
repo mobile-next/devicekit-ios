@@ -119,6 +119,45 @@ public final class H264Encoder: NSObject {
         print("VTCompressSession is ready to use")
     }
 
+    /// Updates the encoder bitrate and optionally frame rate dynamically without restarting the session.
+    ///
+    /// - Parameters:
+    ///   - newBitrate: New target bitrate in bits per second.
+    ///   - newFrameRate: Optional new frame rate (nil to keep current).
+    ///
+    /// This method uses `VTSessionSetProperties` to update the compression session
+    /// properties on-the-fly without invalidating and recreating the session.
+    ///
+    /// ## Important Notes
+    /// - Works only if a session is already configured.
+    /// - Changes take effect immediately for subsequent frames.
+    /// - No SPS/PPS regeneration unless keyframe interval changes.
+    ///
+    /// ## Potential Issues
+    /// - If the session is nil or invalid, throws `cannotSetProperties`.
+    public func updateEncoderSettings(newBitrate: Int, newFrameRate: Int? = nil) throws {
+        guard let session = session else {
+            throw ConfigurationError.cannotSetProperties
+        }
+
+        var propertyDict: [CFString: Any] = [
+            kVTCompressionPropertyKey_AverageBitRate: newBitrate
+        ]
+
+        if let frameRate = newFrameRate {
+            propertyDict[kVTCompressionPropertyKey_ExpectedFrameRate] = frameRate
+            propertyDict[kVTCompressionPropertyKey_MaxKeyFrameInterval] = frameRate
+        }
+
+        let cfDict = propertyDict as CFDictionary
+        guard VTSessionSetProperties(session, propertyDictionary: cfDict) == noErr else {
+            throw ConfigurationError.cannotSetProperties
+        }
+
+        print("[H264Encoder] Updated settings: bitrate=\(newBitrate) bps" +
+              (newFrameRate != nil ? ", frameRate=\(newFrameRate!)" : ""))
+    }
+
     /// Invalidates the current compression session and completes pending frames.
     ///
     /// This:

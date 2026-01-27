@@ -4,13 +4,13 @@ import Network
 /// A lightweight TCP server built on Apple's Network.framework.
 ///
 /// `TCPServer` listens on a specified TCP port, accepts inbound TCP connections,
-/// and exposes a simple callback (`dataHandler`) for sending data back to the
-/// connected client. The server uses dedicated dispatch queues for listener
-/// and connection events to ensure predictable, thread‑safe behavior.
+/// and exposes callbacks for both sending and receiving data. The server uses
+/// dedicated dispatch queues for listener and connection events to ensure
+/// predictable, thread‑safe behavior.
 ///
 /// ## Important Notes
 /// - Only the **most recent connection** receives data via `dataHandler`.
-/// - The server does **not** read inbound data from clients. It only sends.
+/// - The server supports bidirectional communication via `messageHandler`.
 /// - The server does **not** retain multiple connections.
 /// - The server does **not** handle connection cancellation or cleanup.
 /// - The server does **not** detect client disconnects.
@@ -41,6 +41,15 @@ public final class TCPServer {
     /// ## Potential Issue
     /// If multiple clients connect, earlier ones will silently stop receiving data.
     public var dataHandler: ((Data) -> Void)?
+
+    /// A callback invoked when the server receives data from the client.
+    ///
+    /// This closure is called whenever data is received from the connected client.
+    /// Use this to handle control messages, commands, or bidirectional protocols.
+    ///
+    /// ## Important
+    /// This handler is called on `connectionQueue`, not the main thread.
+    public var messageHandler: ((Data) -> Void)?
 
     /// Creates a new TCP server instance.
     public init() {}
@@ -88,15 +97,15 @@ public final class TCPServer {
                     weakSelf.dataHandler = { data in
                         weakSelf.send(data: data, on: connection)
                     }
+
+                    // Start receiving data from the connection
+                    weakSelf.startReceiving(on: connection)
                 }
 
                 // Potential improvement:
                 // Handle .failed, .cancelled, .waiting to clean up or notify.
             }
 
-            // ⚠️ Potential Issue:
-            // No receive loop is implemented. The server cannot read inbound data.
-            // If this is intentional, ignore. Otherwise, add connection.receive(...)
             connection.start(queue: weakSelf.connectionQueue)
         }
 
@@ -114,6 +123,37 @@ public final class TCPServer {
         listener?.cancel()
         listener = nil
         dataHandler = nil
+        messageHandler = nil
+    }
+
+    /// Starts receiving data from the connection.
+    ///
+    /// - Parameter connection: The active `NWConnection` to read from.
+    ///
+    /// This method sets up a receive loop that continuously reads data from the
+    /// connection and forwards it to the `messageHandler` callback.
+    ///
+    /// ## Important Notes
+    /// - This method calls itself recursively to maintain the receive loop.
+    /// - The loop stops when `isComplete` is true or an error occurs.
+    /// - Received data is forwarded to `messageHandler` on `connectionQueue`.
+    private func startReceiving(on connection: NWConnection) {
+        connection.receive(minimumIncompleteLength: 1, maximumLength: 65536) { [weak self] data, _, isComplete, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("[TCPServer] Receive error: \(error)")
+                return
+            }
+
+            if let data = data, !data.isEmpty {
+                self.messageHandler?(data)
+            }
+
+            if !isComplete {
+                self.startReceiving(on: connection)
+            }
+        }
     }
 
     /// Sends data to the specified connection.

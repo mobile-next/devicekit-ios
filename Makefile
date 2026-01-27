@@ -109,7 +109,7 @@ ipa-unsigned:
 		-derivedDataPath $(BUILD_DIR) \
 		CODE_SIGN_IDENTITY="" \
 		CODE_SIGNING_REQUIRED=NO \
-		CODE_SIGNING_ALLOWED=NO
+		CODE_SIGNING_ALLOWED=NO | xcbeautify
 	@echo "Packaging unsigned app into IPA..."
 	@mkdir -p $(EXPORT_PATH)/Payload
 	@cp -r $(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME).app $(EXPORT_PATH)/Payload/

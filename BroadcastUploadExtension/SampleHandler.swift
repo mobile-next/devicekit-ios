@@ -12,13 +12,14 @@ import ReplayKit
 /// - Initialize the Core Image context and `ScreenStreamer`.
 /// - Start and stop the streaming pipeline.
 /// - Forward video sample buffers to the encoder.
-/// - Optionally handle app/mic audio (currently unimplemented).
+/// - Forward app audio to the audio encoder/streamer.
+/// - Optionally handle mic audio (currently unimplemented).
 ///
 /// ## Important Notes
 /// - ReplayKit extensions run in a separate process from the main app.
 /// - Crashes inside the extension (e.g., `fatalError`) terminate the broadcast.
 /// - The extension must be efficient; heavy work should be avoided on the main thread.
-/// - Audio handling is stubbed out and can be implemented if needed.
+/// - App audio is encoded and streamed over a separate TCP port.
 class SampleHandler: RPBroadcastSampleHandler {
 
     // MARK: - Default Configuration Constants
@@ -37,6 +38,12 @@ class SampleHandler: RPBroadcastSampleHandler {
 
     /// Default H.264 average bitrate in bits per second
     private static let defaultAverageBitRate: Int = 8_000_000
+
+    /// Default TCP port for audio streaming
+    private static let defaultAudioPort: UInt16 = 12006
+
+    /// Default Opus audio bitrate in bits per second
+    private static let defaultAudioBitRate: Int = 64_000
 
     // MARK: - Properties
 
@@ -66,6 +73,9 @@ class SampleHandler: RPBroadcastSampleHandler {
         let expectedFrameRate = setupInfo?["expectedFrameRate"] as? Int ?? Self.defaultExpectedFrameRate
         let averageBitRate = setupInfo?["averageBitRate"] as? Int ?? Self.defaultAverageBitRate
         let isRealTime = setupInfo?["isRealTime"] as? Bool ?? false
+        let audioEnabled = setupInfo?["audioEnabled"] as? Bool ?? true
+        let audioPort = setupInfo?["audioPort"] as? UInt16 ?? Self.defaultAudioPort
+        let audioBitRate = setupInfo?["audioBitRate"] as? Int ?? Self.defaultAudioBitRate
 
         context = CIContext()
         screenStreamer = ScreenStreamer()
@@ -78,7 +88,9 @@ class SampleHandler: RPBroadcastSampleHandler {
                 qualityFactor: qualityFactor,
                 expectedFrameRate: expectedFrameRate,
                 averageBitRate: averageBitRate,
-                isRealTime: isRealTime
+                isRealTime: isRealTime,
+                audioPort: audioEnabled ? audioPort : nil,
+                audioBitRate: audioBitRate
             )
         } catch {
             fatalError(error.localizedDescription)
@@ -113,7 +125,7 @@ class SampleHandler: RPBroadcastSampleHandler {
     ///
     /// ReplayKit delivers three types of buffers:
     /// - `.video`: Screen frames (handled here)
-    /// - `.audioApp`: App audio (ignored)
+    /// - `.audioApp`: App audio (encoded and streamed)
     /// - `.audioMic`: Microphone audio (ignored)
     ///
     /// ## Behavior
@@ -124,7 +136,7 @@ class SampleHandler: RPBroadcastSampleHandler {
     ///
     /// ## Potential Issues
     /// - If orientation metadata is missing, the frame is dropped.
-    /// - Audio buffers are ignored; implement if audio streaming is required.
+    /// - Microphone buffers are ignored; implement if mic streaming is required.
     /// - No error logging for dropped frames.
     override func processSampleBuffer(
         _ sampleBuffer: CMSampleBuffer,
@@ -143,8 +155,8 @@ class SampleHandler: RPBroadcastSampleHandler {
             )
 
         case .audioApp:
-            // Handle app audio if needed.
-            break
+            // NSLog("[SampleHandler] audioApp buffer received")
+            screenStreamer?.encodeAudio(sampleBuffer: sampleBuffer)
 
         case .audioMic:
             // Handle microphone audio if needed.

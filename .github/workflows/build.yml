@@ -15,9 +15,14 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
     - name: Install SwiftLint
       run: brew install swiftlint
+
+    - name: Install xcbeautify
+      run: brew install xcbeautify
 
     - name: Run lint
       run: make lint || true
