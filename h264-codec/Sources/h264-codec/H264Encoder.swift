@@ -1,7 +1,9 @@
 import Accelerate
+import CoreGraphics
+import CoreImage
 import CoreMedia
+import CoreVideo
 import VideoToolbox
-import UIKit
 
 /// A hardware‑accelerated H.264 encoder built on VideoToolbox.
 ///
@@ -411,5 +413,76 @@ public final class H264Encoder: NSObject {
             sourceFrameRefcon: nil,
             infoFlagsOut: nil
         )
+    }
+
+    /// Encodes a raw `CVPixelBuffer` directly without rotation.
+    ///
+    /// - Parameters:
+    ///   - pixelBuffer: The pixel buffer to encode (must match encoder dimensions).
+    ///   - timestamp: Presentation timestamp for the encoded frame.
+    ///
+    /// Use this method when the pixel buffer is already in the correct orientation
+    /// and size, such as when converting from screenshots that don't need rotation.
+    ///
+    /// ## Important Notes
+    /// - The pixel buffer dimensions must match the encoder's configured dimensions.
+    /// - No rotation or scaling is applied.
+    /// - Uses `CMTime.invalid` as duration.
+    public func encode(
+        pixelBuffer: CVPixelBuffer,
+        timestamp: CMTime
+    ) {
+        guard let session = session else { return }
+
+        VTCompressionSessionEncodeFrame(
+            session,
+            imageBuffer: pixelBuffer,
+            presentationTimeStamp: timestamp,
+            duration: CMTime.invalid,
+            frameProperties: nil,
+            sourceFrameRefcon: nil,
+            infoFlagsOut: nil
+        )
+    }
+
+    /// Encodes a `CGImage` by converting it to a pixel buffer using GPU-accelerated Core Image.
+    ///
+    /// - Parameters:
+    ///   - cgImage: The source CGImage to encode.
+    ///   - timestamp: Presentation timestamp for the encoded frame.
+    ///   - context: The `CIContext` used for GPU-accelerated rendering.
+    ///   - targetSize: Optional target size. If nil, uses CGImage dimensions.
+    ///   - pool: Optional pixel buffer pool for memory efficiency.
+    ///
+    /// This method:
+    /// - Converts the CGImage to a CVPixelBuffer using GPU-accelerated `CIContext.render()`.
+    /// - Encodes the pixel buffer via `VTCompressionSessionEncodeFrame`.
+    ///
+    /// ## Performance
+    /// - Uses GPU for pixel buffer creation (faster than CGContext.draw)
+    /// - Reuse the CIContext and pool across frames for best performance
+    ///
+    /// ## Usage
+    /// ```swift
+    /// let context = CIContext(options: [.useSoftwareRenderer: false])
+    /// let pool = CGImage.createPixelBufferPool(size: targetSize)
+    /// encoder.encode(cgImage: image, timestamp: time, context: context, pool: pool)
+    /// ```
+    public func encode(
+        cgImage: CGImage,
+        timestamp: CMTime,
+        context: CIContext,
+        targetSize: CGSize? = nil,
+        pool: CVPixelBufferPool? = nil
+    ) {
+        guard let pixelBuffer = cgImage.toPixelBuffer(
+            context: context,
+            targetSize: targetSize,
+            pool: pool
+        ) else {
+            return
+        }
+
+        encode(pixelBuffer: pixelBuffer, timestamp: timestamp)
     }
 }

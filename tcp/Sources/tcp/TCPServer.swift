@@ -51,6 +51,15 @@ public final class TCPServer {
     /// This handler is called on `connectionQueue`, not the main thread.
     public var messageHandler: ((Data) -> Void)?
 
+    /// A callback invoked when a new client connects.
+    ///
+    /// This closure is called when a connection reaches `.ready` state.
+    /// Use this to perform initialization such as sending cached data to the client.
+    ///
+    /// ## Important
+    /// This handler is called on `connectionQueue`, not the main thread.
+    public var onClientConnected: (() -> Void)?
+
     /// Creates a new TCP server instance.
     public init() {}
 
@@ -100,6 +109,9 @@ public final class TCPServer {
 
                     // Start receiving data from the connection
                     weakSelf.startReceiving(on: connection)
+
+                    // Notify that a client has connected
+                    weakSelf.onClientConnected?()
                 }
 
                 // Potential improvement:
@@ -124,6 +136,7 @@ public final class TCPServer {
         listener = nil
         dataHandler = nil
         messageHandler = nil
+        onClientConnected = nil
     }
 
     /// Starts receiving data from the connection.

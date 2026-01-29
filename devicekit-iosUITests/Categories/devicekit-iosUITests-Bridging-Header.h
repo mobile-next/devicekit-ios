@@ -30,3 +30,8 @@
 
 /** Custom snapshot parameters (maxDepth, snapshotKeyHonorModalViews). */
 #import "XCAXClient_iOS+FBSnapshotReqParams.h"
+
+// MARK: - Fast Screenshot
+
+/** Fast screenshot capture using XCTest daemon proxy. */
+#import "FBScreenshot.h"
