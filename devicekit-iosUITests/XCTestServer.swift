@@ -10,7 +10,7 @@ extension String {
     }
 }
 
-// MARK: - WebSocket JSON-RPC Server
+// MARK: - WebSocket HTTP & JSON-RPC Server
 
 /// WebSocket server with JSON-RPC 2.0 protocol for UI automation.
 ///
@@ -24,7 +24,7 @@ extension String {
 ///
 /// ## Starting the Server
 /// ```swift
-/// let server = XCTestWebSocketServer()
+/// let server = XCTestServer()
 /// try await server.start()  // Blocks until shutdown
 /// ```
 ///
@@ -67,7 +67,7 @@ extension String {
 /// };
 /// ```
 @MainActor
-final class XCTestWebSocketServer {
+final class XCTestServer {
 
     /// Default timeout for WebSocket operations.
     private let defaultTimeout: TimeInterval = 100
@@ -80,7 +80,7 @@ final class XCTestWebSocketServer {
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: "XCTestWebSocketServer"
+        category: "XCTestServer"
     )
 
     /// JSON-RPC dispatcher for routing method calls.
@@ -121,7 +121,15 @@ final class XCTestWebSocketServer {
             HTTPResponse(statusCode: .ok, body: Data("OK".utf8))
         }
 
-        logger.info("Server is ready (WebSocket: ws://\(self.localhost):\(port)/rpc, HTTP: POST http://\(self.localhost):\(port)/rpc)")
+        // MJPEG streaming endpoint
+        let mjpegHandler = MJPEGHTTPHandler()
+        await server.appendRoute("GET /mjpeg", to: mjpegHandler)
+
+        // H264 streaming endpoint
+        let h264Handler = H264HTTPHandler()
+        await server.appendRoute("GET /h264", to: h264Handler)
+
+        logger.info("Server is ready (WebSocket: ws://\(self.localhost):\(port)/rpc, HTTP: POST http://\(self.localhost):\(port)/rpc, MJPEG: http://\(self.localhost):\(port)/mjpeg, H264: http://\(self.localhost):\(port)/h264)")
         try await server.run()
     }
 }

@@ -51,15 +51,22 @@
 		781480752F27D2BB00E61E3B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480742F27D2B900E61E3B /* URL.swift */; };
 		781480FF2F27DEE600E61E3B /* IOGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480FE2F27DEE600E61E3B /* IOGesture.swift */; };
 		7844BCC12F28128A00F7E003 /* OpusCodec in Frameworks */ = {isa = PBXBuildFile; productRef = 7844BCC02F28128A00F7E003 /* OpusCodec */; };
+		785281492F2BEC40002A7531 /* FBScreenshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 785281472F2BEC40002A7531 /* FBScreenshot.h */; };
+		7852814A2F2BEC40002A7531 /* FBScreenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 785281482F2BEC40002A7531 /* FBScreenshot.m */; };
 		787C47972F227F6B0027A012 /* JSONRPCModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47932F227F6B0027A012 /* JSONRPCModels.swift */; };
 		787C47982F227F6B0027A012 /* RPCMethodHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47942F227F6B0027A012 /* RPCMethodHandler.swift */; };
-		787C47992F227F6B0027A012 /* XCTestWebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47952F227F6B0027A012 /* XCTestWebSocketServer.swift */; };
+		787C47992F227F6B0027A012 /* XCTestServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47952F227F6B0027A012 /* XCTestServer.swift */; };
 		787C479A2F227F6B0027A012 /* JSONRPCDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47922F227F6B0027A012 /* JSONRPCDispatcher.swift */; };
 		787C47DF2F228B770027A012 /* IOTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47DD2F228B770027A012 /* IOTap.swift */; };
 		787C47E02F228B770027A012 /* DumpUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47DC2F228B770027A012 /* DumpUI.swift */; };
 		787C48462F228D8D0027A012 /* JSONRPCHTTPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C48452F228D8C0027A012 /* JSONRPCHTTPHandler.swift */; };
 		787C48482F228D960027A012 /* JSONRPCMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C48472F228D950027A012 /* JSONRPCMessageHandler.swift */; };
 		787C95982F17F23500AB3BF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787C95972F17F23500AB3BF1 /* Assets.xcassets */; };
+		78C54B332F2CF23500A9369C /* TCP in Frameworks */ = {isa = PBXBuildFile; productRef = 78C54B322F2CF23500A9369C /* TCP */; };
+		78C54B352F2CF23800A9369C /* H264Codec in Frameworks */ = {isa = PBXBuildFile; productRef = 78C54B342F2CF23800A9369C /* H264Codec */; };
+		78C54BB32F2D4F3400A9369C /* CPUUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BB22F2D4F2F00A9369C /* CPUUsageMonitor.swift */; };
+		78C54BCB2F2D5C4600A9369C /* MemoryUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BCA2F2D5C3E00A9369C /* MemoryUsageMonitor.swift */; };
+		78C54BCF2F2D5CAD00A9369C /* MetricsReportGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BCE2F2D5CA700A9369C /* MetricsReportGenerator.swift */; };
 		78F689082F17EE190025C8AC /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78F689072F17EE190025C8AC /* ReplayKit.framework */; };
 		78F689122F17EE190025C8AC /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78F689072F17EE190025C8AC /* ReplayKit.framework */; };
 		78F689142F17EE190025C8AC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78F689132F17EE190025C8AC /* UIKit.framework */; };
@@ -250,15 +257,20 @@
 		781480362F27CEF000E61E3B /* Screenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screenshot.swift; sourceTree = "<group>"; };
 		781480742F27D2B900E61E3B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		781480FE2F27DEE600E61E3B /* IOGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOGesture.swift; sourceTree = "<group>"; };
+		785281472F2BEC40002A7531 /* FBScreenshot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBScreenshot.h; sourceTree = "<group>"; };
+		785281482F2BEC40002A7531 /* FBScreenshot.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBScreenshot.m; sourceTree = "<group>"; };
 		787C47922F227F6B0027A012 /* JSONRPCDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCDispatcher.swift; sourceTree = "<group>"; };
 		787C47932F227F6B0027A012 /* JSONRPCModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCModels.swift; sourceTree = "<group>"; };
 		787C47942F227F6B0027A012 /* RPCMethodHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCMethodHandler.swift; sourceTree = "<group>"; };
-		787C47952F227F6B0027A012 /* XCTestWebSocketServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestWebSocketServer.swift; sourceTree = "<group>"; };
+		787C47952F227F6B0027A012 /* XCTestServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestServer.swift; sourceTree = "<group>"; };
 		787C47DC2F228B770027A012 /* DumpUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DumpUI.swift; sourceTree = "<group>"; };
 		787C47DD2F228B770027A012 /* IOTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOTap.swift; sourceTree = "<group>"; };
 		787C48452F228D8C0027A012 /* JSONRPCHTTPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCHTTPHandler.swift; sourceTree = "<group>"; };
 		787C48472F228D950027A012 /* JSONRPCMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCMessageHandler.swift; sourceTree = "<group>"; };
 		787C95972F17F23500AB3BF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		78C54BB22F2D4F2F00A9369C /* CPUUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUUsageMonitor.swift; sourceTree = "<group>"; };
+		78C54BCA2F2D5C3E00A9369C /* MemoryUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryUsageMonitor.swift; sourceTree = "<group>"; };
+		78C54BCE2F2D5CA700A9369C /* MetricsReportGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsReportGenerator.swift; sourceTree = "<group>"; };
 		78F689062F17EE190025C8AC /* BroadcastUploadExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BroadcastUploadExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		78F689072F17EE190025C8AC /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		78F689112F17EE190025C8AC /* BroadcastUploadExtensionSetupUI.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BroadcastUploadExtensionSetupUI.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -287,6 +299,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		787C95D52F17F59E00AB3BF1 /* View */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = View; sourceTree = "<group>"; };
+		78C54BD12F2D67E300A9369C /* Streamer */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Streamer; sourceTree = "<group>"; };
 		78F689092F17EE190025C8AC /* BroadcastUploadExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (78F6891F2F17EE190025C8AC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = BroadcastUploadExtension; sourceTree = "<group>"; };
 		78F689152F17EE190025C8AC /* BroadcastUploadExtensionSetupUI */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (78F689232F17EE190025C8AC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = BroadcastUploadExtensionSetupUI; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -303,8 +316,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78C54B332F2CF23500A9369C /* TCP in Frameworks */,
 				612DE40229801F71003C2BE0 /* XCTest.framework in Frameworks */,
 				5279BFD62935ECE20056C609 /* FlyingFox in Frameworks */,
+				78C54B352F2CF23800A9369C /* H264Codec in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,11 +382,16 @@
 		52049BF6293503A200807AA3 /* devicekit-iosUITests */ = {
 			isa = PBXGroup;
 			children = (
+				78C54BD12F2D67E300A9369C /* Streamer */,
+				78C54BCE2F2D5CA700A9369C /* MetricsReportGenerator.swift */,
+				78C54BCA2F2D5C3E00A9369C /* MemoryUsageMonitor.swift */,
+				78C54BB22F2D4F2F00A9369C /* CPUUsageMonitor.swift */,
 				787C47962F227F6B0027A012 /* JSONRPC */,
 				612DE410298410F9003C2BE0 /* XCTest */,
 				52D8FAA92D6DD3850015FAB3 /* Utilities */,
 				52D8FA8E2D6DCF010015FAB3 /* Categories */,
 				52D8F8F12D6DCC150015FAB3 /* PrivateHeaders */,
+				787C47952F227F6B0027A012 /* XCTestServer.swift */,
 				52049BF7293503A200807AA3 /* devicekit_iosUITests.swift */,
 			);
 			path = "devicekit-iosUITests";
@@ -524,6 +544,8 @@
 		52D8FAA92D6DD3850015FAB3 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				785281472F2BEC40002A7531 /* FBScreenshot.h */,
+				785281482F2BEC40002A7531 /* FBScreenshot.m */,
 				521C1F0F2D8051F20024EE42 /* XCTestDaemonsProxy.m */,
 				521C1F0D2D8051890024EE42 /* XCTestDaemonsProxy.h */,
 				521C1F062D8017460024EE42 /* AXClientProxy.m */,
@@ -561,7 +583,6 @@
 				787C48472F228D950027A012 /* JSONRPCMessageHandler.swift */,
 				787C48452F228D8C0027A012 /* JSONRPCHTTPHandler.swift */,
 				787C47942F227F6B0027A012 /* RPCMethodHandler.swift */,
-				787C47952F227F6B0027A012 /* XCTestWebSocketServer.swift */,
 			);
 			path = JSONRPC;
 			sourceTree = "<group>";
@@ -591,6 +612,7 @@
 			files = (
 				52D8FAA72D6DD1950015FAB3 /* XCUICoordinate.h in Headers */,
 				52D8FAA52D6DD1950015FAB3 /* XCUIApplicationImpl.h in Headers */,
+				785281492F2BEC40002A7531 /* FBScreenshot.h in Headers */,
 				52D8FAB52D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.h in Headers */,
 				52D8FAA62D6DD1950015FAB3 /* XCUIApplicationProcess.h in Headers */,
 				52D8FAA82D6DD1950015FAB3 /* XCUIDevice.h in Headers */,
@@ -653,9 +675,14 @@
 			dependencies = (
 				52049BF5293503A200807AA3 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				78C54BD12F2D67E300A9369C /* Streamer */,
+			);
 			name = "devicekit-iosUITests";
 			packageProductDependencies = (
 				5279BFD52935ECE20056C609 /* FlyingFox */,
+				78C54B322F2CF23500A9369C /* TCP */,
+				78C54B342F2CF23800A9369C /* H264Codec */,
 			);
 			productName = "maestro-driver-iosUITests";
 			productReference = 52049BF3293503A200807AA3 /* devicekit-iosUITests.xctest */;
@@ -811,15 +838,18 @@
 				612DE4122984114B003C2BE0 /* RunnerDaemonProxy.swift in Sources */,
 				94826F4429DB082100795E9B /* SystemPermissionManager.swift in Sources */,
 				52D8FAAC2D6DD3A20015FAB3 /* FBLogger.m in Sources */,
+				7852814A2F2BEC40002A7531 /* FBScreenshot.m in Sources */,
 				521C1F072D8017480024EE42 /* AXClientProxy.m in Sources */,
 				5261117A2DE5E8E7007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m in Sources */,
 				78147F3D2F27BDBC00E61E3B /* AppsLaunch.swift in Sources */,
 				610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */,
 				787C47DF2F228B770027A012 /* IOTap.swift in Sources */,
 				787C47E02F228B770027A012 /* DumpUI.swift in Sources */,
+				78C54BB32F2D4F3400A9369C /* CPUUsageMonitor.swift in Sources */,
 				521C1F102D8051FC0024EE42 /* XCTestDaemonsProxy.m in Sources */,
 				613E87D7299A64BD00FF8551 /* PointerEventPath.swift in Sources */,
 				78147FCB2F27C04400E61E3B /* IOSwipe.swift in Sources */,
+				78C54BCF2F2D5CAD00A9369C /* MetricsReportGenerator.swift in Sources */,
 				787C48482F228D960027A012 /* JSONRPCMessageHandler.swift in Sources */,
 				9811C9092C49751D00DDACA0 /* OrientationGeometry.swift in Sources */,
 				612DE414298426EF003C2BE0 /* EventRecord.swift in Sources */,
@@ -827,12 +857,13 @@
 				787C47982F227F6B0027A012 /* RPCMethodHandler.swift in Sources */,
 				7814800B2F27C56100E61E3B /* IOLongpress.swift in Sources */,
 				781480372F27CEF000E61E3B /* Screenshot.swift in Sources */,
-				787C47992F227F6B0027A012 /* XCTestWebSocketServer.swift in Sources */,
+				787C47992F227F6B0027A012 /* XCTestServer.swift in Sources */,
 				781480752F27D2BB00E61E3B /* URL.swift in Sources */,
 				787C479A2F227F6B0027A012 /* JSONRPCDispatcher.swift in Sources */,
 				521C1F0B2D801A360024EE42 /* XCUIApplication+Helper.m in Sources */,
 				52D8FA9D2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.m in Sources */,
 				52049BF8293503A200807AA3 /* devicekit_iosUITests.swift in Sources */,
+				78C54BCB2F2D5C4600A9369C /* MemoryUsageMonitor.swift in Sources */,
 				52D8FAB02D6DD4100015FAB3 /* FBConfiguration.m in Sources */,
 				78147F0F2F27AA6B00E61E3B /* IOText.swift in Sources */,
 				6124329E2A4DA5BB00F5F619 /* AXElement.swift in Sources */,
@@ -1375,6 +1406,16 @@
 		7844BCC02F28128A00F7E003 /* OpusCodec */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = OpusCodec;
+		};
+		78C54B322F2CF23500A9369C /* TCP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78F689012F17EDFA0025C8AC /* XCLocalSwiftPackageReference "tcp" */;
+			productName = TCP;
+		};
+		78C54B342F2CF23800A9369C /* H264Codec */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78F689002F17EDEB0025C8AC /* XCLocalSwiftPackageReference "h264-codec" */;
+			productName = H264Codec;
 		};
 		78F689302F17EE5C0025C8AC /* H264Codec */ = {
 			isa = XCSwiftPackageProductDependency;

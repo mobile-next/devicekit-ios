@@ -27,7 +27,7 @@ final class devicekit_iosUITests: XCTestCase {
 
     @MainActor
     func testRunAutomation() async throws {
-        let server = XCTestWebSocketServer()
+        let server = XCTestServer()
         devicekit_iosUITests.logger.info("Will start WebSocket JSON-RPC server")
         try await server.start()
     }

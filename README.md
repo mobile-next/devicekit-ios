@@ -27,7 +27,10 @@ DeviceKit iOS is a UI automation and screen streaming framework for iOS devices.
 - [WebSocket Examples](#websocket-examples)
 - [Error Codes](#json-rpc-error-codes)
 - [Screen Streaming](#screen-streaming)
-  - [screencapture.sh](#quick-start-screencapturesh-recommended)
+  - [MJPEG Streaming](#mjpeg-streaming-browser-friendly)
+  - [XCTest H.264 Streaming](#xctest-h264-streaming-http)
+  - [ReplayKit H.264 Streaming](#replaykit-h264-streaming-broadcastextension)
+  - [Streaming Comparison](#streaming-method-comparison)
 - [Building](#building)
 
 ---
@@ -698,7 +701,122 @@ ws.on('message', (data) => {
 
 ## Screen Streaming
 
-### Overview
+DeviceKit iOS provides multiple screen streaming methods:
+
+| Method | Source | Protocol | Port | Endpoint | Use Case |
+|--------|--------|----------|------|----------|----------|
+| **ReplayKit H.264** | BroadcastExtension | TCP | 12005 | N/A | High quality, system-level capture |
+| **XCTest H.264** | Screenshot API | HTTP | 12004 | `/h264` | Video recording, no app required |
+| **MJPEG** | Screenshot API | HTTP | 12004 | `/mjpeg` | Browser viewing, simple clients |
+
+---
+
+### MJPEG Streaming (Browser-friendly)
+
+Motion JPEG streaming over HTTP. Works in browsers and simple HTTP clients.
+
+#### Quick Start
+
+```bash
+# View in browser
+open "http://127.0.0.1:12004/mjpeg"
+
+# View with ffplay
+ffplay -fflags nobuffer "http://127.0.0.1:12004/mjpeg"
+
+# View with VLC
+vlc "http://127.0.0.1:12004/mjpeg"
+```
+
+#### URL Parameters
+
+| Parameter | Default | Range | Description |
+|-----------|---------|-------|-------------|
+| `fps` | 10 | 1-60 | Frames per second |
+| `quality` | 25 | 1-100 | JPEG quality (%) |
+| `scale` | 100 | 10-100 | Image scale (%) |
+
+#### Examples
+
+```bash
+# Higher quality and frame rate
+open "http://127.0.0.1:12004/mjpeg?fps=30&quality=50"
+
+# Lower bandwidth (reduced resolution)
+open "http://127.0.0.1:12004/mjpeg?fps=15&quality=30&scale=50"
+
+# Python OpenCV viewing
+python3 -c "
+import cv2
+cap = cv2.VideoCapture('http://127.0.0.1:12004/mjpeg?fps=15')
+while True:
+    ret, frame = cap.read()
+    if ret:
+        cv2.imshow('iOS Device', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+"
+```
+
+---
+
+### XCTest H.264 Streaming (HTTP)
+
+H.264 streaming over HTTP, similar to MJPEG. No separate TCP port needed.
+
+#### Quick Start
+
+```bash
+# View with ffplay (simplest)
+curl http://127.0.0.1:12004/h264 | ffplay -fflags nobuffer -flags low_delay -f h264 -
+
+# Or with custom settings
+curl "http://127.0.0.1:12004/h264?fps=30&bitrate=4000000&width=960&height=540" | ffplay -f h264 -
+```
+
+#### URL Parameters
+
+| Parameter | Default | Range | Description |
+|-----------|---------|-------|-------------|
+| `fps` | 30 | 1-60 | Frames per second |
+| `bitrate` | 4000000 | 100000-10000000 | Target bitrate (bps) |
+| `quality` | 60 | 1-100 | Encoder quality hint |
+| `width` | 960 | 100-3840 | Output width (pixels) |
+| `height` | 540 | 100-2160 | Output height (pixels) |
+
+#### Examples
+
+```bash
+# Default settings (30fps, 4Mbps, 960x540)
+curl http://127.0.0.1:12004/h264 | ffplay -f h264 -
+
+# High quality, full HD
+curl "http://127.0.0.1:12004/h264?fps=30&bitrate=8000000&width=1920&height=1080" | ffplay -f h264 -
+
+# Low bandwidth
+curl "http://127.0.0.1:12004/h264?fps=15&bitrate=1000000&width=480&height=270" | ffplay -f h264 -
+
+# With ffplay low-latency flags
+curl http://127.0.0.1:12004/h264 | ffplay -fflags nobuffer -flags low_delay -framedrop -f h264 -
+```
+
+#### Recording
+
+```bash
+# Record to MP4
+curl http://127.0.0.1:12004/h264 | ffmpeg -f h264 -i - -c copy recording.mp4
+
+# Record for 60 seconds
+timeout 60 curl http://127.0.0.1:12004/h264 | ffmpeg -f h264 -i - -c copy recording.mp4
+```
+
+---
+
+### ReplayKit H.264 Streaming (BroadcastExtension)
+
+High-quality system-level screen capture using ReplayKit BroadcastExtension. Provides the best quality and performance.
+
+#### Overview
 
 DeviceKit iOS provides real-time H.264 video streaming via TCP on port 12005. The stream is compatible with standard video players and processing pipelines.
 
@@ -811,6 +929,32 @@ gst-launch-1.0 tcpclientsrc -e do-timestamp=true host=$DEVICE_IP port=12005 \
 ```bash
 docker cp <container_id>:/recording.mp4 ./recording.mp4
 ```
+
+---
+
+### Streaming Method Comparison
+
+| Feature | ReplayKit H.264 | XCTest H.264 | MJPEG |
+|---------|-----------------|--------------|-------|
+| **Protocol** | TCP | HTTP | HTTP |
+| **Port** | 12005 | 12004 | 12004 |
+| **Endpoint** | N/A (TCP) | `/h264` | `/mjpeg` |
+| **Requires App** | Yes (ScreenStreamer) | No | No |
+| **Quality** | Excellent | Good | Good |
+| **Latency** | Low | Medium | Low |
+| **Bandwidth** | Low (~2-8 Mbps) | Low (~1-4 Mbps) | High (~10-30 Mbps) |
+| **Browser Support** | No | No | Yes |
+| **Best For** | Production streaming | Video recording | Debugging, browser |
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| ffplay shows nothing | Wait 1-2 seconds for keyframe; use `-fflags nobuffer` |
+| High latency | Add `-flags low_delay -framedrop` to ffplay |
+| Connection refused | Check port forwarding: `iproxy <port>:<port>` |
+| Choppy playback | Reduce fps or increase bitrate |
+| MJPEG slow in browser | Reduce `quality` and `scale` parameters |
 
 ---
 
