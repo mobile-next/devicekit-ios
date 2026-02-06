@@ -62,7 +62,6 @@
 		787C48462F228D8D0027A012 /* JSONRPCHTTPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C48452F228D8C0027A012 /* JSONRPCHTTPHandler.swift */; };
 		787C48482F228D960027A012 /* JSONRPCMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C48472F228D950027A012 /* JSONRPCMessageHandler.swift */; };
 		787C95982F17F23500AB3BF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787C95972F17F23500AB3BF1 /* Assets.xcassets */; };
-		78C54B332F2CF23500A9369C /* TCP in Frameworks */ = {isa = PBXBuildFile; productRef = 78C54B322F2CF23500A9369C /* TCP */; };
 		78C54B352F2CF23800A9369C /* H264Codec in Frameworks */ = {isa = PBXBuildFile; productRef = 78C54B342F2CF23800A9369C /* H264Codec */; };
 		78C54BB32F2D4F3400A9369C /* CPUUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BB22F2D4F2F00A9369C /* CPUUsageMonitor.swift */; };
 		78C54BCB2F2D5C4600A9369C /* MemoryUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BCA2F2D5C3E00A9369C /* MemoryUsageMonitor.swift */; };
@@ -70,7 +69,6 @@
 		78F689082F17EE190025C8AC /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78F689072F17EE190025C8AC /* ReplayKit.framework */; };
 		78F6891E2F17EE190025C8AC /* BroadcastUploadExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 78F689062F17EE190025C8AC /* BroadcastUploadExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		78F689312F17EE5C0025C8AC /* H264Codec in Frameworks */ = {isa = PBXBuildFile; productRef = 78F689302F17EE5C0025C8AC /* H264Codec */; };
-		78F689332F17EE5C0025C8AC /* TCP in Frameworks */ = {isa = PBXBuildFile; productRef = 78F689322F17EE5C0025C8AC /* TCP */; };
 		78F689392F17EF1B0025C8AC /* devicekit_iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F689372F17EF1B0025C8AC /* devicekit_iosApp.swift */; };
 		94826F4429DB082100795E9B /* SystemPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94826F4329DB082100795E9B /* SystemPermissionManager.swift */; };
 		9811C9092C49751D00DDACA0 /* OrientationGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9811C9082C49751D00DDACA0 /* OrientationGeometry.swift */; };
@@ -296,7 +294,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78C54B332F2CF23500A9369C /* TCP in Frameworks */,
 				612DE40229801F71003C2BE0 /* XCTest.framework in Frameworks */,
 				5279BFD62935ECE20056C609 /* FlyingFox in Frameworks */,
 				78C54B352F2CF23800A9369C /* H264Codec in Frameworks */,
@@ -307,7 +304,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78F689332F17EE5C0025C8AC /* TCP in Frameworks */,
 				78F689082F17EE190025C8AC /* ReplayKit.framework in Frameworks */,
 				7844BCC12F28128A00F7E003 /* OpusCodec in Frameworks */,
 				78F689312F17EE5C0025C8AC /* H264Codec in Frameworks */,
@@ -649,7 +645,6 @@
 			name = "devicekit-iosUITests";
 			packageProductDependencies = (
 				5279BFD52935ECE20056C609 /* FlyingFox */,
-				78C54B322F2CF23500A9369C /* TCP */,
 				78C54B342F2CF23800A9369C /* H264Codec */,
 			);
 			productName = "maestro-driver-iosUITests";
@@ -674,7 +669,6 @@
 			name = BroadcastUploadExtension;
 			packageProductDependencies = (
 				78F689302F17EE5C0025C8AC /* H264Codec */,
-				78F689322F17EE5C0025C8AC /* TCP */,
 				7844BCC02F28128A00F7E003 /* OpusCodec */,
 			);
 			productName = BroadcastUploadExtension;
@@ -716,7 +710,6 @@
 			packageReferences = (
 				52049C062935E04D00807AA3 /* XCRemoteSwiftPackageReference "FlyingFox" */,
 				78F689002F17EDEB0025C8AC /* XCLocalSwiftPackageReference "h264-codec" */,
-				78F689012F17EDFA0025C8AC /* XCLocalSwiftPackageReference "tcp" */,
 				7844BCBF2F28128A00F7E003 /* XCLocalSwiftPackageReference "opus-codec" */,
 			);
 			productRefGroup = 52049BD42935039F00807AA3 /* Products */;
@@ -1221,10 +1214,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "h264-codec";
 		};
-		78F689012F17EDFA0025C8AC /* XCLocalSwiftPackageReference "tcp" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = tcp;
-		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1248,11 +1237,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = OpusCodec;
 		};
-		78C54B322F2CF23500A9369C /* TCP */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 78F689012F17EDFA0025C8AC /* XCLocalSwiftPackageReference "tcp" */;
-			productName = TCP;
-		};
 		78C54B342F2CF23800A9369C /* H264Codec */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 78F689002F17EDEB0025C8AC /* XCLocalSwiftPackageReference "h264-codec" */;
@@ -1262,11 +1246,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 78F689002F17EDEB0025C8AC /* XCLocalSwiftPackageReference "h264-codec" */;
 			productName = H264Codec;
-		};
-		78F689322F17EE5C0025C8AC /* TCP */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 78F689012F17EDFA0025C8AC /* XCLocalSwiftPackageReference "tcp" */;
-			productName = TCP;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
