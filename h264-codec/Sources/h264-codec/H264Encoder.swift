@@ -5,72 +5,19 @@ import CoreMedia
 import CoreVideo
 import VideoToolbox
 
-/// A hardware‑accelerated H.264 encoder built on VideoToolbox.
-///
-/// `H264Encoder` wraps `VTCompressionSession` to encode `CVImageBuffer` / `CMSampleBuffer`
-/// into H.264 NAL units, exposing them via the `naluHandling` callback.
-///
-/// The encoder:
-/// - Configures a `VTCompressionSession` with bitrate, profile, and realtime options.
-/// - Extracts SPS/PPS from keyframes and emits them as NAL units with start codes.
-/// - Parses encoded frames into NAL units and emits them with Annex‑B start codes.
-/// - Supports encoding from both `CMSampleBuffer` and raw `CVImageBuffer`.
-///
-/// ## Important Notes
-/// - The encoder outputs **Annex‑B** formatted NAL units (start‑code prefixed).
-/// - Rotation is applied via Core Image (`rotate(context:orientation:)`) before encoding.
-/// - The encoder assumes a **Baseline** H.264 profile.
-/// - `naluHandling` is invoked on the VideoToolbox callback thread.
-/// - `invalidateCompressionSession()` does not clear `session` to `nil`.
 public final class H264Encoder: NSObject {
-
-    /// Errors that can occur during encoder configuration.
     enum ConfigurationError: Error {
-        /// The compression session could not be created.
         case cannotCreateSession
-        /// The compression session properties could not be set.
         case cannotSetProperties
-        /// The compression session could not be prepared for encoding.
         case cannotPrepareToEncode
     }
 
-    /// The underlying VideoToolbox compression session.
     private var session: VTCompressionSession?
 
-    /// H.264 NALU start code prefix (Annex‑B format).
     private static let naluStartCode = Data([UInt8](arrayLiteral: 0x00, 0x00, 0x00, 0x01))
 
-    /// Callback invoked for each emitted NAL unit (SPS, PPS, or frame data).
-    ///
-    /// The data is in **Annex‑B** format: each NAL unit is prefixed with a 4‑byte
-    /// start code (`0x00 0x00 0x00 0x01`).
-    ///
-    /// ## Threading
-    /// - This closure is called on the VideoToolbox output callback thread.
-    /// - If you touch UI or other main‑thread‑only resources, dispatch accordingly.
     public var naluHandling: ((Data) -> Void)?
 
-    /// Configures and prepares the VideoToolbox compression session.
-    ///
-    /// - Parameters:
-    ///   - width: Frame width in pixels.
-    ///   - height: Frame height in pixels.
-    ///   - isRealTime: Whether to optimize for real‑time encoding.
-    ///   - expectedFrameRate: Expected frame rate (used for keyframe interval and rate control).
-    ///   - averageBitRate: Target average bitrate in bits per second.
-    ///   - quality: Encoder quality hint (0.0–1.0).
-    /// - Throws: `ConfigurationError` if session creation, property setting, or preparation fails.
-    ///
-    /// ## Behavior
-    /// - Creates a `VTCompressionSession` for H.264.
-    /// - Sets profile to `Baseline_AutoLevel`.
-    /// - Sets keyframe interval to `expectedFrameRate`.
-    /// - Enables real‑time mode and power efficiency if requested.
-    ///
-    /// ## Potential Issues
-    /// - No explicit cleanup of an existing session before reconfiguration.
-    /// - No validation of `width`, `height`, or bitrate ranges.
-    /// - `kVTCompressionPropertyKey_Quality` is a hint; actual quality may vary.
     public func configureCompressSession(
         width: Int32,
         height: Int32,
@@ -121,22 +68,6 @@ public final class H264Encoder: NSObject {
         print("VTCompressSession is ready to use")
     }
 
-    /// Updates the encoder bitrate and optionally frame rate dynamically without restarting the session.
-    ///
-    /// - Parameters:
-    ///   - newBitrate: New target bitrate in bits per second.
-    ///   - newFrameRate: Optional new frame rate (nil to keep current).
-    ///
-    /// This method uses `VTSessionSetProperties` to update the compression session
-    /// properties on-the-fly without invalidating and recreating the session.
-    ///
-    /// ## Important Notes
-    /// - Works only if a session is already configured.
-    /// - Changes take effect immediately for subsequent frames.
-    /// - No SPS/PPS regeneration unless keyframe interval changes.
-    ///
-    /// ## Potential Issues
-    /// - If the session is nil or invalid, throws `cannotSetProperties`.
     public func updateEncoderSettings(newBitrate: Int, newFrameRate: Int? = nil) throws {
         guard let session = session else {
             throw ConfigurationError.cannotSetProperties
@@ -160,15 +91,6 @@ public final class H264Encoder: NSObject {
               (newFrameRate != nil ? ", frameRate=\(newFrameRate!)" : ""))
     }
 
-    /// Invalidates the current compression session and completes pending frames.
-    ///
-    /// This:
-    /// - Completes all pending frames up to `.invalid` timestamp.
-    /// - Invalidates the compression session.
-    ///
-    /// ## Potential Issues
-    /// - `session` is not set to `nil` after invalidation; subsequent calls to
-    ///   `encode` will still see a non‑nil session reference, which may be invalid.
     public func invalidateCompressionSession() {
         guard let session = session else {
             return
@@ -176,29 +98,8 @@ public final class H264Encoder: NSObject {
 
         VTCompressionSessionCompleteFrames(session, untilPresentationTimeStamp: .invalid)
         VTCompressionSessionInvalidate(session)
-        // Potential improvement: set self.session = nil
     }
 
-    /// VideoToolbox output callback used by the compression session.
-    ///
-    /// This callback:
-    /// - Validates the sample buffer and status.
-    /// - Extracts SPS/PPS from keyframes.
-    /// - Parses the encoded H.264 bitstream into NAL units.
-    /// - Emits each NAL unit via `naluHandling` with a start code prefix.
-    ///
-    /// ## NALU Parsing
-    /// The encoded bitstream uses a length‑prefixed format:
-    /// - Each NAL unit starts with a 4‑byte big‑endian length field.
-    /// - The callback converts this into Annex‑B by:
-    ///   - Reading the length.
-    ///   - Extracting the NAL unit bytes.
-    ///   - Prefixing with `0x00 0x00 0x00 0x01`.
-    ///
-    /// ## Potential Issues
-    /// - No bounds checking beyond `totalLength`; malformed buffers could cause issues.
-    /// - No differentiation between IDR and non‑IDR frames beyond `isKeyFrame`.
-    /// - `naluHandling` is optional; if nil, encoded data is effectively dropped.
     private var encodingOutputCallback: VTCompressionOutputCallback = { (
         outputCallbackRefCon: UnsafeMutableRawPointer?,
         _: UnsafeMutableRawPointer?,
@@ -229,12 +130,10 @@ public final class H264Encoder: NSObject {
 
         let encoder: H264Encoder = Unmanaged<H264Encoder>.fromOpaque(refcon).takeUnretainedValue()
 
-        // If the encoded frame is a keyframe, extract SPS and PPS.
         if sampleBuffer.isKeyFrame {
             encoder.extractSPSAndPPS(from: sampleBuffer)
         }
 
-        // dataBuffer is a wrapper for the encoded H.264 bitstream.
         var dataBuffer: CMBlockBuffer?
         if #available(iOS 13.0, *) {
             dataBuffer = sampleBuffer.dataBuffer
@@ -274,22 +173,6 @@ public final class H264Encoder: NSObject {
         }
     }
 
-    /// Extracts SPS and PPS NAL units from a keyframe sample buffer and emits them.
-    ///
-    /// - Parameter sampleBuffer: A keyframe `CMSampleBuffer` containing H.264 format description.
-    ///
-    /// This method:
-    /// - Reads the `CMVideoFormatDescription` from the sample buffer.
-    /// - Queries H.264 parameter sets at indices 0 and 1 (SPS and PPS).
-    /// - Wraps them in `Data` and emits them via `naluHandling` with start codes.
-    ///
-    /// ## Assumptions
-    /// - `parameterSetCount == 2` (SPS and PPS only).
-    /// - Parameter set indices 0 and 1 correspond to SPS and PPS.
-    ///
-    /// ## Potential Issues
-    /// - If more parameter sets exist (e.g., multiple SPS/PPS), they are ignored.
-    /// - No handling for SEI or other parameter NAL units.
     private func extractSPSAndPPS(from sampleBuffer: CMSampleBuffer) {
         guard let description = CMSampleBufferGetFormatDescription(sampleBuffer) else { return }
 
@@ -336,21 +219,6 @@ public final class H264Encoder: NSObject {
         }
     }
 
-    /// Encodes a `CMSampleBuffer` after applying rotation via Core Image.
-    ///
-    /// - Parameters:
-    ///   - sampleBuffer: The input sample buffer containing an image buffer.
-    ///   - context: The `CIContext` used for rotation rendering.
-    ///   - orientation: The orientation to apply before encoding.
-    ///
-    /// This method:
-    /// - Extracts the `CVImageBuffer` from the sample buffer.
-    /// - Rotates it using `rotate(context:orientation:)`.
-    /// - Encodes the rotated buffer via `VTCompressionSessionEncodeFrame`.
-    ///
-    /// ## Potential Issues
-    /// - If rotation fails, the frame is silently dropped.
-    /// - Duration is taken from the sample buffer; if invalid, timing may be off.
     public func encode(
         sampleBuffer: CMSampleBuffer,
         context: CIContext,
@@ -377,21 +245,6 @@ public final class H264Encoder: NSObject {
         )
     }
 
-    /// Encodes a raw `CVImageBuffer` after applying rotation via Core Image.
-    ///
-    /// - Parameters:
-    ///   - imageBuffer: The raw image buffer to encode.
-    ///   - timestamp: Presentation timestamp for the encoded frame.
-    ///   - context: The `CIContext` used for rotation rendering.
-    ///   - orientation: The orientation to apply before encoding.
-    ///
-    /// This method:
-    /// - Rotates the buffer using `rotate(context:orientation:)`.
-    /// - Encodes the rotated buffer via `VTCompressionSessionEncodeFrame`.
-    ///
-    /// ## Potential Issues
-    /// - Uses `CMTime.invalid` as duration; some pipelines may expect a valid duration.
-    /// - If rotation fails, the frame is silently dropped.
     public func encode(
         imageBuffer: CVImageBuffer,
         timestamp: CMTime,
@@ -415,19 +268,6 @@ public final class H264Encoder: NSObject {
         )
     }
 
-    /// Encodes a raw `CVPixelBuffer` directly without rotation.
-    ///
-    /// - Parameters:
-    ///   - pixelBuffer: The pixel buffer to encode (must match encoder dimensions).
-    ///   - timestamp: Presentation timestamp for the encoded frame.
-    ///
-    /// Use this method when the pixel buffer is already in the correct orientation
-    /// and size, such as when converting from screenshots that don't need rotation.
-    ///
-    /// ## Important Notes
-    /// - The pixel buffer dimensions must match the encoder's configured dimensions.
-    /// - No rotation or scaling is applied.
-    /// - Uses `CMTime.invalid` as duration.
     public func encode(
         pixelBuffer: CVPixelBuffer,
         timestamp: CMTime
@@ -445,29 +285,6 @@ public final class H264Encoder: NSObject {
         )
     }
 
-    /// Encodes a `CGImage` by converting it to a pixel buffer using GPU-accelerated Core Image.
-    ///
-    /// - Parameters:
-    ///   - cgImage: The source CGImage to encode.
-    ///   - timestamp: Presentation timestamp for the encoded frame.
-    ///   - context: The `CIContext` used for GPU-accelerated rendering.
-    ///   - targetSize: Optional target size. If nil, uses CGImage dimensions.
-    ///   - pool: Optional pixel buffer pool for memory efficiency.
-    ///
-    /// This method:
-    /// - Converts the CGImage to a CVPixelBuffer using GPU-accelerated `CIContext.render()`.
-    /// - Encodes the pixel buffer via `VTCompressionSessionEncodeFrame`.
-    ///
-    /// ## Performance
-    /// - Uses GPU for pixel buffer creation (faster than CGContext.draw)
-    /// - Reuse the CIContext and pool across frames for best performance
-    ///
-    /// ## Usage
-    /// ```swift
-    /// let context = CIContext(options: [.useSoftwareRenderer: false])
-    /// let pool = CGImage.createPixelBufferPool(size: targetSize)
-    /// encoder.encode(cgImage: image, timestamp: time, context: context, pool: pool)
-    /// ```
     public func encode(
         cgImage: CGImage,
         timestamp: CMTime,

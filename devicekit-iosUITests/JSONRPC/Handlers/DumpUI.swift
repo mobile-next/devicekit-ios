@@ -1,12 +1,6 @@
 import os
 
 extension Logger {
-    /// Measures and logs the execution time of a block.
-    ///
-    /// - Parameters:
-    ///   - message: Description of the operation being measured.
-    ///   - block: The block to execute and measure.
-    /// - Returns: The result of the block execution.
     func measure<T>(message: String, _ block: () throws -> T) rethrows -> T {
         let start = Date()
         info("\(message) - start")
@@ -20,52 +14,15 @@ extension Logger {
     }
 }
 
-// MARK: - dump_ui Request Model
-
-/// Request body for the `/dump_ui` endpoint.
-///
-/// This model represents the JSON payload for capturing the UI view hierarchy.
-///
-/// ## JSON Format
-/// ```json
-/// {
-///   "deviceId": "device-uuid",
-///   "format": "json"
-/// }
-/// ```
-///
-/// ## Format Options
-/// - `"json"` (default): Returns structured `ViewHierarchy` with metadata (depth, etc.)
-/// - `"raw"`: Returns raw `AXElement` hierarchy without wrapper metadata
-///
-/// ## curl Examples
-/// ```bash
-/// # Capture UI hierarchy in JSON format (default)
-/// curl -X POST http://127.0.0.1:12004/rpc \
-///     -H "Content-Type: application/json" \
-///     -d '{"jsonrpc":"2.0","method":"dump_ui","params":{"deviceId":"","format":"json"},"id":1}'
-///
-/// # Capture UI hierarchy in raw format
-/// curl -X POST http://127.0.0.1:12004/rpc \
-///     -H "Content-Type: application/json" \
-///     -d '{"jsonrpc":"2.0","method":"dump_ui","params":{"deviceId":"","format":"raw"},"id":1}'
-/// ```
 struct DumpUIRequest: Codable {
-    /// The target device identifier (unused in direct device connection, kept for API compatibility).
     let deviceId: String
-
-    /// Format of the output: "json" (default) or "raw".
-    /// - `json`: Returns `ViewHierarchy` with metadata (depth, axElement)
-    /// - `raw`: Returns raw `AXElement` hierarchy directly
     let format: String?
 }
 
-/// Supported output formats for dump_ui.
 private enum DumpUIFormat: String {
     case json
     case raw
 
-    /// Parses format string, defaults to `.json` if nil or unrecognized.
     init(from string: String?) {
         if let string = string?.lowercased(), let format = DumpUIFormat(rawValue: string) {
             self = format
@@ -75,40 +32,6 @@ private enum DumpUIFormat: String {
     }
 }
 
-// MARK: - dump_ui Method Handler
-
-/// JSON-RPC handler for the `dump_ui` method.
-///
-/// Captures the complete UI view hierarchy of the foreground application.
-///
-/// ## Parameters
-/// ```json
-/// {
-///   "deviceId": "",
-///   "format": "json"
-/// }
-/// ```
-///
-/// ## Result Formats
-///
-/// ### JSON Format (default)
-/// Returns `ViewHierarchy` with metadata:
-/// ```json
-/// {
-///   "depth": 15,
-///   "axElement": { ... nested hierarchy ... }
-/// }
-/// ```
-///
-/// ### Raw Format
-/// Returns the raw `AXElement` hierarchy directly without wrapper:
-/// ```json
-/// {
-///   "identifier": "...",
-///   "frame": { "X": 0, "Y": 0, "Width": 390, "Height": 844 },
-///   "children": [ ... ]
-/// }
-/// ```
 @MainActor
 struct DumpUIMethodHandler: RPCMethodHandler {
     static let methodName = "dump_ui"
@@ -182,19 +105,9 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         }
     }
 
-    // MARK: - Private Helper Methods
-
-    /// Formats the AXElement hierarchy based on the requested format.
-    ///
-    /// - Parameters:
-    ///   - axElement: The accessibility element hierarchy to format.
-    ///   - format: The desired output format (.json or .raw).
-    /// - Returns: JSONValue representation of the hierarchy.
-    /// - Throws: Error if JSON encoding fails.
     private func formatResponse(axElement: AXElement, format: DumpUIFormat) throws -> JSONValue {
         switch format {
         case .json:
-            // Wrap in ViewHierarchy with depth metadata
             let viewHierarchy = ViewHierarchy(
                 axElement: axElement,
                 depth: axElement.depth()
@@ -202,7 +115,6 @@ struct DumpUIMethodHandler: RPCMethodHandler {
             return try JSONValue.from(viewHierarchy)
 
         case .raw:
-            // Return raw AXElement directly without wrapper
             return try JSONValue.from(axElement)
         }
     }

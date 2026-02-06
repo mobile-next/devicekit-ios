@@ -1,31 +1,17 @@
 import os
 
-/// Comprehensive metrics collector for MJPEG streaming performance analysis.
 final class MJPEGMetrics: @unchecked Sendable {
-
-    // MARK: - Timing Metrics (all in nanoseconds)
-
-    /// Frame capture times
     private var captureTimes: [UInt64] = []
-    /// Scaling times (if applicable)
     private var scaleTimes: [UInt64] = []
-    /// Total frame processing times
     private var frameTimes: [UInt64] = []
-    /// Time between frame deliveries
     private var frameIntervals: [UInt64] = []
-
-    // MARK: - Frame Counters
 
     private(set) var framesCapured: UInt64 = 0
     private(set) var framesDropped: UInt64 = 0
     private(set) var framesScaled: UInt64 = 0
 
-    // MARK: - Data Metrics
-
     private(set) var totalBytesOutput: UInt64 = 0
     private var frameSizes: [Int] = []
-
-    // MARK: - Session Info
 
     private let sessionStartTime: UInt64
     private var lastFrameTime: UInt64 = 0
@@ -44,8 +30,6 @@ final class MJPEGMetrics: @unchecked Sendable {
         self.targetFPS = targetFPS
         self.sessionStartTime = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW)
     }
-
-    // MARK: - Recording Methods
 
     func recordCapture(durationNs: UInt64, success: Bool) {
         lock.lock()
@@ -80,8 +64,6 @@ final class MJPEGMetrics: @unchecked Sendable {
         lastFrameTime = now
     }
 
-    // MARK: - Statistics
-
     private func percentile(_ values: [UInt64], _ p: Double) -> UInt64 {
         guard !values.isEmpty else { return 0 }
         let sorted = values.sorted()
@@ -97,7 +79,6 @@ final class MJPEGMetrics: @unchecked Sendable {
     func logSummary() {
         logger.info("\n\(self.generateReport())")
     }
-
 
     private func buildSections() -> [ReportSection] {
         let now = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW)

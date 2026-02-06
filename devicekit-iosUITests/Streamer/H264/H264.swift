@@ -6,8 +6,6 @@ import CoreImage
 import CoreMedia
 import H264Codec
 
-// MARK: - Constants
-
 private enum H264Constants {
     static let defaultFPS: Int = 30
     static let maxFPS: Int = 60
@@ -19,8 +17,6 @@ private enum H264Constants {
     static let minScale: Int = 10
     static let maxScale: Int = 100
 }
-
-// MARK: - Stream Configuration
 
 struct H264StreamConfig: Sendable {
     let fps: Int
@@ -38,14 +34,6 @@ struct H264StreamConfig: Sendable {
     }
 }
 
-// MARK: - HTTP Handler
-
-/// HTTP handler for H.264 video streaming endpoint.
-///
-/// Streams H.264 encoded video over HTTP. Connect with:
-/// ```bash
-/// curl http://127.0.0.1:12004/h264 | ffplay -fflags nobuffer -flags low_delay -f h264 -
-/// ```
 @MainActor
 struct H264HTTPHandler: HTTPHandler {
 
@@ -85,8 +73,6 @@ struct H264HTTPHandler: HTTPHandler {
     }
 }
 
-// MARK: - Byte Stream
-
 struct H264ByteStream: AsyncBufferedSequence, Sendable {
     typealias Element = UInt8
 
@@ -96,8 +82,6 @@ struct H264ByteStream: AsyncBufferedSequence, Sendable {
         H264ByteIterator(config: config)
     }
 }
-
-// MARK: - Iterator
 
 final class H264ByteIterator: AsyncBufferedIteratorProtocol, @unchecked Sendable {
     typealias Element = UInt8
@@ -121,12 +105,10 @@ final class H264ByteIterator: AsyncBufferedIteratorProtocol, @unchecked Sendable
         self.metrics = H264Metrics(targetFPS: config.fps, targetBitrate: config.bitrate)
         self.frameProducer = H264FrameProducer(metrics: metrics)
 
-        // Create NAL unit stream and start capture loop
         let stream = frameProducer.makeNALUnitStream()
         self.naluStream = stream
         self.naluIterator = stream.makeAsyncIterator()
 
-        // Start background capture loop
         startCaptureLoop()
     }
 
@@ -174,7 +156,6 @@ final class H264ByteIterator: AsyncBufferedIteratorProtocol, @unchecked Sendable
             return nil
         }
 
-        // Get next NAL unit from the stream
         guard let data = await naluIterator?.next() else {
             isCancelled = true
             metrics.logSummary()

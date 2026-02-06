@@ -1,28 +1,6 @@
 import Foundation
 import os
 
-// MARK: - JSON-RPC Dispatcher
-
-/// Routes JSON-RPC requests to the appropriate method handlers.
-///
-/// The dispatcher maintains a registry of method handlers and processes
-/// incoming requests by looking up and invoking the corresponding handler.
-///
-/// ## Supported Methods
-/// - `io_tap`: Performs tap gestures at screen coordinates
-/// - `io_longpress`: Performs long-press gestures
-/// - `io_swipe`: Performs swipe gestures
-/// - `io_text`: Types text into focused text fields
-/// - `dump_ui`: Captures UI view hierarchy
-/// - `screenshot`: Captures device screenshot
-/// - `apps_launch`: Launches applications by bundle ID
-/// - `open_url`: Opens URLs in the default application
-///
-/// ## Usage
-/// ```swift
-/// let dispatcher = JSONRPCDispatcher()
-/// let response = await dispatcher.dispatch(requestData)
-/// ```
 @MainActor
 final class JSONRPCDispatcher {
 
@@ -31,10 +9,8 @@ final class JSONRPCDispatcher {
         category: "JSONRPCDispatcher"
     )
 
-    /// Registered method handlers keyed by method name.
     private var handlers: [String: any RPCMethodHandler] = [:]
 
-    /// Initializes the dispatcher with default method handlers.
     init() {
         registerHandler(IOTapMethodHandler())
         registerHandler(DumpUIMethodHandler())
@@ -47,26 +23,15 @@ final class JSONRPCDispatcher {
         registerHandler(IOGestureMethodHandler())
     }
 
-    /// Registers a method handler.
-    ///
-    /// - Parameter handler: The handler to register.
     func registerHandler<T: RPCMethodHandler>(_ handler: T) {
         handlers[T.methodName] = handler
     }
 
-    /// Dispatches a JSON-RPC request and returns the response.
-    ///
-    /// - Parameter data: Raw JSON data containing the request.
-    /// - Returns: JSON-encoded response data.
     func dispatch(_ data: Data) async -> Data {
         let response = await processRequest(data)
         return encodeResponse(response)
     }
 
-    /// Dispatches a JSON-RPC request string and returns the response string.
-    ///
-    /// - Parameter message: JSON string containing the request.
-    /// - Returns: JSON string containing the response.
     func dispatch(_ message: String) async -> String {
         guard let data = message.data(using: .utf8) else {
             let response = JSONRPCResponse.failure(error: .parseError, id: nil)
@@ -75,8 +40,6 @@ final class JSONRPCDispatcher {
         let responseData = await dispatch(data)
         return String(data: responseData, encoding: .utf8) ?? "{}"
     }
-
-    // MARK: - Private Methods
 
     private func processRequest(_ data: Data) async -> JSONRPCResponse {
         let request: JSONRPCRequest
@@ -127,13 +90,7 @@ final class JSONRPCDispatcher {
     }
 }
 
-// MARK: - Batch Request Support
-
 extension JSONRPCDispatcher {
-    /// Dispatches a batch of JSON-RPC requests.
-    ///
-    /// - Parameter data: Raw JSON data containing an array of requests.
-    /// - Returns: JSON-encoded array of responses.
     func dispatchBatch(_ data: Data) async -> Data {
         guard let requests = try? JSONDecoder().decode([JSONRPCRequest].self, from: data) else {
             let response = JSONRPCResponse.failure(error: .invalidRequest, id: nil)
@@ -150,7 +107,6 @@ extension JSONRPCDispatcher {
                 continue
             }
             let response = await processRequest(requestData)
-            // Only include response if request had an id (not a notification)
             if request.id != nil {
                 responses.append(response)
             }
