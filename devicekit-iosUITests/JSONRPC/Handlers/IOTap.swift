@@ -1,50 +1,11 @@
 import os
 
-// MARK: - Tap Request Model
-
-/// Request body for the `/io_tap` endpoint.
-///
-/// This model represents the JSON payload for tap gestures.
-///
-/// ## JSON Format
-/// ```json
-/// {
-///   "x": 100.0,
-///   "y": 200.0,
-///   "duration": null
-/// }
-/// ```
-///
 struct IOTapRequest: Codable {
-    /// The target device identifier.
     let deviceId: String
-
-    /// X coordinate in screen points.
     let x: Float
-
-    /// Y coordinate in screen points.
     let y: Float
 }
 
-// MARK: - Tap Method Handler
-
-/// JSON-RPC handler for the `io_tap` method.
-///
-/// Performs tap or long-press gestures at screen coordinates.
-///
-/// ## Parameters
-/// ```json
-/// {
-///   "x": 100.0,
-///   "y": 200.0,
-///   "duration": null
-/// }
-/// ```
-///
-/// ## Result
-/// ```json
-/// {"success": true}
-/// ```
 @MainActor
 struct IOTapMethodHandler: RPCMethodHandler {
     static let methodName = "io_tap"
@@ -54,11 +15,6 @@ struct IOTapMethodHandler: RPCMethodHandler {
         category: String(describing: Self.self)
     )
 
-    /// Executes the `io_tap` JSON‑RPC method.
-    ///
-    /// - Parameter params: The JSON‑RPC parameters containing tap coordinates.
-    /// - Returns: A JSON object `{ "success": true }` on success.
-    /// - Throws: `RPCMethodError` if decoding fails or the gesture cannot be synthesized.
     func execute(params: JSONValue?) async throws -> JSONValue {
         guard let params = params else {
             throw RPCMethodError.invalidParams("Missing parameters for io_tap method")

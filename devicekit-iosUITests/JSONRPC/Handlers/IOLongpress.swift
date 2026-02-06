@@ -1,55 +1,12 @@
 import os
 
-// MARK: - Tap Request Model
-
-/// Request body for the `/io_longpress` endpoint.
-///
-/// This model represents the JSON payload for long-press gestures.
-///
-/// ## JSON Format
-/// ```json
-/// {
-///   "x": 100.0,
-///   "y": 200.0,
-///   "duration": null
-/// }
-/// ```
-///
 struct IOLongpressRequest: Codable {
-    /// The target device identifier.
     let deviceId: String
-
-    /// X coordinate in screen points.
     let x: Float
-
-    /// Y coordinate in screen points.
     let y: Float
-
-    /// Duration in seconds for long-press gestures.
-    /// - `nil` or omitted: Performs a simple tap.
-    /// - Non-nil value: Performs a long-press for the specified duration.
     let duration: TimeInterval
 }
 
-// MARK: - Tap Method Handler
-
-/// JSON-RPC handler for the `io_longpress` method.
-///
-/// Performs tap or long-press gestures at screen coordinates.
-///
-/// ## Parameters
-/// ```json
-/// {
-///   "x": 100,
-///   "y": 200,
-///   "duration": 2
-/// }
-/// ```
-///
-/// ## Result
-/// ```json
-/// {"success": true}
-/// ```
 @MainActor
 struct IOLongpressMethodHandler: RPCMethodHandler {
     static let methodName = "io_longpress"
@@ -59,11 +16,6 @@ struct IOLongpressMethodHandler: RPCMethodHandler {
         category: String(describing: Self.self)
     )
 
-    /// Executes the `io_longpress` JSON‑RPC method.
-    ///
-    /// - Parameter params: The JSON‑RPC parameters containing longpress coordinates and duration.
-    /// - Returns: A JSON object `{ "success": true }` on success.
-    /// - Throws: `RPCMethodError` if decoding fails or the gesture cannot be synthesized.
     func execute(params: JSONValue?) async throws -> JSONValue {
         guard let params = params else {
             throw RPCMethodError.invalidParams("Missing parameters for io_tap method")

@@ -17,10 +17,7 @@ enum H264Error: Error, LocalizedError {
     }
 }
 
-/// Produces H264 encoded frames from screen captures.
-/// Uses AsyncStream for thread-safe NAL unit delivery.
 final class H264FrameProducer: @unchecked Sendable {
-
     private let captureTimeout: TimeInterval = 0.5
     private let metricsReportInterval: UInt64 = 30
 
@@ -31,10 +28,8 @@ final class H264FrameProducer: @unchecked Sendable {
     private var isConfigured = false
     private var frameCount: UInt64 = 0
 
-    // AsyncStream for thread-safe NAL unit delivery
     private var continuation: AsyncStream<Data>.Continuation?
 
-    // Metrics
     private let metrics: H264Metrics
 
     private let logger = Logger(
@@ -46,7 +41,6 @@ final class H264FrameProducer: @unchecked Sendable {
         self.metrics = metrics
     }
 
-    /// Creates an AsyncStream that yields NAL units as they're encoded.
     func makeNALUnitStream() -> AsyncStream<Data> {
         AsyncStream { continuation in
             self.continuation = continuation
@@ -57,15 +51,12 @@ final class H264FrameProducer: @unchecked Sendable {
         }
     }
 
-    /// Invalidates the encoder session.
     func invalidateEncoder() {
         encoder?.invalidateCompressionSession()
         continuation?.finish()
         continuation = nil
     }
 
-    /// Captures a screenshot and encodes it to H264.
-    /// NAL units are delivered via the AsyncStream.
     @MainActor
     func captureAndEncodeFrame(
         fps: Int,
@@ -76,7 +67,6 @@ final class H264FrameProducer: @unchecked Sendable {
     ) async throws {
         let frameStart = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW)
 
-        // Capture screenshot
         let captureStart = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW)
         guard let uiImage = try? FBScreenshot.captureUIImage(
             withQuality: 0.9,
@@ -87,7 +77,6 @@ final class H264FrameProducer: @unchecked Sendable {
         }
         metrics.recordCapture(durationNs: clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) - captureStart, success: true)
 
-        // Configure encoder on first frame
         if !isConfigured {
             try configureEncoder(
                 for: cgImage,
@@ -104,7 +93,6 @@ final class H264FrameProducer: @unchecked Sendable {
             throw H264Error.encoderNotConfigured
         }
 
-        // Convert to pixel buffer using GPU
         let convertStart = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW)
         guard let pixelBuffer = cgImage.toPixelBuffer(
             context: ciContext,
@@ -116,7 +104,6 @@ final class H264FrameProducer: @unchecked Sendable {
         }
         metrics.recordConversion(durationNs: clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) - convertStart, success: true)
 
-        // Encode frame - NAL units delivered via continuation
         let encodeStart = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW)
         let timestamp = CMTime(
             value: CMTimeValue(frameCount),
@@ -126,15 +113,12 @@ final class H264FrameProducer: @unchecked Sendable {
         metrics.recordEncode(durationNs: clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) - encodeStart, success: true)
         frameCount += 1
 
-        // Record frame completion
         metrics.recordFrameComplete(totalDurationNs: clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) - frameStart)
 
-        // Log metrics periodically
         if frameCount % metricsReportInterval == 0 {
             metrics.logSummary()
         }
 
-        // Maintain frame rate
         let elapsed = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) - frameStart
         if elapsed < frameInterval {
             try await Task.sleep(nanoseconds: frameInterval - elapsed)
@@ -153,7 +137,6 @@ final class H264FrameProducer: @unchecked Sendable {
         let originalWidth = CGFloat(cgImage.width)
         let originalHeight = CGFloat(cgImage.height)
 
-        // Ensure even dimensions (H264 requirement)
         var scaledWidth = Int(originalWidth * CGFloat(scale))
         var scaledHeight = Int(originalHeight * CGFloat(scale))
         scaledWidth = scaledWidth - (scaledWidth % 2)
@@ -165,19 +148,16 @@ final class H264FrameProducer: @unchecked Sendable {
 
         logger.info("Encoder: \(scaledWidth)x\(scaledHeight) @ \(fps)fps, \(bitrate/1_000_000)Mbps")
 
-        // GPU-accelerated context
         ciContext = CIContext(options: [
             .useSoftwareRenderer: false,
             .highQualityDownsample: false
         ])
 
-        // Pixel buffer pool for reuse
         pixelBufferPool = CGImage.createPixelBufferPool(
             size: targetSize!,
             minimumBufferCount: 3
         )
 
-        // Configure encoder
         let enc = H264Encoder()
         try enc.configureCompressSession(
             width: Int32(scaledWidth),
@@ -188,7 +168,6 @@ final class H264FrameProducer: @unchecked Sendable {
             quality: quality
         )
 
-        // Deliver NAL units via AsyncStream continuation (thread-safe)
         enc.naluHandling = { [weak self] data in
             guard let self = self else { return }
             let isIDR = data.count > 4 && (data[4] & 0x1F) == 5

@@ -1,11 +1,6 @@
 import FlyingFox
 import Foundation
 
-// MARK: - HTTP POST Handler for JSON-RPC
-
-/// HTTP handler for JSON-RPC over POST requests.
-///
-/// This allows testing with curl and other HTTP clients.
 @MainActor
 struct JSONRPCHTTPHandler: HTTPHandler {
 

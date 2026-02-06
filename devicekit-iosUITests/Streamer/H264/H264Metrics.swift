@@ -1,17 +1,11 @@
 import os
 
-/// Comprehensive metrics collector for H264 streaming performance analysis.
 final class H264Metrics: @unchecked Sendable {
-
-    // MARK: - Timing Metrics (all in nanoseconds)
-
     private var captureTimes: [UInt64] = []
     private var convertTimes: [UInt64] = []
     private var encodeTimes: [UInt64] = []
     private var frameTimes: [UInt64] = []
     private var frameIntervals: [UInt64] = []
-
-    // MARK: - Frame Counters
 
     private(set) var framesCapured: UInt64 = 0
     private(set) var framesEncoded: UInt64 = 0
@@ -20,14 +14,10 @@ final class H264Metrics: @unchecked Sendable {
     private(set) var framesDroppedEncoding: UInt64 = 0
     private(set) var framesSkipped: UInt64 = 0
 
-    // MARK: - Data Metrics
-
     private(set) var totalBytesOutput: UInt64 = 0
     private(set) var naluCount: UInt64 = 0
     private(set) var idrFrameCount: UInt64 = 0
     private var naluSizes: [Int] = []
-
-    // MARK: - System Metrics
 
     private let sessionStartTime: UInt64
     private var lastFrameTime: UInt64 = 0
@@ -46,8 +36,6 @@ final class H264Metrics: @unchecked Sendable {
         self.targetBitrate = targetBitrate
         self.sessionStartTime = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW)
     }
-
-    // MARK: - Recording Methods
 
     func recordCapture(durationNs: UInt64, success: Bool) {
         lock.lock()
@@ -115,8 +103,6 @@ final class H264Metrics: @unchecked Sendable {
         framesSkipped += 1
     }
 
-    // MARK: - Statistics Calculation
-
     private func percentile(_ values: [UInt64], _ p: Double) -> UInt64 {
         guard !values.isEmpty else { return 0 }
         let sorted = values.sorted()
@@ -143,8 +129,6 @@ final class H264Metrics: @unchecked Sendable {
     private func getCPUUsage() -> Double {
         CPUUsageMonitor().cpuUsage()
     }
-
-    // MARK: - Report sections
 
     private func buildSections() -> [ReportSection] {
         let now = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW)
@@ -268,8 +252,6 @@ final class H264Metrics: @unchecked Sendable {
 
         return [session, timing, video, bandwidth, nal, system]
     }
-
-    // MARK: - Report Generation
 
     func generateReport() -> String {
         let sections = buildSections()

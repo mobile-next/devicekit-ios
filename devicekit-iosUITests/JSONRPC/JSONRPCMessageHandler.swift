@@ -1,9 +1,6 @@
 import FlyingFox
 import Foundation
 
-// MARK: - WebSocket Message Handler
-
-/// WebSocket message handler that processes JSON-RPC messages.
 struct JSONRPCMessageHandler: WSMessageHandler {
 
     private let dispatcher: JSONRPCDispatcher

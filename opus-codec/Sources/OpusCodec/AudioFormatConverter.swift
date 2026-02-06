@@ -2,7 +2,6 @@ import AudioToolbox
 import CoreMedia
 import Foundation
 
-/// Converts audio sample buffers to PCM Int16 format with specified sample rate and channel configuration.
 final class AudioFormatConverter {
 
     private var converter: AudioConverterRef?

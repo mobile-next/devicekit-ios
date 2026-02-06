@@ -13,7 +13,7 @@ struct Metric {
 
 struct DistributionMetric {
     let name: String
-    let values: [UInt64]  // nanoseconds or bytes or whatever
+    let values: [UInt64]
     let unit: String?
 }
 

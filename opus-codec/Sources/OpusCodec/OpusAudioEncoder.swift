@@ -3,10 +3,7 @@ import CoreMedia
 import Foundation
 import OpusEncoder
 
-/// Encodes PCM audio sample buffers into Opus frames (48 kHz, mono, 20 ms).
 public final class OpusAudioEncoder {
-
-    /// Callback invoked for each encoded Opus frame.
     public var opusHandling: ((Data) -> Void)?
 
     private var encoder: OpusEncoderRef?
@@ -58,7 +55,6 @@ public final class OpusAudioEncoder {
             return
         }
 
-        // NSLog("[OpusAudioEncoder] PCM samples: \(pcm.count)")
         pendingPCM.append(contentsOf: pcm)
         encodePendingFrames()
     }
