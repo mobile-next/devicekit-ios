@@ -66,6 +66,7 @@
 		78C54BB32F2D4F3400A9369C /* CPUUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BB22F2D4F2F00A9369C /* CPUUsageMonitor.swift */; };
 		78C54BCB2F2D5C4600A9369C /* MemoryUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BCA2F2D5C3E00A9369C /* MemoryUsageMonitor.swift */; };
 		78C54BCF2F2D5CAD00A9369C /* MetricsReportGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BCE2F2D5CA700A9369C /* MetricsReportGenerator.swift */; };
+		78EA9F912F36611B008B17D3 /* AppsTerminate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EA9F902F36611B008B17D3 /* AppsTerminate.swift */; };
 		78F689082F17EE190025C8AC /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78F689072F17EE190025C8AC /* ReplayKit.framework */; };
 		78F6891E2F17EE190025C8AC /* BroadcastUploadExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 78F689062F17EE190025C8AC /* BroadcastUploadExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		78F689312F17EE5C0025C8AC /* H264Codec in Frameworks */ = {isa = PBXBuildFile; productRef = 78F689302F17EE5C0025C8AC /* H264Codec */; };
@@ -258,6 +259,7 @@
 		78C54BB22F2D4F2F00A9369C /* CPUUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUUsageMonitor.swift; sourceTree = "<group>"; };
 		78C54BCA2F2D5C3E00A9369C /* MemoryUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryUsageMonitor.swift; sourceTree = "<group>"; };
 		78C54BCE2F2D5CA700A9369C /* MetricsReportGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsReportGenerator.swift; sourceTree = "<group>"; };
+		78EA9F902F36611B008B17D3 /* AppsTerminate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsTerminate.swift; sourceTree = "<group>"; };
 		78F689062F17EE190025C8AC /* BroadcastUploadExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BroadcastUploadExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		78F689072F17EE190025C8AC /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		78F689132F17EE190025C8AC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -561,6 +563,7 @@
 				7814800A2F27C55500E61E3B /* IOLongpress.swift */,
 				78147FCA2F27C03500E61E3B /* IOSwipe.swift */,
 				78147F3C2F27BDBC00E61E3B /* AppsLaunch.swift */,
+				78EA9F902F36611B008B17D3 /* AppsTerminate.swift */,
 				78147F0E2F27AA6B00E61E3B /* IOText.swift */,
 				787C47DC2F228B770027A012 /* DumpUI.swift */,
 				787C47DD2F228B770027A012 /* IOTap.swift */,
@@ -791,6 +794,7 @@
 				521C1F0B2D801A360024EE42 /* XCUIApplication+Helper.m in Sources */,
 				52D8FA9D2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.m in Sources */,
 				52049BF8293503A200807AA3 /* devicekit_iosUITests.swift in Sources */,
+				78EA9F912F36611B008B17D3 /* AppsTerminate.swift in Sources */,
 				78C54BCB2F2D5C4600A9369C /* MemoryUsageMonitor.swift in Sources */,
 				52D8FAB02D6DD4100015FAB3 /* FBConfiguration.m in Sources */,
 				78147F0F2F27AA6B00E61E3B /* IOText.swift in Sources */,
