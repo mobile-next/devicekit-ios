@@ -16,12 +16,13 @@ final class JSONRPCDispatcher {
         registerHandler(DumpUIMethodHandler())
         registerHandler(IOTextMethodHandler())
         registerHandler(ApsLaunchMethodHandler())
-        registerHandler(ApsTerminateMethodHandler())
+        registerHandler(AppsTerminateMethodHandler())
         registerHandler(IOSwipeMethodHandler())
         registerHandler(IOLongpressMethodHandler())
         registerHandler(ScreenshotMethodHandler())
         registerHandler(URLMethodHandler())
         registerHandler(IOGestureMethodHandler())
+        registerHandler(IOButtonMethodHandler())
     }
 
     func registerHandler<T: RPCMethodHandler>(_ handler: T) {
