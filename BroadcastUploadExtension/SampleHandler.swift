@@ -1,3 +1,4 @@
+import Foundation
 import ReplayKit
 
 class SampleHandler: RPBroadcastSampleHandler {
@@ -8,6 +9,8 @@ class SampleHandler: RPBroadcastSampleHandler {
     private static let defaultAverageBitRate: Int = 8_000_000
     private static let defaultAudioPort: UInt16 = 12006
     private static let defaultAudioBitRate: Int = 64_000
+
+    private static let rpcPort: UInt16 = 12004
 
     private var context: CIContext?
     private var screenStreamer: ScreenStreamer?
@@ -40,8 +43,23 @@ class SampleHandler: RPBroadcastSampleHandler {
                 audioPort: audioEnabled ? audioPort : nil,
                 audioBitRate: audioBitRate
             )
+
+            // Double tap will move the app from the foreground
+            requestToGoHome()
+            requestToGoHome()
         } catch {
             fatalError(error.localizedDescription)
+        }
+    }
+
+    private func requestToGoHome() {
+        let url = URL(string: "ws://127.0.0.1:\(Self.rpcPort)/rpc")!
+        let task = URLSession.shared.webSocketTask(with: url)
+        task.resume()
+
+        let request = #"{"jsonrpc":"2.0","method":"io_button","params":{"button":"home","deviceId":""},"id":1}"#
+        task.send(.string(request)) { _ in
+            task.cancel(with: .normalClosure, reason: nil)
         }
     }
 
