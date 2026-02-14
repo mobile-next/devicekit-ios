@@ -35,7 +35,7 @@ final class AudioFormatConverter {
         }
 
         let inputASBD = asbdPointer.pointee
-        NSLog("[AudioFormatConverter] Input ASBD: rate=\(inputASBD.mSampleRate) channels=\(inputASBD.mChannelsPerFrame) bytesPerFrame=\(inputASBD.mBytesPerFrame) formatFlags=\(inputASBD.mFormatFlags) formatID=\(inputASBD.mFormatID)")
+        // NSLog("[AudioFormatConverter] Input ASBD: rate=\(inputASBD.mSampleRate) channels=\(inputASBD.mChannelsPerFrame) bytesPerFrame=\(inputASBD.mBytesPerFrame) formatFlags=\(inputASBD.mFormatFlags) formatID=\(inputASBD.mFormatID)")
         guard inputASBD.mFormatID == kAudioFormatLinearPCM else {
             NSLog("[AudioFormatConverter] Input format is not linear PCM")
             return nil
