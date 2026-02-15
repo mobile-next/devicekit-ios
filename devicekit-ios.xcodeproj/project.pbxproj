@@ -53,6 +53,9 @@
 		7844BCC12F28128A00F7E003 /* OpusCodec in Frameworks */ = {isa = PBXBuildFile; productRef = 7844BCC02F28128A00F7E003 /* OpusCodec */; };
 		785281492F2BEC40002A7531 /* FBScreenshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 785281472F2BEC40002A7531 /* FBScreenshot.h */; };
 		7852814A2F2BEC40002A7531 /* FBScreenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 785281482F2BEC40002A7531 /* FBScreenshot.m */; };
+		7865E4C42F423A8700D0F45F /* IOOrientationSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865E4C32F423A8700D0F45F /* IOOrientationSet.swift */; };
+		7865E4C52F423A8700D0F45F /* IOOrientationGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865E4C22F423A8700D0F45F /* IOOrientationGet.swift */; };
+		7865E4C72F423ACA00D0F45F /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865E4C62F423ACA00D0F45F /* DeviceInfo.swift */; };
 		787C47972F227F6B0027A012 /* JSONRPCModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47932F227F6B0027A012 /* JSONRPCModels.swift */; };
 		787C47982F227F6B0027A012 /* RPCMethodHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47942F227F6B0027A012 /* RPCMethodHandler.swift */; };
 		787C47992F227F6B0027A012 /* XCTestServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47952F227F6B0027A012 /* XCTestServer.swift */; };
@@ -248,6 +251,9 @@
 		781480FE2F27DEE600E61E3B /* IOGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOGesture.swift; sourceTree = "<group>"; };
 		785281472F2BEC40002A7531 /* FBScreenshot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBScreenshot.h; sourceTree = "<group>"; };
 		785281482F2BEC40002A7531 /* FBScreenshot.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBScreenshot.m; sourceTree = "<group>"; };
+		7865E4C22F423A8700D0F45F /* IOOrientationGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOOrientationGet.swift; sourceTree = "<group>"; };
+		7865E4C32F423A8700D0F45F /* IOOrientationSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOOrientationSet.swift; sourceTree = "<group>"; };
+		7865E4C62F423ACA00D0F45F /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
 		787C47922F227F6B0027A012 /* JSONRPCDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCDispatcher.swift; sourceTree = "<group>"; };
 		787C47932F227F6B0027A012 /* JSONRPCModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCModels.swift; sourceTree = "<group>"; };
 		787C47942F227F6B0027A012 /* RPCMethodHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCMethodHandler.swift; sourceTree = "<group>"; };
@@ -559,6 +565,9 @@
 		787C47DE2F228B770027A012 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
+				7865E4C62F423ACA00D0F45F /* DeviceInfo.swift */,
+				7865E4C22F423A8700D0F45F /* IOOrientationGet.swift */,
+				7865E4C32F423A8700D0F45F /* IOOrientationSet.swift */,
 				781480FE2F27DEE600E61E3B /* IOGesture.swift */,
 				781480742F27D2B900E61E3B /* URL.swift */,
 				781480362F27CEF000E61E3B /* Screenshot.swift */,
@@ -774,6 +783,7 @@
 				52D8FAAC2D6DD3A20015FAB3 /* FBLogger.m in Sources */,
 				7852814A2F2BEC40002A7531 /* FBScreenshot.m in Sources */,
 				521C1F072D8017480024EE42 /* AXClientProxy.m in Sources */,
+				7865E4C72F423ACA00D0F45F /* DeviceInfo.swift in Sources */,
 				5261117A2DE5E8E7007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m in Sources */,
 				78147F3D2F27BDBC00E61E3B /* AppsLaunch.swift in Sources */,
 				610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */,
@@ -789,6 +799,8 @@
 				9811C9092C49751D00DDACA0 /* OrientationGeometry.swift in Sources */,
 				612DE414298426EF003C2BE0 /* EventRecord.swift in Sources */,
 				787C47972F227F6B0027A012 /* JSONRPCModels.swift in Sources */,
+				7865E4C42F423A8700D0F45F /* IOOrientationSet.swift in Sources */,
+				7865E4C52F423A8700D0F45F /* IOOrientationGet.swift in Sources */,
 				787C47982F227F6B0027A012 /* RPCMethodHandler.swift in Sources */,
 				7814800B2F27C56100E61E3B /* IOLongpress.swift in Sources */,
 				781480372F27CEF000E61E3B /* Screenshot.swift in Sources */,
