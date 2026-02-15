@@ -13,7 +13,7 @@ struct ScreenshotRequest: Codable {
 
 @MainActor
 struct ScreenshotMethodHandler: RPCMethodHandler {
-    static let methodName = "screenshot"
+    static let methodName = "device.screenshot"
     
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

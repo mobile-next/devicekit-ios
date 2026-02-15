@@ -22,7 +22,7 @@ private enum ActionType: String {
 
 @MainActor
 struct IOGestureMethodHandler: RPCMethodHandler {
-    static let methodName = "io_gesture"
+    static let methodName = "device.io.gesture"
 
     private static let minimumPressHoldDuration: TimeInterval = 0.05
 

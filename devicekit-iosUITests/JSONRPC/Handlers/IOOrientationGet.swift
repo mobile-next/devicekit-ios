@@ -6,7 +6,7 @@ struct IOOrientationGetRequest: Codable {
 
 @MainActor
 struct IOOrientationGetMethodHandler: RPCMethodHandler {
-    static let methodName = "io_orientation_get"
+    static let methodName = "device.io.orientation.get"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

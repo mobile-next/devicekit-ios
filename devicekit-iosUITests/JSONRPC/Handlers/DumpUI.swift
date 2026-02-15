@@ -34,7 +34,7 @@ private enum DumpUIFormat: String {
 
 @MainActor
 struct DumpUIMethodHandler: RPCMethodHandler {
-    static let methodName = "dump_ui"
+    static let methodName = "device.dump.ui"
 
     private let springboardApplication = XCUIApplication(
         bundleIdentifier: "com.apple.springboard"

@@ -8,7 +8,7 @@ struct URLRequest: Codable {
 
 @MainActor
 struct URLMethodHandler: RPCMethodHandler {
-    static let methodName = "open_url"
+    static let methodName = "device.url"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

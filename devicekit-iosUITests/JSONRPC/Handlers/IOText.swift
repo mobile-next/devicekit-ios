@@ -14,7 +14,7 @@ struct IOTextRequest: Codable {
 
 @MainActor
 struct IOTextMethodHandler: RPCMethodHandler {
-    static let methodName = "io_text"
+    static let methodName = "device.io.text"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

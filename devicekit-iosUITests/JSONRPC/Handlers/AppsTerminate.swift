@@ -7,7 +7,7 @@ struct AppsTerminateRequest : Codable {
 
 @MainActor
 struct AppsTerminateMethodHandler: RPCMethodHandler {
-    static let methodName = "apps_terminate"
+    static let methodName = "device.apps.terminate"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
