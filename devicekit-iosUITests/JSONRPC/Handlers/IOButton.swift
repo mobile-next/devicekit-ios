@@ -4,7 +4,8 @@ struct IOButtonRequest : Codable {
     enum Button: String, Codable {
         case home
         case lock
-        // add more cases here
+        case volumeUp
+        case volumeDown
     }
 
     let button: Button
@@ -47,6 +48,10 @@ struct IOButtonMethodHandler: RPCMethodHandler {
             XCUIDevice.shared.press(.home)
         case .lock:
             XCUIDevice.shared.perform(NSSelectorFromString("pressLockButton"))
+        case .volumeUp:
+            XCUIDevice.shared.press(.volumeUp)
+        case .volumeDown:
+            XCUIDevice.shared.press(.volumeDown)
         }
         logger.info("[Done] Tapping on button: \(request.button.rawValue)")
 
