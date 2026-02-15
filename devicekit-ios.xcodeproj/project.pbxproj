@@ -56,6 +56,7 @@
 		7865E4C42F423A8700D0F45F /* IOOrientationSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865E4C32F423A8700D0F45F /* IOOrientationSet.swift */; };
 		7865E4C52F423A8700D0F45F /* IOOrientationGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865E4C22F423A8700D0F45F /* IOOrientationGet.swift */; };
 		7865E4C72F423ACA00D0F45F /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865E4C62F423ACA00D0F45F /* DeviceInfo.swift */; };
+		7865E50F2F42596200D0F45F /* AppsForeground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865E50E2F42596200D0F45F /* AppsForeground.swift */; };
 		787C47972F227F6B0027A012 /* JSONRPCModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47932F227F6B0027A012 /* JSONRPCModels.swift */; };
 		787C47982F227F6B0027A012 /* RPCMethodHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47942F227F6B0027A012 /* RPCMethodHandler.swift */; };
 		787C47992F227F6B0027A012 /* XCTestServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C47952F227F6B0027A012 /* XCTestServer.swift */; };
@@ -254,6 +255,7 @@
 		7865E4C22F423A8700D0F45F /* IOOrientationGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOOrientationGet.swift; sourceTree = "<group>"; };
 		7865E4C32F423A8700D0F45F /* IOOrientationSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOOrientationSet.swift; sourceTree = "<group>"; };
 		7865E4C62F423ACA00D0F45F /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
+		7865E50E2F42596200D0F45F /* AppsForeground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsForeground.swift; sourceTree = "<group>"; };
 		787C47922F227F6B0027A012 /* JSONRPCDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCDispatcher.swift; sourceTree = "<group>"; };
 		787C47932F227F6B0027A012 /* JSONRPCModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCModels.swift; sourceTree = "<group>"; };
 		787C47942F227F6B0027A012 /* RPCMethodHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCMethodHandler.swift; sourceTree = "<group>"; };
@@ -574,6 +576,7 @@
 				7814800A2F27C55500E61E3B /* IOLongpress.swift */,
 				78A190B52F3A3ADA007F24E0 /* IOButton.swift */,
 				78147FCA2F27C03500E61E3B /* IOSwipe.swift */,
+				7865E50E2F42596200D0F45F /* AppsForeground.swift */,
 				78147F3C2F27BDBC00E61E3B /* AppsLaunch.swift */,
 				78EA9F902F36611B008B17D3 /* AppsTerminate.swift */,
 				78147F0E2F27AA6B00E61E3B /* IOText.swift */,
@@ -782,6 +785,7 @@
 				94826F4429DB082100795E9B /* SystemPermissionManager.swift in Sources */,
 				52D8FAAC2D6DD3A20015FAB3 /* FBLogger.m in Sources */,
 				7852814A2F2BEC40002A7531 /* FBScreenshot.m in Sources */,
+				7865E50F2F42596200D0F45F /* AppsForeground.swift in Sources */,
 				521C1F072D8017480024EE42 /* AXClientProxy.m in Sources */,
 				7865E4C72F423ACA00D0F45F /* DeviceInfo.swift in Sources */,
 				5261117A2DE5E8E7007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m in Sources */,
