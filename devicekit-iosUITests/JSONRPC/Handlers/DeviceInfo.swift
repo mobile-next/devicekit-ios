@@ -6,7 +6,7 @@ struct DeviceInfoRequest: Codable {
 
 @MainActor
 struct DeviceInfoMethodHandler: RPCMethodHandler {
-    static let methodName = "device_info"
+    static let methodName = "device.info"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

@@ -9,7 +9,7 @@ struct IOLongpressRequest: Codable {
 
 @MainActor
 struct IOLongpressMethodHandler: RPCMethodHandler {
-    static let methodName = "io_longpress"
+    static let methodName = "device.io.longpress"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

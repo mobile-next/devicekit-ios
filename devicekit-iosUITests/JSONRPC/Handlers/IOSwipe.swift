@@ -14,7 +14,7 @@ struct IOSwipeRequest: Decodable {
 
 @MainActor
 struct IOSwipeMethodHandler: RPCMethodHandler {
-    static let methodName = "io_swipe"
+    static let methodName = "device.io.swipe"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

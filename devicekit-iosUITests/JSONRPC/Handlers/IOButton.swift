@@ -14,7 +14,7 @@ struct IOButtonRequest : Codable {
 
 @MainActor
 struct IOButtonMethodHandler: RPCMethodHandler {
-    static let methodName = "io_button"
+    static let methodName = "device.io.button"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

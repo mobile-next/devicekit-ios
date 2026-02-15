@@ -8,7 +8,7 @@ struct IOTapRequest: Codable {
 
 @MainActor
 struct IOTapMethodHandler: RPCMethodHandler {
-    static let methodName = "io_tap"
+    static let methodName = "device.io.tap"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
