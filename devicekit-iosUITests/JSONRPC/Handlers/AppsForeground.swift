@@ -39,7 +39,7 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
         guard let foregroundApp = foregroundApp else {
             let duration = Date().timeIntervalSince(start)
             logger.info("[Done] No foreground app found, took \(duration)")
-            return .object(["bundleId": .string(""), "name": .string("")])
+            return .object(["bundleId": .string(""), "name": .string(""), "pid": .int(0)])
         }
 
         guard let bundleId = foregroundApp.bundleID else {
@@ -47,10 +47,11 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
         }
 
         let name = foregroundApp.label
+        let pid = foregroundApp.processID
 
         let duration = Date().timeIntervalSince(start)
-        logger.info("[Done] Foreground app: \(bundleId), took \(duration)")
+        logger.info("[Done] Foreground app: \(bundleId) (pid: \(pid)), took \(duration)")
 
-        return .object(["bundleId": .string(bundleId), "name": .string(name)])
+        return .object(["bundleId": .string(bundleId), "name": .string(name), "pid": .int(Int(pid))])
     }
 }
