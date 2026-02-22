@@ -49,9 +49,17 @@ struct IOButtonMethodHandler: RPCMethodHandler {
         case .lock:
             XCUIDevice.shared.perform(NSSelectorFromString("pressLockButton"))
         case .volumeUp:
+            #if targetEnvironment(simulator)
+            logger.warning("volumeUp button is not available on the Simulator")
+            #else
             XCUIDevice.shared.press(.volumeUp)
+            #endif
         case .volumeDown:
+            #if targetEnvironment(simulator)
+            logger.warning("volumeDown button is not available on the Simulator")
+            #else
             XCUIDevice.shared.press(.volumeDown)
+            #endif
         }
         logger.info("[Done] Tapping on button: \(request.button.rawValue)")
 
