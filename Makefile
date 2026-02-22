@@ -17,7 +17,7 @@ CODE_SIGN_IDENTITY ?= Apple Development
 # Export method for IPA (development, ad-hoc, app-store, enterprise)
 EXPORT_METHOD ?= development
 
-.PHONY: clean build archive install list-devices ipa ipa-unsigned test-ipa lint
+.PHONY: clean build archive install install-sim list-devices ipa ipa-unsigned sim-zip-arm64 sim-zip-x86_64 sim-zip test-ipa lint
 
 clean:
 	@echo "Cleaning build artifacts..."
@@ -60,6 +60,41 @@ install: build
 	xcrun devicectl device install app \
 		--device $$DEVICE_ID \
 		$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME).app
+
+# Install DeviceKit main app and XCUITest runner on a booted iOS Simulator.
+# Usage:
+#   make install-sim                            — auto-detects the first booted simulator
+#   make install-sim SIMULATOR_UDID=<udid>      — targets a specific simulator
+SIMULATOR_UDID ?=
+install-sim:
+	@echo "Building $(SCHEME) for iOS Simulator (build-for-testing)..."
+	@xcodebuild build-for-testing \
+		-project $(PROJECT) \
+		-scheme $(SCHEME) \
+		-configuration $(CONFIGURATION) \
+		-destination 'generic/platform=iOS Simulator' \
+		-derivedDataPath $(BUILD_DIR) \
+		CODE_SIGN_IDENTITY="" \
+		CODE_SIGNING_REQUIRED=NO \
+		CODE_SIGNING_ALLOWED=NO | xcbeautify
+	@SIM_UDID="$(SIMULATOR_UDID)"; \
+	if [ -z "$$SIM_UDID" ]; then \
+		echo "Auto-detecting booted simulator..."; \
+		SIM_UDID=$$(xcrun simctl list devices booted | grep -E "\(([A-F0-9-]+)\)" | head -1 | sed -E 's/.*\(([A-F0-9-]+)\).*/\1/'); \
+		if [ -z "$$SIM_UDID" ]; then \
+			echo "Error: No booted simulator found. Start one first:"; \
+			echo "  xcrun simctl list devices available"; \
+			echo "  xcrun simctl boot <udid>"; \
+			exit 1; \
+		fi; \
+		echo "Found booted simulator: $$SIM_UDID"; \
+	fi; \
+	echo "Installing $(SCHEME).app on simulator $$SIM_UDID..."; \
+	xcrun simctl install $$SIM_UDID "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator/$(SCHEME).app"; \
+	echo "Installing $(SCHEME)UITests-Runner.app on simulator $$SIM_UDID..."; \
+	xcrun simctl install $$SIM_UDID "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator/$(SCHEME)UITests-Runner.app"; \
+	echo ""; \
+	echo "Done. DeviceKit installed on simulator $$SIM_UDID"
 
 list-devices:
 	@echo "Connected iOS devices:"
@@ -119,6 +154,47 @@ ipa-unsigned:
 	@echo "Unsigned IPA created at: $(EXPORT_PATH)/$(SCHEME)-unsigned.ipa"
 	@echo "You can now resign this with your adhoc certificate using:"
 	@echo "  codesign -f -s 'Your Identity' $(EXPORT_PATH)/$(SCHEME)-unsigned.ipa"
+
+# Build XCUITest runner for iOS Simulator (arm64 — Apple Silicon)
+sim-zip-arm64:
+	@echo "Building $(SCHEME) XCUITest runner for iOS Simulator (arm64)..."
+	xcodebuild build-for-testing \
+		-project $(PROJECT) \
+		-scheme $(SCHEME) \
+		-configuration $(CONFIGURATION) \
+		-destination 'generic/platform=iOS Simulator' \
+		-derivedDataPath $(BUILD_DIR) \
+		CODE_SIGN_IDENTITY="" \
+		CODE_SIGNING_REQUIRED=NO \
+		CODE_SIGNING_ALLOWED=NO \
+		ARCHS=arm64 | xcbeautify
+	@mkdir -p $(EXPORT_PATH)
+	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/
+	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-Sim-arm64.zip $(SCHEME)UITests-Runner.app
+	@rm -rf "$(EXPORT_PATH)/$(SCHEME)UITests-Runner.app"
+	@echo "Simulator zip created at: $(EXPORT_PATH)/$(SCHEME)-Sim-arm64.zip"
+
+# Build XCUITest runner for iOS Simulator (x86_64 — Intel)
+sim-zip-x86_64:
+	@echo "Building $(SCHEME) XCUITest runner for iOS Simulator (x86_64)..."
+	xcodebuild build-for-testing \
+		-project $(PROJECT) \
+		-scheme $(SCHEME) \
+		-configuration $(CONFIGURATION) \
+		-destination 'generic/platform=iOS Simulator' \
+		-derivedDataPath $(BUILD_DIR) \
+		CODE_SIGN_IDENTITY="" \
+		CODE_SIGNING_REQUIRED=NO \
+		CODE_SIGNING_ALLOWED=NO \
+		ARCHS=x86_64 | xcbeautify
+	@mkdir -p $(EXPORT_PATH)
+	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/
+	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-Sim-x86_64.zip $(SCHEME)UITests-Runner.app
+	@rm -rf "$(EXPORT_PATH)/$(SCHEME)UITests-Runner.app"
+	@echo "Simulator zip created at: $(EXPORT_PATH)/$(SCHEME)-Sim-x86_64.zip"
+
+# Build both simulator zips
+sim-zip: sim-zip-arm64 sim-zip-x86_64
 
 # Build for testing with XCUITest files
 test-ipa:
