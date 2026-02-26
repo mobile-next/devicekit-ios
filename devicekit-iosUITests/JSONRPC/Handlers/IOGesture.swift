@@ -32,23 +32,7 @@ struct IOGestureMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for io_gesture method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        let request: IOGestureRequest
-        do {
-            request = try JSONDecoder().decode(IOGestureRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid io_gesture parameters: \(error.localizedDescription)")
-        }
+        let request = try decodeParams(IOGestureRequest.self, from: params)
 
         guard !request.actions.isEmpty else {
             throw RPCMethodError.invalidParams("Actions array cannot be empty")

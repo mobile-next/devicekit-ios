@@ -9,6 +9,21 @@ protocol RPCMethodHandler {
     func execute(params: JSONValue?) async throws -> JSONValue
 }
 
+extension RPCMethodHandler {
+    func decodeParams<T: Decodable>(_ type: T.Type, from params: JSONValue?) throws -> T {
+        guard let params = params else {
+            throw RPCMethodError.invalidParams("Missing parameters")
+        }
+        do {
+            return try JSONDecoder().decode(type, from: params.toData())
+        } catch let error as RPCMethodError {
+            throw error
+        } catch {
+            throw RPCMethodError.invalidParams("Invalid parameters: \(error.localizedDescription)")
+        }
+    }
+}
+
 enum RPCMethodError: Error {
     case invalidParams(String)
     case internalError(String)

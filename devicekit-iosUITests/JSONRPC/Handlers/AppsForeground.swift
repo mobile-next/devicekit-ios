@@ -14,22 +14,7 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for apps_foreground method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        do {
-            _ = try JSONDecoder().decode(AppsForegroundRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid apps_foreground parameters: \(error.localizedDescription)")
-        }
+        _ = try decodeParams(AppsForegroundRequest.self, from: params)
 
         let start = Date()
 

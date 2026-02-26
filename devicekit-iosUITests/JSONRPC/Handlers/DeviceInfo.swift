@@ -14,22 +14,7 @@ struct DeviceInfoMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for device_info method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        do {
-            _ = try JSONDecoder().decode(DeviceInfoRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid device_info parameters: \(error.localizedDescription)")
-        }
+        _ = try decodeParams(DeviceInfoRequest.self, from: params)
 
         let start = Date()
 

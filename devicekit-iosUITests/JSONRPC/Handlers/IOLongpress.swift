@@ -17,23 +17,7 @@ struct IOLongpressMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for io_tap method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        let request: IOLongpressRequest
-        do {
-            request = try JSONDecoder().decode(IOLongpressRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid io_tap parameters: \(error.localizedDescription)")
-        }
+        let request = try decodeParams(IOLongpressRequest.self, from: params)
 
         let (width, height) = OrientationGeometry.physicalScreenSize()
         let point = OrientationGeometry.orientationAwarePoint(
@@ -41,14 +25,13 @@ struct IOLongpressMethodHandler: RPCMethodHandler {
             height: height,
             point: CGPoint(x: CGFloat(request.x), y: CGFloat(request.y))
         )
-        let (x, y) = (point.x, point.y)
 
-        logger.info("Long pressing \(x), \(y) for \(request.duration)s")
+        logger.info("Long pressing \(point.x), \(point.y) for \(request.duration)s")
 
         do {
             let eventRecord = EventRecord(orientation: .portrait)
             _ = eventRecord.addPointerTouchEvent(
-                at: CGPoint(x: CGFloat(x), y: CGFloat(y)),
+                at: point,
                 touchUpAfter: request.duration
             )
             let start = Date()

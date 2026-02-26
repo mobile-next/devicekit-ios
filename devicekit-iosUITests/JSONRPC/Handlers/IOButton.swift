@@ -22,23 +22,7 @@ struct IOButtonMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for io_button method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        let request: IOButtonRequest
-        do {
-            request = try JSONDecoder().decode(IOButtonRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid io_button parameters: \(error.localizedDescription)")
-        }
+        let request = try decodeParams(IOButtonRequest.self, from: params)
 
         let start = Date()
 

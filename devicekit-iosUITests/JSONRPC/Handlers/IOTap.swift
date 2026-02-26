@@ -16,23 +16,7 @@ struct IOTapMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for io_tap method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        let request: IOTapRequest
-        do {
-            request = try JSONDecoder().decode(IOTapRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid io_tap parameters: \(error.localizedDescription)")
-        }
+        let request = try decodeParams(IOTapRequest.self, from: params)
 
         let (width, height) = OrientationGeometry.physicalScreenSize()
         let point = OrientationGeometry.orientationAwarePoint(
@@ -40,12 +24,11 @@ struct IOTapMethodHandler: RPCMethodHandler {
             height: height,
             point: CGPoint(x: CGFloat(request.x), y: CGFloat(request.y))
         )
-        let (x, y) = (point.x, point.y)
 
         do {
             let eventRecord = EventRecord(orientation: .portrait)
             _ = eventRecord.addPointerTouchEvent(
-                at: CGPoint(x: CGFloat(x), y: CGFloat(y)),
+                at: point,
                 touchUpAfter: nil
             )
             let start = Date()

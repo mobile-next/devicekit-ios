@@ -22,23 +22,7 @@ struct IOSwipeMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for io_swipe method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        let request: IOSwipeRequest
-        do {
-            request = try JSONDecoder().decode(IOSwipeRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid io_swipe parameters: \(error.localizedDescription)")
-        }
+        let request = try decodeParams(IOSwipeRequest.self, from: params)
 
         do {
             try await swipePrivateAPI(

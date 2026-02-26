@@ -22,23 +22,7 @@ struct IOTextMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for io_text method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        let request: IOTextRequest
-        do {
-            request = try JSONDecoder().decode(IOTextRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid io_text parameters: \(error.localizedDescription)")
-        }
+        let request = try decodeParams(IOTextRequest.self, from: params)
 
         do {
             let start = Date()

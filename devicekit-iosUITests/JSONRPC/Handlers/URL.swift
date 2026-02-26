@@ -16,23 +16,7 @@ struct URLMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for open_url method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        let request: URLRequest
-        do {
-            request = try JSONDecoder().decode(URLRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid open_url parameters: \(error.localizedDescription)")
-        }
+        let request = try decodeParams(URLRequest.self, from: params)
 
         guard let url = URL(string: request.url) else {
             throw RPCMethodError.invalidParams("Invalid URL format: '\(request.url)'")

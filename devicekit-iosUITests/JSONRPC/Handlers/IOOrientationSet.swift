@@ -15,23 +15,7 @@ struct IOOrientationSetMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for io_orientation_set method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        let request: IOOrientationSetRequest
-        do {
-            request = try JSONDecoder().decode(IOOrientationSetRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid io_orientation_set parameters: \(error.localizedDescription)")
-        }
+        let request = try decodeParams(IOOrientationSetRequest.self, from: params)
 
         let target: UIDeviceOrientation
         switch request.orientation.uppercased() {

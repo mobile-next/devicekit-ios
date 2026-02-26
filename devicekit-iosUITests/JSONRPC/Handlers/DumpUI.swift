@@ -47,23 +47,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters for dump_ui method")
-        }
-
-        let paramsData: Data
-        do {
-            paramsData = try params.toData()
-        } catch {
-            throw RPCMethodError.invalidParams("Failed to serialize params: \(error.localizedDescription)")
-        }
-
-        let request: DumpUIRequest
-        do {
-            request = try JSONDecoder().decode(DumpUIRequest.self, from: paramsData)
-        } catch {
-            throw RPCMethodError.invalidParams("Invalid dump_ui parameters: \(error.localizedDescription)")
-        }
+        let request = try decodeParams(DumpUIRequest.self, from: params)
 
         let format = DumpUIFormat(from: request.format)
         logger.info("dump_ui requested with format: \(format.rawValue)")
@@ -143,34 +127,21 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         ]
         let appFrame = appHierarchy.frame
 
-        if deviceAxFrame != appFrame {
-            guard
-                let deviceWidth = deviceAxFrame["Width"], deviceWidth > 0,
-                let deviceHeight = deviceAxFrame["Height"], deviceHeight > 0,
-                let appWidth = appFrame["Width"], appWidth > 0,
-                let appHeight = appFrame["Height"], appHeight > 0
-            else {
-                return AXElement(
-                    children: [appHierarchy, AXElement(children: statusBars), safariWebViewHierarchy].compactMap { $0 }
-                )
-            }
-
-            let offsetX = deviceWidth - appWidth
-            let offsetY = deviceHeight - appHeight
-            let offset = WindowOffset(offsetX: offsetX, offsetY: offsetY)
-
-            NSLog("Adjusting view hierarchy with offset: \(offset)")
-
-            let adjustedAppHierarchy = expandElementSizes(appHierarchy, offset: offset)
-
-            return AXElement(
-                children: [adjustedAppHierarchy, AXElement(children: statusBars), safariWebViewHierarchy].compactMap { $0 }
-            )
-        } else {
-            return AXElement(
-                children: [appHierarchy, AXElement(children: statusBars), safariWebViewHierarchy].compactMap { $0 }
-            )
+        if deviceAxFrame != appFrame,
+           let deviceWidth = deviceAxFrame["Width"], deviceWidth > 0,
+           let deviceHeight = deviceAxFrame["Height"], deviceHeight > 0,
+           let appWidth = appFrame["Width"], appWidth > 0,
+           let appHeight = appFrame["Height"], appHeight > 0 {
+            let offset = WindowOffset(offsetX: deviceWidth - appWidth, offsetY: deviceHeight - appHeight)
+            logger.info("Adjusting view hierarchy with offset: \(String.init(describing: offset))")
+            return buildRootElement(app: expandElementSizes(appHierarchy, offset: offset), statusBars: statusBars, safari: safariWebViewHierarchy)
         }
+
+        return buildRootElement(app: appHierarchy, statusBars: statusBars, safari: safariWebViewHierarchy)
+    }
+
+    private func buildRootElement(app: AXElement, statusBars: [AXElement], safari: AXElement?) -> AXElement {
+        AXElement(children: [app, AXElement(children: statusBars), safari].compactMap { $0 })
     }
 
     private func expandElementSizes(_ element: AXElement, offset: WindowOffset) -> AXElement {
