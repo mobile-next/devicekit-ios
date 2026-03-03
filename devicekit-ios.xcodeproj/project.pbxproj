@@ -66,9 +66,6 @@
 		787C95982F17F23500AB3BF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787C95972F17F23500AB3BF1 /* Assets.xcassets */; };
 		78A190B62F3A3ADA007F24E0 /* IOButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A190B52F3A3ADA007F24E0 /* IOButton.swift */; };
 		78C54B352F2CF23800A9369C /* H264Codec in Frameworks */ = {isa = PBXBuildFile; productRef = 78C54B342F2CF23800A9369C /* H264Codec */; };
-		78C54BB32F2D4F3400A9369C /* CPUUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BB22F2D4F2F00A9369C /* CPUUsageMonitor.swift */; };
-		78C54BCB2F2D5C4600A9369C /* MemoryUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BCA2F2D5C3E00A9369C /* MemoryUsageMonitor.swift */; };
-		78C54BCF2F2D5CAD00A9369C /* MetricsReportGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C54BCE2F2D5CA700A9369C /* MetricsReportGenerator.swift */; };
 		78EA9F912F36611B008B17D3 /* AppsTerminate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EA9F902F36611B008B17D3 /* AppsTerminate.swift */; };
 		78F689082F17EE190025C8AC /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78F689072F17EE190025C8AC /* ReplayKit.framework */; };
 		78F6891E2F17EE190025C8AC /* BroadcastUploadExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 78F689062F17EE190025C8AC /* BroadcastUploadExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -175,9 +172,6 @@
 		787C48472F228D950027A012 /* JSONRPCMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCMessageHandler.swift; sourceTree = "<group>"; };
 		787C95972F17F23500AB3BF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		78A190B52F3A3ADA007F24E0 /* IOButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOButton.swift; sourceTree = "<group>"; };
-		78C54BB22F2D4F2F00A9369C /* CPUUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUUsageMonitor.swift; sourceTree = "<group>"; };
-		78C54BCA2F2D5C3E00A9369C /* MemoryUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryUsageMonitor.swift; sourceTree = "<group>"; };
-		78C54BCE2F2D5CA700A9369C /* MetricsReportGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsReportGenerator.swift; sourceTree = "<group>"; };
 		78EA9F902F36611B008B17D3 /* AppsTerminate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsTerminate.swift; sourceTree = "<group>"; };
 		78F689062F17EE190025C8AC /* BroadcastUploadExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BroadcastUploadExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		78F689072F17EE190025C8AC /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
@@ -238,8 +232,8 @@
 		52049BCA2935039F00807AA3 = {
 			isa = PBXGroup;
 			children = (
-				52049BD52935039F00807AA3 /* devicekit-ios */,
-				52049BF6293503A200807AA3 /* devicekit-iosUITests */,
+				52049BD52935039F00807AA3 /* DeviceKit */,
+				52049BF6293503A200807AA3 /* DeviceKitTests */,
 				78F689092F17EE190025C8AC /* BroadcastUploadExtension */,
 				52049BD42935039F00807AA3 /* Products */,
 				5279BFD42935ECE20056C609 /* Frameworks */,
@@ -256,24 +250,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		52049BD52935039F00807AA3 /* devicekit-ios */ = {
+		52049BD52935039F00807AA3 /* DeviceKit */ = {
 			isa = PBXGroup;
 			children = (
 				787C95972F17F23500AB3BF1 /* Assets.xcassets */,
 				787C95D52F17F59E00AB3BF1 /* View */,
 				78F689372F17EF1B0025C8AC /* devicekit_iosApp.swift */,
 			);
-			path = "devicekit-ios";
+			path = DeviceKit;
 			sourceTree = "<group>";
 		};
-		52049BF6293503A200807AA3 /* devicekit-iosUITests */ = {
+		52049BF6293503A200807AA3 /* DeviceKitTests */ = {
 			isa = PBXGroup;
 			children = (
 				AAAA00012F82000100000001 /* Assets.xcassets */,
 				78C54BD12F2D67E300A9369C /* Streamer */,
-				78C54BCE2F2D5CA700A9369C /* MetricsReportGenerator.swift */,
-				78C54BCA2F2D5C3E00A9369C /* MemoryUsageMonitor.swift */,
-				78C54BB22F2D4F2F00A9369C /* CPUUsageMonitor.swift */,
 				787C47962F227F6B0027A012 /* JSONRPC */,
 				612DE410298410F9003C2BE0 /* XCTest */,
 				52D8FAA92D6DD3850015FAB3 /* Utilities */,
@@ -282,7 +273,7 @@
 				787C47952F227F6B0027A012 /* XCTestServer.swift */,
 				52049BF7293503A200807AA3 /* devicekit_iosUITests.swift */,
 			);
-			path = "devicekit-iosUITests";
+			path = DeviceKitTests;
 			sourceTree = "<group>";
 		};
 		5279BFD42935ECE20056C609 /* Frameworks */ = {
@@ -613,12 +604,10 @@
 				610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */,
 				787C47DF2F228B770027A012 /* IOTap.swift in Sources */,
 				787C47E02F228B770027A012 /* DumpUI.swift in Sources */,
-				78C54BB32F2D4F3400A9369C /* CPUUsageMonitor.swift in Sources */,
 				521C1F102D8051FC0024EE42 /* XCTestDaemonsProxy.m in Sources */,
 				78A190B62F3A3ADA007F24E0 /* IOButton.swift in Sources */,
 				613E87D7299A64BD00FF8551 /* PointerEventPath.swift in Sources */,
 				78147FCB2F27C04400E61E3B /* IOSwipe.swift in Sources */,
-				78C54BCF2F2D5CAD00A9369C /* MetricsReportGenerator.swift in Sources */,
 				787C48482F228D960027A012 /* JSONRPCMessageHandler.swift in Sources */,
 				9811C9092C49751D00DDACA0 /* OrientationGeometry.swift in Sources */,
 				612DE414298426EF003C2BE0 /* EventRecord.swift in Sources */,
@@ -635,7 +624,6 @@
 				52D8FA9D2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.m in Sources */,
 				52049BF8293503A200807AA3 /* devicekit_iosUITests.swift in Sources */,
 				78EA9F912F36611B008B17D3 /* AppsTerminate.swift in Sources */,
-				78C54BCB2F2D5C4600A9369C /* MemoryUsageMonitor.swift in Sources */,
 				52D8FAB02D6DD4100015FAB3 /* FBConfiguration.m in Sources */,
 				78147F0F2F27AA6B00E61E3B /* IOText.swift in Sources */,
 				6124329E2A4DA5BB00F5F619 /* AXElement.swift in Sources */,
@@ -792,9 +780,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = UWTTLVVSRY;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -823,9 +811,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = UWTTLVVSRY;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -915,9 +903,9 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = UWTTLVVSRY;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -966,9 +954,9 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = UWTTLVVSRY;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
