@@ -43,23 +43,8 @@ class SampleHandler: RPBroadcastSampleHandler {
                 audioPort: audioEnabled ? audioPort : nil,
                 audioBitRate: audioBitRate
             )
-
-            // Double tap will move the app from the foreground
-            requestToGoHome()
-            requestToGoHome()
         } catch {
             fatalError(error.localizedDescription)
-        }
-    }
-
-    private func requestToGoHome() {
-        let url = URL(string: "ws://127.0.0.1:\(Self.rpcPort)/rpc")!
-        let task = URLSession.shared.webSocketTask(with: url)
-        task.resume()
-
-        let request = #"{"jsonrpc":"2.0","method":"io_button","params":{"button":"home","deviceId":""},"id":1}"#
-        task.send(.string(request)) { _ in
-            task.cancel(with: .normalClosure, reason: nil)
         }
     }
 
