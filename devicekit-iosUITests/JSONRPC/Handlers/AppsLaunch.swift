@@ -6,7 +6,7 @@ struct AppsLaunchRequest : Codable {
 }
 
 @MainActor
-struct ApsLaunchMethodHandler: RPCMethodHandler {
+struct AppsLaunchMethodHandler: RPCMethodHandler {
     static let methodName = "device.apps.launch"
 
     private let logger = Logger(

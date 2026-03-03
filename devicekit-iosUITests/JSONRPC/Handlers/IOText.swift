@@ -1,4 +1,3 @@
-import FlyingFox
 import XCTest
 import os
 
@@ -70,7 +69,7 @@ struct IOTextMethodHandler: RPCMethodHandler {
         }
     }
 
-    func repeatUntil(timeout: TimeInterval, delta: TimeInterval, block: () -> Bool) async throws {
+    private func repeatUntil(timeout: TimeInterval, delta: TimeInterval, block: () -> Bool) async throws {
         guard delta >= 0 else {
             throw NSError(domain: "Invalid value", code: 1, userInfo: [NSLocalizedDescriptionKey: "Delta cannot be negative"])
         }

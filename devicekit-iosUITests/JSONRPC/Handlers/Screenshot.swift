@@ -32,8 +32,8 @@ struct ScreenshotMethodHandler: RPCMethodHandler {
             imageData = fullScreenshot.pngRepresentation
             
         case "jpg", "jpeg":
-            let quality = Double(request.quality ?? Constants.defaultJpegQuality) / 100.0
-            imageData = fullScreenshot.image.jpegData(compressionQuality: quality)
+            let clampedQuality = min(max(request.quality ?? Constants.defaultJpegQuality, 0), 100)
+            imageData = fullScreenshot.image.jpegData(compressionQuality: Double(clampedQuality) / 100.0)
             
         default:
             throw RPCMethodError.invalidParams("Unsupported image format: \(request.format)")
