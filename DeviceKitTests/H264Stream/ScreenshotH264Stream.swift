@@ -103,14 +103,14 @@ final class ScreenshotH264Stream {
             &pixelBufferPool
         )
 
-        try encoder?.configureCompressSession(
+        try encoder?.configureCompressSession(H264EncoderConfig(
             width: width,
             height: height,
             isRealTime: true,
             expectedFrameRate: config.fps,
             averageBitRate: config.bitrate,
             quality: config.encoderQuality
-        )
+        ))
 
         encoder?.naluHandling = { [weak self] data in
             guard let self else { return }

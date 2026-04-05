@@ -15,7 +15,8 @@ public struct H264Unit {
     
     var data: Data {
         if type == .vcl {
-            return lengthData! + payload
+            guard let lengthData = lengthData else { return payload }
+            return lengthData + payload
         } else {
             return payload
         }

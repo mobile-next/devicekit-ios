@@ -159,14 +159,14 @@ final class H264FrameProducer: @unchecked Sendable {
         )
 
         let enc = H264Encoder()
-        try enc.configureCompressSession(
+        try enc.configureCompressSession(H264EncoderConfig(
             width: Int32(scaledWidth),
             height: Int32(scaledHeight),
             isRealTime: true,
             expectedFrameRate: fps,
             averageBitRate: bitrate,
             quality: quality
-        )
+        ))
 
         enc.naluHandling = { [weak self] data in
             guard let self = self else { return }

@@ -5,6 +5,31 @@ import CoreMedia
 import CoreVideo
 import VideoToolbox
 
+public struct H264EncoderConfig {
+    public let width: Int32
+    public let height: Int32
+    public let isRealTime: Bool
+    public let expectedFrameRate: Int
+    public let averageBitRate: Int
+    public let quality: Float
+
+    public init(
+        width: Int32,
+        height: Int32,
+        isRealTime: Bool,
+        expectedFrameRate: Int,
+        averageBitRate: Int,
+        quality: Float
+    ) {
+        self.width = width
+        self.height = height
+        self.isRealTime = isRealTime
+        self.expectedFrameRate = expectedFrameRate
+        self.averageBitRate = averageBitRate
+        self.quality = quality
+    }
+}
+
 public final class H264Encoder: NSObject {
     enum ConfigurationError: Error {
         case cannotCreateSession
@@ -24,18 +49,11 @@ public final class H264Encoder: NSObject {
 
     public var naluHandling: ((Data) -> Void)?
 
-    public func configureCompressSession(
-        width: Int32,
-        height: Int32,
-        isRealTime: Bool,
-        expectedFrameRate: Int,
-        averageBitRate: Int,
-        quality: Float
-    ) throws {
+    public func configureCompressSession(_ config: H264EncoderConfig) throws {
         let error = VTCompressionSessionCreate(
             allocator: kCFAllocatorDefault,
-            width: width,
-            height: height,
+            width: config.width,
+            height: config.height,
             codecType: kCMVideoCodecType_H264,
             encoderSpecification: nil,
             imageBufferAttributes: nil,
@@ -55,12 +73,12 @@ public final class H264Encoder: NSObject {
                 kVTPixelTransferPropertyKey_ScalingMode: kVTScalingMode_Normal
             ],
             kVTCompressionPropertyKey_ProfileLevel: kVTProfileLevel_H264_Baseline_AutoLevel,
-            kVTCompressionPropertyKey_MaxKeyFrameInterval: expectedFrameRate,
-            kVTCompressionPropertyKey_ExpectedFrameRate: expectedFrameRate,
-            kVTCompressionPropertyKey_AverageBitRate: averageBitRate,
-            kVTCompressionPropertyKey_RealTime: isRealTime,
+            kVTCompressionPropertyKey_MaxKeyFrameInterval: config.expectedFrameRate,
+            kVTCompressionPropertyKey_ExpectedFrameRate: config.expectedFrameRate,
+            kVTCompressionPropertyKey_AverageBitRate: config.averageBitRate,
+            kVTCompressionPropertyKey_RealTime: config.isRealTime,
             kVTCompressionPropertyKey_MaximizePowerEfficiency: true,
-            kVTCompressionPropertyKey_Quality: quality,
+            kVTCompressionPropertyKey_Quality: config.quality
         ] as CFDictionary
 
         guard VTSessionSetProperties(session, propertyDictionary: propertyDictionary) == noErr else {
@@ -94,7 +112,7 @@ public final class H264Encoder: NSObject {
         }
 
         print("[H264Encoder] Updated settings: bitrate=\(newBitrate) bps" +
-              (newFrameRate != nil ? ", frameRate=\(newFrameRate!)" : ""))
+              (newFrameRate.map { ", frameRate=\($0)" } ?? ""))
     }
 
     public func invalidateCompressionSession() {
@@ -106,6 +124,7 @@ public final class H264Encoder: NSObject {
         VTCompressionSessionInvalidate(session)
     }
 
+    // swiftlint:disable closure_parameter_position
     private var encodingOutputCallback: VTCompressionOutputCallback = { (
         outputCallbackRefCon: UnsafeMutableRawPointer?,
         _: UnsafeMutableRawPointer?,
@@ -113,6 +132,7 @@ public final class H264Encoder: NSObject {
         flags: VTEncodeInfoFlags,
         sampleBuffer: CMSampleBuffer?
     ) in
+    // swiftlint:enable closure_parameter_position
         guard let sampleBuffer = sampleBuffer else {
             print("nil buffer")
             return

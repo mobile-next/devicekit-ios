@@ -7,13 +7,13 @@ let package = Package(
     products: [
         .library(
             name: "H264Codec",
-            targets: ["H264Codec"]),
+            targets: ["H264Codec"])
     ],
     targets: [
         .target(
             name: "H264Codec"),
         .testTarget(
             name: "H264CodecTests",
-            dependencies: ["H264Codec"]),
+            dependencies: ["H264Codec"])
     ]
 )

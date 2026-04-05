@@ -32,7 +32,7 @@ class SampleHandler: RPBroadcastSampleHandler {
         screenStreamer = ScreenStreamer()
 
         do {
-            try screenStreamer?.start(
+            try screenStreamer?.start(StreamerConfig(
                 port: port,
                 rect: rect,
                 scaleFactor: scaleFactor,
@@ -42,7 +42,7 @@ class SampleHandler: RPBroadcastSampleHandler {
                 isRealTime: isRealTime,
                 audioPort: audioEnabled ? audioPort : nil,
                 audioBitRate: audioBitRate
-            )
+            ))
         } catch {
             fatalError(error.localizedDescription)
         }

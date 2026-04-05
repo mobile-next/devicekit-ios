@@ -3,6 +3,18 @@ import CoreMedia
 import H264Codec
 import OpusCodec
 
+struct StreamerConfig {
+    let port: UInt16
+    let rect: CGRect
+    let scaleFactor: Float
+    let qualityFactor: Float
+    let expectedFrameRate: Int
+    let averageBitRate: Int
+    let isRealTime: Bool
+    let audioPort: UInt16?
+    let audioBitRate: Int
+}
+
 final class ScreenStreamer {
     private let h264Encoder: H264Encoder
     private let tcpServer: TCPServer
@@ -26,39 +38,29 @@ final class ScreenStreamer {
         self.audioServer = audioServer
     }
 
-    func start(
-        port: UInt16,
-        rect: CGRect,
-        scaleFactor: Float,
-        qualityFactor: Float,
-        expectedFrameRate: Int,
-        averageBitRate: Int,
-        isRealTime: Bool,
-        audioPort: UInt16?,
-        audioBitRate: Int
-    ) throws {
+    func start(_ config: StreamerConfig) throws {
         isPaused = false
         isStopped = false
 
-        try tcpServer.start(port: port)
+        try tcpServer.start(port: config.port)
 
-        let dimensions = rect.scaledDimensions(scaleFactor)
-        try h264Encoder.configureCompressSession(
+        let dimensions = config.rect.scaledDimensions(config.scaleFactor)
+        try h264Encoder.configureCompressSession(H264EncoderConfig(
             width: dimensions.width,
             height: dimensions.height,
-            isRealTime: isRealTime,
-            expectedFrameRate: expectedFrameRate,
-            averageBitRate: averageBitRate,
-            quality: qualityFactor
-        )
+            isRealTime: config.isRealTime,
+            expectedFrameRate: config.expectedFrameRate,
+            averageBitRate: config.averageBitRate,
+            quality: config.qualityFactor
+        ))
 
         h264Encoder.naluHandling = { [weak self] data in
             guard let self else { return }
             tcpServer.dataHandler?(data)
         }
 
-        if let audioPort {
-            audioEncoder.updateBitRate(audioBitRate)
+        if let audioPort = config.audioPort {
+            audioEncoder.updateBitRate(config.audioBitRate)
             try audioServer.start(port: audioPort)
             audioEncoder.opusHandling = { [weak self] data in
                 guard let self else { return }
@@ -133,7 +135,7 @@ final class ScreenStreamer {
             return
         }
 
-        if let fr = frameRate, (fr < 1 || fr > 60) {
+        if let fr = frameRate, fr < 1 || fr > 60 {
             print("[ScreenStreamer] Frame rate out of range: \(fr) (must be 1-60)")
             return
         }
@@ -141,7 +143,7 @@ final class ScreenStreamer {
         do {
             try h264Encoder.updateEncoderSettings(newBitrate: bitrate, newFrameRate: frameRate)
             print("[ScreenStreamer] ✓ Configuration updated: bitrate=\(bitrate) bps" +
-                  (frameRate != nil ? ", frameRate=\(frameRate!)" : ""))
+                  (frameRate.map { ", frameRate=\($0)" } ?? ""))
         } catch {
             print("[ScreenStreamer] ✗ Failed to update encoder: \(error)")
         }
