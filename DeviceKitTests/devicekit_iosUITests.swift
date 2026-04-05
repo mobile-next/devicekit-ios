@@ -4,11 +4,11 @@ import os
 
 /// UI tests for the DeviceKit iOS application.
 ///
-final class devicekit_iosUITests: XCTestCase {
+final class DeviceKitUITests: XCTestCase {
 
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: "devicekit_iosUITests"
+        category: "DeviceKitUITests"
     )
 
     private static var swizzledOutIdle = false
@@ -16,7 +16,7 @@ final class devicekit_iosUITests: XCTestCase {
     override func setUpWithError() throws {
         // XCTest internals sometimes use XCTAssert* instead of exceptions.
         // Setting `continueAfterFailure` so that the xctest runner does not stop
-        // when an XCTest internal error happes (eg: when using .allElementsBoundByIndex
+        // when an XCTest internal error happens (eg: when using .allElementsBoundByIndex
         // on a ReactNative app)
         continueAfterFailure = true
     }
@@ -28,7 +28,7 @@ final class devicekit_iosUITests: XCTestCase {
     @MainActor
     func testRunAutomation() async throws {
         let server = XCTestServer()
-        devicekit_iosUITests.logger.info("Will start WebSocket JSON-RPC server")
+        DeviceKitUITests.logger.info("Will start WebSocket JSON-RPC server")
         try await server.start()
     }
 

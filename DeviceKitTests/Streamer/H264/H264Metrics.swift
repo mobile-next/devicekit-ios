@@ -7,7 +7,7 @@ final class H264Metrics: @unchecked Sendable {
     private var frameTimes: [UInt64] = []
     private var frameIntervals: [UInt64] = []
 
-    private(set) var framesCapured: UInt64 = 0
+    private(set) var framesCaptured: UInt64 = 0
     private(set) var framesEncoded: UInt64 = 0
     private(set) var framesDroppedCapture: UInt64 = 0
     private(set) var framesDroppedConversion: UInt64 = 0
@@ -43,7 +43,7 @@ final class H264Metrics: @unchecked Sendable {
 
         if success {
             captureTimes.append(durationNs)
-            framesCapured += 1
+            framesCaptured += 1
         } else {
             framesDroppedCapture += 1
         }
@@ -155,7 +155,7 @@ final class H264Metrics: @unchecked Sendable {
         let avgNaluSize = naluSizes.isEmpty ? 0 : naluSizes.reduce(0, +) / naluSizes.count
 
         let totalDropped = framesDroppedCapture + framesDroppedConversion + framesDroppedEncoding
-        let totalAttempted = framesCapured + framesDroppedCapture
+        let totalAttempted = framesCaptured + framesDroppedCapture
         let dropRate = totalAttempted > 0 ? Double(totalDropped) / Double(totalAttempted) * 100 : 0
 
         let memoryMB = Double(getMemoryFootprint()) / 1_000_000
@@ -169,7 +169,7 @@ final class H264Metrics: @unchecked Sendable {
             metrics: [
                 Metric(name: "Duration", value: .double(sessionDurationSec), unit: "s"),
                 Metric(name: "Frames Encoded", value: .uint(framesEncoded), unit: nil),
-                Metric(name: "Frames Captured", value: .uint(framesCapured), unit: nil),
+                Metric(name: "Frames Captured", value: .uint(framesCaptured), unit: nil),
                 Metric(name: "Frames Skipped", value: .uint(framesSkipped), unit: nil)
             ]
         )

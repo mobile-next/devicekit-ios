@@ -40,8 +40,8 @@ struct IOLongpressMethodHandler: RPCMethodHandler {
             logger.info("Tapping took \(duration)")
             return .object(["success": .bool(true)])
         } catch {
-            logger.error("Error tapping: \(error)")
-            throw RPCMethodError.internalError("Error tapping point: \(error.localizedDescription)")
+            logger.error("Error long-pressing: \(error)")
+            throw RPCMethodError.internalError("Error long-pressing point: \(error.localizedDescription)")
         }
     }
 }

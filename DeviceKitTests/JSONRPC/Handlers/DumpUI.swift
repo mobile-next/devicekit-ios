@@ -55,7 +55,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         do {
             let foregroundApp = RunningApp.getForegroundApp()
             guard let foregroundApp = foregroundApp else {
-                logger.warning("No foreground app found returning springboard app hierarchy")
+                logger.warning("No foreground app found, returning springboard app hierarchy")
                 let springboardHierarchy = try elementHierarchy(xcuiElement: springboardApplication)
                 return try formatResponse(axElement: springboardHierarchy, format: format)
             }

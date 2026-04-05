@@ -6,7 +6,7 @@ final class MJPEGMetrics: @unchecked Sendable {
     private var frameTimes: [UInt64] = []
     private var frameIntervals: [UInt64] = []
 
-    private(set) var framesCapured: UInt64 = 0
+    private(set) var framesCaptured: UInt64 = 0
     private(set) var framesDropped: UInt64 = 0
     private(set) var framesScaled: UInt64 = 0
 
@@ -36,7 +36,7 @@ final class MJPEGMetrics: @unchecked Sendable {
         defer { lock.unlock() }
         if success {
             captureTimes.append(durationNs)
-            framesCapured += 1
+            framesCaptured += 1
         } else {
             framesDropped += 1
         }
@@ -96,10 +96,10 @@ final class MJPEGMetrics: @unchecked Sendable {
         let actualFPS = avgIntervalNs > 0 ? 1_000_000_000 / avgIntervalNs : 0
         let fpsEfficiency = actualFPS / Double(targetFPS) * 100
 
-        let throughput = sessionDurationSec > 0 ? Double(framesCapured) / sessionDurationSec : 0
+        let throughput = sessionDurationSec > 0 ? Double(framesCaptured) / sessionDurationSec : 0
 
-        let dropRate = (framesCapured + framesDropped) > 0
-            ? Double(framesDropped) / Double(framesCapured + framesDropped) * 100
+        let dropRate = (framesCaptured + framesDropped) > 0
+            ? Double(framesDropped) / Double(framesCaptured + framesDropped) * 100
             : 0
 
         let bandwidthBps = sessionDurationSec > 0 ? Double(totalBytesOutput * 8) / sessionDurationSec : 0
@@ -115,7 +115,7 @@ final class MJPEGMetrics: @unchecked Sendable {
             title: "Session",
             metrics: [
                 Metric(name: "Duration", value: .double(sessionDurationSec), unit: "s"),
-                Metric(name: "Frames Captured", value: .uint(framesCapured), unit: nil),
+                Metric(name: "Frames Captured", value: .uint(framesCaptured), unit: nil),
                 Metric(name: "Frames Scaled", value: .uint(framesScaled), unit: nil),
                 Metric(name: "Frames Dropped", value: .uint(framesDropped), unit: nil)
             ]

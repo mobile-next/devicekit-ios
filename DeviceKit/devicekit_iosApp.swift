@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct devicekit_iosApp: App {
+struct DeviceKitApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

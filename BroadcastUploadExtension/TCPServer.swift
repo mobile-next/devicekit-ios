@@ -29,7 +29,7 @@ public final class TCPServer {
 
         listener?.stateUpdateHandler = { state in
             if state == .ready {
-                print("listener is ready to recieve data")
+                print("listener is ready to receive data")
             }
         }
 

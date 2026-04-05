@@ -150,7 +150,7 @@ struct IOGestureMethodHandler: RPCMethodHandler {
 
     private func executeGesture(fingerActions: [Int: [Action]]) async throws {
         let isMultiFinger = fingerActions.count > 1
-        let style: EventRecord.Style = isMultiFinger ? .multiFinger : .singeFinger
+        let style: EventRecord.Style = isMultiFinger ? .multiFinger : .singleFinger
 
         let eventRecord = EventRecord(orientation: .portrait, style: style)
 
