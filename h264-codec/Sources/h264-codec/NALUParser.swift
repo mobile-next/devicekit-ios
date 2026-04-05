@@ -15,7 +15,8 @@ public final class NALUParser {
     public init() {}
 
     public func enqueue(_ data: Data) {
-        parsingQueue.async { [unowned self] in
+        parsingQueue.async { [weak self] in
+            guard let self else { return }
             dataStream.append(data)
             
             while searchIndex < dataStream.endIndex - 3 {

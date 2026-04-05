@@ -9,7 +9,7 @@ import ImageIO
 import Accelerate
 
 /// Configuration for the H.264 screenshot stream.
-struct H264StreamConfig {
+struct ScreenshotStreamConfig {
     /// Target frames per second.
     var fps: Int = 15
 
@@ -41,7 +41,7 @@ final class ScreenshotH264Stream {
         category: "H264Stream"
     )
 
-    private var config = H264StreamConfig()
+    private var config = ScreenshotStreamConfig()
     private var encoder: H264Encoder?
     private var tcpServer: TCPServer?
     private var ciContext: CIContext?
@@ -64,7 +64,7 @@ final class ScreenshotH264Stream {
     private var frameStartTime: UInt64 = 0
 
     /// Starts the H.264 stream.
-    func start(config: H264StreamConfig = H264StreamConfig()) throws {
+    func start(config: ScreenshotStreamConfig = ScreenshotStreamConfig()) throws {
         guard !isRunning else {
             logger.warning("Stream already running")
             return

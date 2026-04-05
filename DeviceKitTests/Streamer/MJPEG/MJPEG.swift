@@ -28,9 +28,9 @@ struct MJPEGHTTPHandler: HTTPHandler {
     )
 
     func handleRequest(_ request: HTTPRequest) async throws -> HTTPResponse {
-        let fps = parseQueryInt(from: request, name: "fps", default: MJPEGConstants.defaultFPS, min: 1, max: MJPEGConstants.maxFPS)
-        let qualityPercent = parseQueryInt(from: request, name: "quality", default: 25, min: 1, max: 100)
-        let scalePercent = parseQueryInt(from: request, name: "scale", default: MJPEGConstants.defaultScale, min: MJPEGConstants.minScale, max: MJPEGConstants.maxScale)
+        let fps = request.queryInt(name: "fps", default: MJPEGConstants.defaultFPS, min: 1, max: MJPEGConstants.maxFPS)
+        let qualityPercent = request.queryInt(name: "quality", default: 25, min: 1, max: 100)
+        let scalePercent = request.queryInt(name: "scale", default: MJPEGConstants.defaultScale, min: MJPEGConstants.minScale, max: MJPEGConstants.maxScale)
 
         let quality = max(MJPEGConstants.minQuality, min(MJPEGConstants.maxQuality, CGFloat(qualityPercent) / 100.0))
         let scale = CGFloat(scalePercent) / 100.0
@@ -55,13 +55,6 @@ struct MJPEGHTTPHandler: HTTPHandler {
         )
     }
 
-    private func parseQueryInt(from request: HTTPRequest, name: String, default defaultValue: Int, min minValue: Int, max maxValue: Int) -> Int {
-        guard let param = request.query.first(where: { $0.name == name }),
-              let intValue = Int(param.value) else {
-            return defaultValue
-        }
-        return Swift.max(minValue, Swift.min(maxValue, intValue))
-    }
 }
 
 struct MJPEGByteStream: AsyncBufferedSequence, Sendable {

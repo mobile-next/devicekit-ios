@@ -18,7 +18,7 @@ private enum H264Constants {
     static let maxScale: Int = 100
 }
 
-struct H264StreamConfig: Sendable {
+struct H264HTTPStreamConfig: Sendable {
     let fps: Int
     let bitrate: Int
     let quality: Float
@@ -43,15 +43,15 @@ struct H264HTTPHandler: HTTPHandler {
     )
 
     func handleRequest(_ request: HTTPRequest) async throws -> HTTPResponse {
-        let fps = parseQueryInt(from: request, name: "fps", default: H264Constants.defaultFPS, min: 1, max: H264Constants.maxFPS)
-        let bitrate = parseQueryInt(from: request, name: "bitrate", default: H264Constants.defaultBitrate, min: H264Constants.minBitrate, max: H264Constants.maxBitrate)
-        let quality = Float(parseQueryInt(from: request, name: "quality", default: H264Constants.defaultQuality, min: 1, max: 100)) / 100.0
-        let scalePercent = parseQueryInt(from: request, name: "scale", default: H264Constants.defaultScale, min: H264Constants.minScale, max: H264Constants.maxScale)
+        let fps = request.queryInt(name: "fps", default: H264Constants.defaultFPS, min: 1, max: H264Constants.maxFPS)
+        let bitrate = request.queryInt(name: "bitrate", default: H264Constants.defaultBitrate, min: H264Constants.minBitrate, max: H264Constants.maxBitrate)
+        let quality = Float(request.queryInt(name: "quality", default: H264Constants.defaultQuality, min: 1, max: 100)) / 100.0
+        let scalePercent = request.queryInt(name: "scale", default: H264Constants.defaultScale, min: H264Constants.minScale, max: H264Constants.maxScale)
         let scale = Float(scalePercent) / 100.0
 
         logger.info("Starting H264 stream: scale=\(scalePercent)% @ \(fps)fps, \(bitrate/1_000_000)Mbps")
 
-        let config = H264StreamConfig(fps: fps, bitrate: bitrate, quality: quality, scale: scale)
+        let config = H264HTTPStreamConfig(fps: fps, bitrate: bitrate, quality: quality, scale: scale)
         let stream = H264ByteStream(config: config)
         let bodySequence = HTTPBodySequence(from: stream)
 
@@ -64,19 +64,12 @@ struct H264HTTPHandler: HTTPHandler {
         return HTTPResponse(statusCode: .ok, headers: headers, body: bodySequence)
     }
 
-    private func parseQueryInt(from request: HTTPRequest, name: String, default defaultValue: Int, min minValue: Int, max maxValue: Int) -> Int {
-        guard let param = request.query.first(where: { $0.name == name }),
-              let intValue = Int(param.value) else {
-            return defaultValue
-        }
-        return Swift.max(minValue, Swift.min(maxValue, intValue))
-    }
 }
 
 struct H264ByteStream: AsyncBufferedSequence, Sendable {
     typealias Element = UInt8
 
-    let config: H264StreamConfig
+    let config: H264HTTPStreamConfig
 
     func makeAsyncIterator() -> H264ByteIterator {
         H264ByteIterator(config: config)
@@ -87,7 +80,7 @@ final class H264ByteIterator: AsyncBufferedIteratorProtocol, @unchecked Sendable
     typealias Element = UInt8
     typealias Buffer = [UInt8]
 
-    private let config: H264StreamConfig
+    private let config: H264HTTPStreamConfig
     private let frameProducer: H264FrameProducer
     private let metrics: H264Metrics
     private var naluStream: AsyncStream<Data>?
@@ -100,7 +93,7 @@ final class H264ByteIterator: AsyncBufferedIteratorProtocol, @unchecked Sendable
         category: "H264Iterator"
     )
 
-    init(config: H264StreamConfig) {
+    init(config: H264HTTPStreamConfig) {
         self.config = config
         self.metrics = H264Metrics(targetFPS: config.fps, targetBitrate: config.bitrate)
         self.frameProducer = H264FrameProducer(metrics: metrics)
