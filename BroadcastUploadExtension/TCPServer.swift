@@ -18,14 +18,19 @@ public final class TCPServer {
 
     public init() {}
 
-    public func start(port: UInt16) throws {
+    public func start(port: UInt16, host: String = "127.0.0.1") throws {
         listener?.cancel()
 
         guard let port = NWEndpoint.Port(rawValue: port) else {
             throw ServerError.invalidPortNumber
         }
 
-        listener = try NWListener(using: .tcp, on: port)
+        let params = NWParameters.tcp
+        params.requiredLocalEndpoint = NWEndpoint.hostPort(
+            host: NWEndpoint.Host(host),
+            port: port
+        )
+        listener = try NWListener(using: params)
 
         listener?.stateUpdateHandler = { state in
             if state == .ready {

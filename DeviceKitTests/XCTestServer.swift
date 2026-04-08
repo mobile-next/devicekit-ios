@@ -75,8 +75,8 @@ final class XCTestServer {
     /// Default port for the WebSocket server.
     private let defaultPort: UInt16 = 12004
 
-    /// Server binds to localhost only.
-    private let localhost = "127.0.0.1"
+    /// Server binds to localhost only by default. Override with LISTEN_HOST env var.
+    private let localhost = ProcessInfo.processInfo.environment["LISTEN_HOST"] ?? "127.0.0.1"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

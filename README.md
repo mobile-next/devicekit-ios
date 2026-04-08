@@ -75,7 +75,14 @@ make sim-zip
 
 ### Starting the Server
 
-DeviceKit runs as an XCUITest. Once installed and launched on a device or simulator, it starts a server on `127.0.0.1:12004` (configurable via the `PORT` environment variable).
+DeviceKit runs as an XCUITest. Once installed and launched on a device or simulator, it starts a server on `127.0.0.1:12004`.
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `12004` | JSON-RPC server port |
+| `LISTEN_HOST` | `127.0.0.1` | Bind address for the JSON-RPC server. All TCP servers (video, audio) also bind to `127.0.0.1` by default. |
 
 **Endpoints:**
 
