@@ -81,8 +81,8 @@ DeviceKit runs as an XCUITest. Once installed and launched on a device or simula
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `PORT` | `12004` | JSON-RPC server port |
-| `LISTEN_HOST` | `127.0.0.1` | Bind address for the JSON-RPC server. All TCP servers (video, audio) also bind to `127.0.0.1` by default. |
+| `DEVICEKIT_LISTEN_PORT` | `12004` | JSON-RPC server port |
+| `DEVICEKIT_LISTEN_HOST` | `127.0.0.1` | Bind address for the JSON-RPC server. All TCP servers (video, audio) also bind to `127.0.0.1` by default. |
 
 **Endpoints:**
 

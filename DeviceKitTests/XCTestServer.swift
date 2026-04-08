@@ -76,7 +76,7 @@ final class XCTestServer {
     private let defaultPort: UInt16 = 12004
 
     /// Server binds to localhost only by default. Override with LISTEN_HOST env var.
-    private let localhost = ProcessInfo.processInfo.environment["LISTEN_HOST"] ?? "127.0.0.1"
+    private let localhost = ProcessInfo.processInfo.environment["DEVICEKIT_LISTEN_HOST"] ?? "127.0.0.1"
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -98,7 +98,7 @@ final class XCTestServer {
     ///
     /// - Throws: An error if the server fails to bind or encounters a runtime error.
     func start() async throws {
-        let port = ProcessInfo.processInfo.environment["PORT"]?.toUInt16() ?? defaultPort
+        let port = ProcessInfo.processInfo.environment["DEVICEKIT_LISTEN_PORT"]?.toUInt16() ?? defaultPort
         let server = HTTPServer(
             address: try .inet(ip4: localhost, port: port),
             timeout: defaultTimeout
