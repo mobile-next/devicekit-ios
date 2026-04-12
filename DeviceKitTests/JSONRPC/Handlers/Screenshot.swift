@@ -7,7 +7,7 @@ private enum Constants {
 struct ScreenshotRequest: Codable {
     let format: String
     let quality: Int?
-    let outputPath = "-"
+    var outputPath: String = "-"
 }
 
 @MainActor
