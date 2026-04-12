@@ -110,6 +110,7 @@ sim-install:
 
 # Build, run mocha tests with code coverage
 test-coverage:
+	@rm -rf $(BUILD_DIR)/coverage.xcresult
 	@BOOTED=$$(xcrun simctl list devices booted -j | jq -r '[.devices[][] | select(.state=="Booted")] | first | .udid'); \
 	scripts/test-coverage.sh $(PROJECT) $(SCHEME) "$$BOOTED" $(BUILD_DIR)
 

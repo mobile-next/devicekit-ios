@@ -31,6 +31,10 @@ echo "Waiting for server on localhost:12004..."
 RETRIES=0
 MAX_RETRIES=120
 while [ $RETRIES -lt $MAX_RETRIES ]; do
+    if ! kill -0 $XCODEBUILD_PID 2>/dev/null; then
+        echo "error: xcodebuild process ($XCODEBUILD_PID) exited before server became ready"
+        exit 1
+    fi
     if curl -s http://localhost:12004/health > /dev/null 2>&1; then
         echo "Server is ready"
         break
