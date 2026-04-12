@@ -91,11 +91,8 @@ struct DumpUIMethodHandler: RPCMethodHandler {
     private func formatResponse(axElement: AXElement, format: DumpUIFormat) throws -> JSONValue {
         switch format {
         case .json:
-            let viewHierarchy = ViewHierarchy(
-                axElement: axElement,
-                depth: axElement.depth()
-            )
-            return try JSONValue.from(viewHierarchy)
+            let sourceTree = SourceTreeElement(axElement: axElement)
+            return try JSONValue.from(sourceTree)
 
         case .raw:
             return try JSONValue.from(axElement)

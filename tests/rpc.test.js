@@ -267,14 +267,38 @@ describe("device.screenshot", function () {
 // device.dump.ui
 // ---------------------------------------------------------------------------
 describe("device.dump.ui", function () {
-  it("dumps the UI hierarchy", async function () {
+  it("dumps the UI hierarchy without params", async function () {
     const result = returnsResult(await rpc("device.dump.ui"));
     assert.ok(result);
   });
 
-  it("dumps the UI hierarchy as json", async function () {
+  it("returns source tree format for json", async function () {
     const result = returnsResult(await rpc("device.dump.ui", { format: "json" }));
-    assert.ok(result);
+    assert.ok(typeof result.type === "string", "expected type to be a string");
+    assert.ok(result.rect, "expected rect");
+    assert.ok(typeof result.rect.x === "number", "expected rect.x");
+    assert.ok(typeof result.rect.y === "number", "expected rect.y");
+    assert.ok(typeof result.rect.width === "number", "expected rect.width");
+    assert.ok(typeof result.rect.height === "number", "expected rect.height");
+    assert.ok(!("elementType" in result), "should not have elementType");
+    assert.ok(!("frame" in result), "should not have frame");
+    assert.ok(!("isVisible" in result), "should not have isVisible");
+  });
+
+  it("json children follow the same source tree format", async function () {
+    const result = returnsResult(await rpc("device.dump.ui", { format: "json" }));
+    assert.ok(Array.isArray(result.children), "expected children array");
+    assert.ok(result.children.length > 0, "expected at least one child");
+    const child = result.children[0];
+    assert.ok(typeof child.type === "string", "child should have string type");
+    assert.ok(child.rect, "child should have rect");
+    assert.ok(typeof child.rect.x === "number", "child rect.x should be number");
+  });
+
+  it("dumps the UI hierarchy as raw", async function () {
+    const result = returnsResult(await rpc("device.dump.ui", { format: "raw" }));
+    assert.ok(typeof result.elementType === "number", "raw format should have numeric elementType");
+    assert.ok(result.frame, "raw format should have frame");
   });
 });
 

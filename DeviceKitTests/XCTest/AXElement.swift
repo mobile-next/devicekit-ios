@@ -1,9 +1,70 @@
 import Foundation
 import XCTest
 
-struct ViewHierarchy: Codable {
-    let axElement: AXElement
-    let depth: Int
+struct SourceTreeRect: Codable {
+    let x: Double
+    let y: Double
+    let width: Double
+    let height: Double
+
+    init(frame: AXFrame) {
+        self.x = frame["X"] ?? 0
+        self.y = frame["Y"] ?? 0
+        self.width = frame["Width"] ?? 0
+        self.height = frame["Height"] ?? 0
+    }
+}
+
+struct SourceTreeElement: Codable {
+    let type: String
+    let label: String?
+    let name: String?
+    let value: String?
+    let rawIdentifier: String?
+    let rect: SourceTreeRect
+    let children: [SourceTreeElement]?
+
+    init(axElement: AXElement) {
+        self.type = Self.elementTypeName(axElement.elementType)
+        self.label = axElement.label.isEmpty ? nil : axElement.label
+        let identifier = axElement.identifier.isEmpty ? nil : axElement.identifier
+        self.name = identifier ?? (axElement.label.isEmpty ? nil : axElement.label)
+        self.value = axElement.value
+        self.rawIdentifier = identifier
+        self.rect = SourceTreeRect(frame: axElement.frame)
+        self.children = axElement.children?.isEmpty == true ? nil : axElement.children?.map { SourceTreeElement(axElement: $0) }
+    }
+
+    private static let elementTypeNames: [Int: String] = [
+        0: "Any", 1: "Other", 2: "Application", 3: "Group", 4: "Window",
+        5: "Sheet", 6: "Drawer", 7: "Alert", 8: "Dialog", 9: "Button",
+        10: "RadioButton", 11: "RadioGroup", 12: "CheckBox",
+        13: "DisclosureTriangle", 14: "PopUpButton", 15: "ComboBox",
+        16: "MenuButton", 17: "ToolbarButton", 18: "Popover",
+        19: "Keyboard", 20: "Key", 21: "NavigationBar", 22: "TabBar",
+        23: "TabGroup", 24: "Toolbar", 25: "StatusBar", 26: "Table",
+        27: "TableRow", 28: "TableColumn", 29: "Outline", 30: "OutlineRow",
+        31: "Browser", 32: "CollectionView", 33: "Slider",
+        34: "PageIndicator", 35: "ProgressIndicator",
+        36: "ActivityIndicator", 37: "SegmentedControl", 38: "Picker",
+        39: "PickerWheel", 40: "Switch", 41: "Toggle", 42: "Link",
+        43: "Image", 44: "Icon", 45: "SearchField", 46: "ScrollView",
+        47: "ScrollBar", 48: "StaticText", 49: "TextField",
+        50: "SecureTextField", 51: "DatePicker", 52: "TextView",
+        53: "Menu", 54: "MenuItem", 55: "MenuBar", 56: "MenuBarItem",
+        57: "Map", 58: "WebView", 59: "IncrementArrow",
+        60: "DecrementArrow", 61: "Timeline", 62: "RatingIndicator",
+        63: "ValueIndicator", 64: "SplitGroup", 65: "Splitter",
+        66: "RelevanceIndicator", 67: "ColorWell", 68: "HelpTag",
+        69: "Matte", 70: "DockItem", 71: "Ruler", 72: "RulerMarker",
+        73: "Grid", 74: "LevelIndicator", 75: "Cell", 76: "LayoutArea",
+        77: "LayoutItem", 78: "Handle", 79: "Stepper", 80: "Tab",
+        81: "TouchBar", 82: "StatusItem",
+    ]
+
+    private static func elementTypeName(_ rawValue: Int) -> String {
+        "XCUIElementType" + (elementTypeNames[rawValue] ?? "Unknown")
+    }
 }
 
 struct WindowOffset: Codable {
