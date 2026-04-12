@@ -2,10 +2,6 @@ import UniformTypeIdentifiers
 
 final class MJPEGImageScaler {
     func scaleJPEG(_ data: Data, scaleFactor: CGFloat, quality: CGFloat) -> Data? {
-        guard scaleFactor > 0 && scaleFactor < 1.0 else {
-            return data
-        }
-
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
               let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
             return nil
