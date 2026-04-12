@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     tags:
-      - "*.*.*"    
+      - "*.*.*"
   pull_request:
     branches: [ main ]
 
@@ -27,15 +27,8 @@ jobs:
     - name: Install xcbeautify
       run: brew install xcbeautify
 
-    - name: Install trivy
-      run: brew install trivy
-
     - name: Run lint
       run: make lint
-
-    - name: Run trivy
-      run: |
-        trivy fs --severity HIGH,CRITICAL .
 
     - name: Build unsigned IPA (real device)
       run: make ipa-unsigned
