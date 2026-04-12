@@ -24,6 +24,7 @@ jobs:
       uses: github/codeql-action/init@v4
       with:
         languages: swift
+        build-mode: manual
 
     - name: Build
       run: make debug
