@@ -11,11 +11,13 @@ protocol RPCMethodHandler {
 
 extension RPCMethodHandler {
     func decodeParams<T: Decodable>(_ type: T.Type, from params: JSONValue?) throws -> T {
-        guard let params = params else {
-            throw RPCMethodError.invalidParams("Missing parameters")
+        let data = if let params = params {
+            try params.toData()
+        } else {
+            Data("{}".utf8)
         }
         do {
-            return try JSONDecoder().decode(type, from: params.toData())
+            return try JSONDecoder().decode(type, from: data)
         } catch let error as RPCMethodError {
             throw error
         } catch {
