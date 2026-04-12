@@ -17,6 +17,7 @@ DeviceKit iOS is a JSON-RPC server for programmatic iOS device automation. It ru
   - [Streaming Endpoints](#streaming-endpoints)
 - [Architecture](#architecture)
 - [Building](#building)
+- [Testing](#testing)
 - [Communication](#communication)
 - [License](#license)
 
@@ -177,6 +178,21 @@ The ReplayKit broadcast extension provides system-level screen and audio capture
 |------|--------|
 | 12005 | H264 video |
 | 12006 | Opus audio |
+
+## Testing
+
+Tests run against a live XCUITest server on a booted simulator. You need one simulator running — the test harness picks the first booted device automatically.
+
+```bash
+# Install test dependencies (one-time)
+cd tests && npm install && cd ..
+
+# Run tests with code coverage
+make test-coverage
+
+# View coverage report as HTML
+make coverage-html
+```
 
 ## Architecture
 
