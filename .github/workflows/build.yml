@@ -9,7 +9,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -52,14 +52,30 @@ jobs:
         path: build/export/*-Sim-*.zip
         retention-days: 4
 
+  release:
+    needs: build
+    if: github.ref_type == 'tag' && github.event_name == 'push'
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Download IPA artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: devicekit-ios-unsigned-ipa
+
+    - name: Download simulator zip artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: devicekit-ios-simulator-zips
+
     - name: Upload to GitHub Release
-      if: github.ref_type == 'tag' && github.event_name == 'push'
       uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         name: Version ${{ github.ref_name }}
         files: |
-          build/export/*-unsigned.ipa
-          build/export/*-Sim-*.zip
-
+          *-unsigned.ipa
+          *-Sim-*.zip
