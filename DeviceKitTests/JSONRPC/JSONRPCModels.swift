@@ -43,8 +43,8 @@ struct JSONRPCRequest: Codable {
     }
 }
 
-struct JSONRPCResponse: Codable {
-    var jsonrpc: String = "2.0"
+struct JSONRPCResponse: Encodable {
+    let jsonrpc: String = "2.0"
     let result: JSONValue?
     let error: JSONRPCError?
     let id: JSONRPCId?

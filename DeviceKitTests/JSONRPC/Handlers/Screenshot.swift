@@ -7,7 +7,11 @@ private enum Constants {
 struct ScreenshotRequest: Codable {
     let format: String
     let quality: Int?
-    var outputPath: String = "-"
+    let outputPath = "-"
+
+    private enum CodingKeys: String, CodingKey {
+        case format, quality
+    }
 }
 
 @MainActor
