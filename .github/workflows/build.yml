@@ -1,0 +1,69 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - "*.*.*"    
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install SwiftLint
+      run: brew install swiftlint
+
+    - name: Install xcbeautify
+      run: brew install xcbeautify
+
+    - name: Install trivy
+      run: brew install trivy
+
+    - name: Run lint
+      run: make lint
+
+    - name: Run trivy
+      run: |
+        trivy fs --severity HIGH,CRITICAL .
+
+    - name: Build unsigned IPA (real device)
+      run: make ipa-unsigned
+
+    - name: Build simulator zips (arm64 + x86_64)
+      run: make sim-zip
+
+    - name: Upload unsigned IPA artifact
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: devicekit-ios-unsigned-ipa
+        path: build/export/*-unsigned.ipa
+        retention-days: 4
+
+    - name: Upload simulator zip artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: devicekit-ios-simulator-zips
+        path: build/export/*-Sim-*.zip
+        retention-days: 4
+
+    - name: Upload to GitHub Release
+      if: github.ref_type == 'tag' && github.event_name == 'push'
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+      with:
+        name: Version ${{ github.ref_name }}
+        files: |
+          build/export/*-unsigned.ipa
+          build/export/*-Sim-*.zip
+

@@ -1,0 +1,11 @@
+{
+  "name": "devicekit-ios-tests",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "mocha --timeout 10000 rpc.test.js"
+  },
+  "devDependencies": {
+    "mocha": "^11.7.5"
+  }
+}
