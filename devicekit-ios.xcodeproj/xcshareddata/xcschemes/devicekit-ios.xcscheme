@@ -33,8 +33,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "52049BF2293503A200807AA3"
-               BuildableName = "devicekit-iosUITests.xctest"
-               BlueprintName = "devicekit-iosUITests"
+               BuildableName = "devicekit-ios-uitests.xctest"
+               BlueprintName = "devicekit-ios-uitests"
                ReferencedContainer = "container:devicekit-ios.xcodeproj">
             </BuildableReference>
             <SkippedTests>
