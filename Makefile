@@ -28,9 +28,9 @@ debug:
 release:
 	@$(MAKE) build CONFIGURATION=Release
 
-# Create unsigned IPAs for real iOS devices (runner + screen streamer)
+# Create unsigned IPA with XCUITest runner for real iOS devices
 ipa-unsigned:
-	@echo "Building unsigned app and test runner for arm64 iOS devices..."
+	@echo "Building unsigned test runner for arm64 iOS devices..."
 	xcodebuild build-for-testing \
 		-project $(PROJECT) \
 		-scheme $(SCHEME) \
@@ -47,12 +47,6 @@ ipa-unsigned:
 	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-runner.ipa Payload
 	@rm -rf $(EXPORT_PATH)/Payload
 	@echo "Runner IPA created at: $(EXPORT_PATH)/$(SCHEME)-runner.ipa"
-	@echo "Packaging screen streamer IPA..."
-	@mkdir -p $(EXPORT_PATH)/Payload
-	@cp -r $(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME).app $(EXPORT_PATH)/Payload/
-	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-screenstreamer.ipa Payload
-	@rm -rf $(EXPORT_PATH)/Payload
-	@echo "Screen streamer IPA created at: $(EXPORT_PATH)/$(SCHEME)-screenstreamer.ipa"
 
 # Build XCUITest runner for iOS Simulator (arm64 — Apple Silicon)
 sim-zip-arm64:
