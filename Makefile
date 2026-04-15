@@ -1,6 +1,7 @@
 # Project configuration
 PROJECT = devicekit-ios.xcodeproj
 SCHEME = devicekit-ios
+TEST_TARGET = devicekit-ios-uitests
 BUILD_DIR = build
 ARCHIVE_PATH = $(BUILD_DIR)/$(SCHEME).xcarchive
 EXPORT_PATH = $(BUILD_DIR)/export
@@ -45,7 +46,7 @@ ipa-unsigned:
 	@rm -rf $(EXPORT_PATH)/Payload
 	@rm -f $(EXPORT_PATH)/$(SCHEME)-runner.ipa
 	@mkdir -p $(EXPORT_PATH)/Payload
-	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/Payload/
+	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(TEST_TARGET)-Runner.app" $(EXPORT_PATH)/Payload/
 	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-runner.ipa Payload
 	@rm -rf $(EXPORT_PATH)/Payload
 	@echo "Runner IPA created at: $(EXPORT_PATH)/$(SCHEME)-runner.ipa"
@@ -64,10 +65,10 @@ sim-zip-arm64:
 		CODE_SIGNING_ALLOWED=NO \
 		ARCHS=arm64 | xcbeautify
 	@mkdir -p $(EXPORT_PATH)
-	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/
+	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator/$(TEST_TARGET)-Runner.app" $(EXPORT_PATH)/
 	@scripts/patch-runner.sh "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator" "$(EXPORT_PATH)"
-	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-Sim-arm64.zip $(SCHEME)UITests-Runner.app
-	@rm -rf "$(EXPORT_PATH)/$(SCHEME)UITests-Runner.app"
+	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-Sim-arm64.zip $(TEST_TARGET)-Runner.app
+	@rm -rf "$(EXPORT_PATH)/$(TEST_TARGET)-Runner.app"
 	@echo "Simulator zip created at: $(EXPORT_PATH)/$(SCHEME)-Sim-arm64.zip"
 
 # Build XCUITest runner for iOS Simulator (x86_64 — Intel)
@@ -84,10 +85,10 @@ sim-zip-x86_64:
 		CODE_SIGNING_ALLOWED=NO \
 		ARCHS=x86_64 | xcbeautify
 	@mkdir -p $(EXPORT_PATH)
-	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/
+	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator/$(TEST_TARGET)-Runner.app" $(EXPORT_PATH)/
 	@scripts/patch-runner.sh "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator" "$(EXPORT_PATH)"
-	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-Sim-x86_64.zip $(SCHEME)UITests-Runner.app
-	@rm -rf "$(EXPORT_PATH)/$(SCHEME)UITests-Runner.app"
+	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-Sim-x86_64.zip $(TEST_TARGET)-Runner.app
+	@rm -rf "$(EXPORT_PATH)/$(TEST_TARGET)-Runner.app"
 	@echo "Simulator zip created at: $(EXPORT_PATH)/$(SCHEME)-Sim-x86_64.zip"
 
 # Build both simulator zips
@@ -106,7 +107,7 @@ sim-install:
 	PRODUCTS="$(BUILD_DIR)/local/Build/Products/$(CONFIGURATION)-iphonesimulator"; \
 	scripts/patch-runner.sh "$$PRODUCTS"; \
 	xcrun simctl install "$$BOOTED" "$$PRODUCTS/$(SCHEME).app"; \
-	xcrun simctl install "$$BOOTED" "$$PRODUCTS/$(SCHEME)UITests-Runner.app"; \
+	xcrun simctl install "$$BOOTED" "$$PRODUCTS/$(TEST_TARGET)-Runner.app"; \
 	echo "Installed on simulator $$BOOTED"
 
 # Build, run mocha tests with code coverage
@@ -118,7 +119,7 @@ test-coverage:
 # Generate HTML coverage report (run after test-coverage)
 coverage-html:
 	@PROFDATA=$$(find $(BUILD_DIR)/local/Build/ProfileData -name "Coverage.profdata" 2>/dev/null | head -1); \
-	BINARY="$(BUILD_DIR)/local/Build/Products/Debug-iphonesimulator/$(SCHEME)UITests-Runner.app/PlugIns/$(SCHEME)UITests.xctest/$(SCHEME)UITests"; \
+	BINARY="$(BUILD_DIR)/local/Build/Products/Debug-iphonesimulator/$(TEST_TARGET)-Runner.app/PlugIns/$(TEST_TARGET).xctest/$(TEST_TARGET)"; \
 	if [ -z "$$PROFDATA" ] || [ ! -f "$$BINARY" ]; then echo "error: Run 'make test-coverage' first"; exit 1; fi; \
 	rm -rf coverage-html; \
 	xcrun llvm-cov show "$$BINARY" -instr-profile "$$PROFDATA" -format=html -output-dir=coverage-html \

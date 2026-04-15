@@ -7,7 +7,7 @@
 BUILD_DIR="${1:?Usage: $0 <build-products-dir> [runner-dir]}"
 RUNNER_DIR="${2:-$BUILD_DIR}"
 
-RUNNER_APP="${RUNNER_DIR}/devicekit-iosUITests-Runner.app"
+RUNNER_APP="${RUNNER_DIR}/devicekit-ios-uitests-Runner.app"
 HOST_APP="${BUILD_DIR}/devicekit-ios.app"
 
 if [ ! -d "${RUNNER_APP}" ] || [ ! -f "${RUNNER_APP}/Info.plist" ]; then
