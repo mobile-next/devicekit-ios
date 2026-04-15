@@ -28,7 +28,7 @@ debug:
 release:
 	@$(MAKE) build CONFIGURATION=Release
 
-# Create unsigned IPA with host app and UITests runner (for later resigning)
+# Create unsigned IPAs for real iOS devices (runner + screen streamer)
 ipa-unsigned:
 	@echo "Building unsigned app and test runner for arm64 iOS devices..."
 	xcodebuild build-for-testing \
@@ -40,14 +40,19 @@ ipa-unsigned:
 		CODE_SIGN_IDENTITY="" \
 		CODE_SIGNING_REQUIRED=NO \
 		CODE_SIGNING_ALLOWED=NO | xcbeautify
-	@echo "Packaging unsigned IPA..."
+	@scripts/patch-runner.sh "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos"
+	@echo "Packaging runner IPA..."
+	@mkdir -p $(EXPORT_PATH)/Payload
+	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/Payload/
+	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-runner.ipa Payload
+	@rm -rf $(EXPORT_PATH)/Payload
+	@echo "Runner IPA created at: $(EXPORT_PATH)/$(SCHEME)-runner.ipa"
+	@echo "Packaging screen streamer IPA..."
 	@mkdir -p $(EXPORT_PATH)/Payload
 	@cp -r $(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME).app $(EXPORT_PATH)/Payload/
-	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/Payload/
-	@scripts/patch-runner.sh "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos" "$(EXPORT_PATH)/Payload"
-	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-unsigned.ipa Payload
+	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-screenstreamer.ipa Payload
 	@rm -rf $(EXPORT_PATH)/Payload
-	@echo "Unsigned IPA created at: $(EXPORT_PATH)/$(SCHEME)-unsigned.ipa"
+	@echo "Screen streamer IPA created at: $(EXPORT_PATH)/$(SCHEME)-screenstreamer.ipa"
 
 # Build XCUITest runner for iOS Simulator (arm64 — Apple Silicon)
 sim-zip-arm64:

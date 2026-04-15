@@ -33,12 +33,12 @@ jobs:
     - name: Build simulator zips (arm64 + x86_64)
       run: make sim-zip
 
-    - name: Upload unsigned IPA artifact
+    - name: Upload IPA artifacts
       uses: actions/upload-artifact@v5
       if: success()
       with:
-        name: devicekit-ios-unsigned-ipa
-        path: build/export/*-unsigned.ipa
+        name: devicekit-ios-ipa
+        path: build/export/*.ipa
         retention-days: 4
 
     - name: Upload simulator zip artifacts
@@ -59,10 +59,10 @@ jobs:
       attestations: write
 
     steps:
-    - name: Download IPA artifact
+    - name: Download IPA artifacts
       uses: actions/download-artifact@v5
       with:
-        name: devicekit-ios-unsigned-ipa
+        name: devicekit-ios-ipa
 
     - name: Download simulator zip artifacts
       uses: actions/download-artifact@v5
@@ -73,7 +73,7 @@ jobs:
       uses: actions/attest-build-provenance@v2
       with:
         subject-path: |
-          *-unsigned.ipa
+          *.ipa
           *-Sim-*.zip
 
     - name: Upload to GitHub Release
@@ -83,5 +83,5 @@ jobs:
       with:
         name: Version ${{ github.ref_name }}
         files: |
-          *-unsigned.ipa
+          *.ipa
           *-Sim-*.zip
