@@ -42,6 +42,8 @@ ipa-unsigned:
 		CODE_SIGNING_ALLOWED=NO | xcbeautify
 	@scripts/patch-runner.sh "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos"
 	@echo "Packaging runner IPA..."
+	@rm -rf $(EXPORT_PATH)/Payload
+	@rm -f $(EXPORT_PATH)/$(SCHEME)-runner.ipa
 	@mkdir -p $(EXPORT_PATH)/Payload
 	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/Payload/
 	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-runner.ipa Payload
