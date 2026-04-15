@@ -1,3 +1,7 @@
+## [0.0.13](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.13) (2026-04-15)
+* CI: Parallelize IPA and simulator zip builds
+* CI: Fail Trivy scan on HIGH/CRITICAL findings
+
 ## [0.0.12](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.12) (2026-04-15)
 * General: Bump deployment target from iOS 14 to iOS 16 for smaller swift frameworks overhead
 * General: Only package XCUITest runner in the .ipa

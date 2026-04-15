@@ -1,7 +1,7 @@
 # DeviceKit iOS
 
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg?style=flat-square)](https://swift.org)
-[![Platform](https://img.shields.io/badge/Platform-iOS%2014.0+-blue.svg?style=flat-square)](https://developer.apple.com/ios/)
+[![Platform](https://img.shields.io/badge/Platform-iOS%2016.0+-blue.svg?style=flat-square)](https://developer.apple.com/ios/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg?style=flat-square)](LICENSE)
 
 DeviceKit iOS is a JSON-RPC server for programmatic iOS device automation. It runs as an XCUITest runner, providing remote control over touch input, app management, UI inspection, screenshots, and real-time screen streaming.
@@ -41,7 +41,7 @@ DeviceKit iOS is a JSON-RPC server for programmatic iOS device automation. It ru
 
 | Platform | Minimum Version |
 |----------|----------------|
-| iOS      | 14.0           |
+| iOS      | 16.0           |
 | Swift    | 5.9            |
 | Xcode    | 15.0+          |
 
