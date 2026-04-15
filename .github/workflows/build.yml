@@ -41,14 +41,8 @@ jobs:
     - name: Run trivy
       run: trivy fs --severity HIGH,CRITICAL .
 
-  verify:
-    needs: [lint, trivy]
-    runs-on: macos-latest
-    steps:
-    - run: echo "Verification passed"
-
   build-ipa:
-    needs: verify
+    needs: [lint, trivy]
     runs-on: macos-latest
 
     steps:
@@ -69,7 +63,7 @@ jobs:
         retention-days: 4
 
   build-sim:
-    needs: verify
+    needs: [lint, trivy]
     runs-on: macos-latest
 
     steps:
