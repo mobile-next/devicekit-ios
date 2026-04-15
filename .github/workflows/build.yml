@@ -12,42 +12,18 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  lint:
     runs-on: macos-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v5
-      with:
-        submodules: recursive
 
     - name: Install SwiftLint
       run: brew install swiftlint
 
     - name: Run lint
       run: make lint
-
-    - name: Build unsigned IPA (real device)
-      run: make ipa-unsigned
-
-    - name: Build simulator zips (arm64 + x86_64)
-      run: make sim-zip
-
-    - name: Upload IPA artifacts
-      uses: actions/upload-artifact@v5
-      if: success()
-      with:
-        name: devicekit-ios-ipa
-        path: build/export/*.ipa
-        retention-days: 4
-
-    - name: Upload simulator zip artifacts
-      uses: actions/upload-artifact@v5
-      if: success()
-      with:
-        name: devicekit-ios-simulator-zips
-        path: build/export/*-Sim-*.zip
-        retention-days: 4
 
   trivy:
     runs-on: macos-latest
@@ -63,10 +39,52 @@ jobs:
         curl -sfL https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_macOS-ARM64.tar.gz | tar xz -C /usr/local/bin trivy
 
     - name: Run trivy
-      run: trivy fs --severity HIGH,CRITICAL .
+      run: trivy fs --severity HIGH,CRITICAL --exit-code 1 .
+
+  build-ipa:
+    needs: [lint, trivy]
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        submodules: recursive
+
+    - name: Build unsigned IPA (real device)
+      run: make ipa-unsigned
+
+    - name: Upload IPA artifacts
+      uses: actions/upload-artifact@v5
+      if: success()
+      with:
+        name: devicekit-ios-ipa
+        path: build/export/*.ipa
+        retention-days: 4
+
+  build-sim:
+    needs: [lint, trivy]
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        submodules: recursive
+
+    - name: Build simulator zips (arm64 + x86_64)
+      run: make sim-zip
+
+    - name: Upload simulator zip artifacts
+      uses: actions/upload-artifact@v5
+      if: success()
+      with:
+        name: devicekit-ios-simulator-zips
+        path: build/export/*-Sim-*.zip
+        retention-days: 4
 
   release:
-    needs: build
+    needs: [build-ipa, build-sim]
     if: github.ref_type == 'tag' && github.event_name == 'push'
     runs-on: macos-latest
     permissions:
