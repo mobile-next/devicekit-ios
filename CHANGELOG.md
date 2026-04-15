@@ -1,3 +1,10 @@
+## [0.0.12](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.12) (2026-04-15)
+* General: Bump deployment target from iOS 14 to iOS 16 for smaller swift frameworks overhead
+* General: Only package XCUITest runner in the .ipa
+* Fix: Prevent outputPath override via CodingKeys, make JSONRPCResponse Encodable only
+* CI: Add build provenance attestations for release artifacts
+* CI: Remove unnecessary brew install for xcbeautify
+
 ## [0.0.10](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.10) (2026-04-12)
 * General: Initial public release of DeviceKit iOS
 * General: JSON-RPC 2.0 server over HTTP and WebSocket
