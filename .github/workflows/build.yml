@@ -39,7 +39,7 @@ jobs:
         curl -sfL https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_macOS-ARM64.tar.gz | tar xz -C /usr/local/bin trivy
 
     - name: Run trivy
-      run: trivy fs --severity HIGH,CRITICAL .
+      run: trivy fs --severity HIGH,CRITICAL --exit-code 1 .
 
   build-ipa:
     needs: [lint, trivy]
