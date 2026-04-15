@@ -49,6 +49,22 @@ jobs:
         path: build/export/*-Sim-*.zip
         retention-days: 4
 
+  trivy:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+
+    - name: Install trivy
+      env:
+        TRIVY_VERSION: 0.69.3
+      run: |
+        curl -sfL https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_macOS-ARM64.tar.gz | tar xz -C /usr/local/bin trivy
+
+    - name: Run trivy
+      run: trivy fs --severity HIGH,CRITICAL .
+
   release:
     needs: build
     if: github.ref_type == 'tag' && github.event_name == 'push'
