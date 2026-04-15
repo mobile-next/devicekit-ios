@@ -47,7 +47,7 @@ jobs:
     steps:
     - run: echo "Verification passed"
 
-  build:
+  build-ipa:
     needs: verify
     runs-on: macos-latest
 
@@ -60,9 +60,6 @@ jobs:
     - name: Build unsigned IPA (real device)
       run: make ipa-unsigned
 
-    - name: Build simulator zips (arm64 + x86_64)
-      run: make sim-zip
-
     - name: Upload IPA artifacts
       uses: actions/upload-artifact@v5
       if: success()
@@ -70,6 +67,19 @@ jobs:
         name: devicekit-ios-ipa
         path: build/export/*.ipa
         retention-days: 4
+
+  build-sim:
+    needs: verify
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        submodules: recursive
+
+    - name: Build simulator zips (arm64 + x86_64)
+      run: make sim-zip
 
     - name: Upload simulator zip artifacts
       uses: actions/upload-artifact@v5
@@ -80,7 +90,7 @@ jobs:
         retention-days: 4
 
   release:
-    needs: build
+    needs: [build-ipa, build-sim]
     if: github.ref_type == 'tag' && github.event_name == 'push'
     runs-on: macos-latest
     permissions:
