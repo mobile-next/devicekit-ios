@@ -53,9 +53,7 @@ jobs:
 
     - name: Set version from tag
       if: github.ref_type == 'tag'
-      run: |
-        VERSION="${GITHUB_REF_NAME}"
-        sed -i '' "s/MARKETING_VERSION = .*/MARKETING_VERSION = ${VERSION};/" devicekit-ios.xcodeproj/project.pbxproj
+      run: sed -i '' "s/MARKETING_VERSION = .*/MARKETING_VERSION = $GITHUB_REF_NAME;/" devicekit-ios.xcodeproj/project.pbxproj
 
     - name: Build unsigned IPA (real device)
       run: make ipa-unsigned
@@ -80,9 +78,7 @@ jobs:
 
     - name: Set version from tag
       if: github.ref_type == 'tag'
-      run: |
-        VERSION="${GITHUB_REF_NAME}"
-        sed -i '' "s/MARKETING_VERSION = .*/MARKETING_VERSION = ${VERSION};/" devicekit-ios.xcodeproj/project.pbxproj
+      run: sed -i '' "s/MARKETING_VERSION = .*/MARKETING_VERSION = $GITHUB_REF_NAME;/" devicekit-ios.xcodeproj/project.pbxproj
 
     - name: Build simulator zips (arm64 + x86_64)
       run: make sim-zip
