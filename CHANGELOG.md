@@ -1,3 +1,6 @@
+## [0.0.16](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.16) (2026-04-16)
+* General: Set app version in Info.plist from git tag at build time
+
 ## [0.0.13](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.13) (2026-04-15)
 * CI: Parallelize IPA and simulator zip builds
 * CI: Fail Trivy scan on HIGH/CRITICAL findings
