@@ -18,6 +18,15 @@ fi
 # Set display name
 /usr/bin/plutil -replace CFBundleDisplayName -string "Device Kit" "${RUNNER_APP}/Info.plist"
 
+# Set version from VERSION env var (e.g. set by CI from git tag)
+if [ -n "${VERSION}" ]; then
+    /usr/bin/plutil -replace CFBundleShortVersionString -string "${VERSION}" "${RUNNER_APP}/Info.plist"
+    XCTEST_PLIST="${RUNNER_APP}/PlugIns/devicekit-iosUITests.xctest/Info.plist"
+    if [ -f "${XCTEST_PLIST}" ]; then
+        /usr/bin/plutil -replace CFBundleShortVersionString -string "${VERSION}" "${XCTEST_PLIST}"
+    fi
+fi
+
 # Copy icon files from host app
 if [ -d "${HOST_APP}" ]; then
     for icon in "${HOST_APP}"/AppIcon*.png; do
