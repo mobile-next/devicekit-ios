@@ -3,7 +3,7 @@ import SwiftUI
 
 struct BroadcastStarterView: View {
     let preferredExtension =
-        "com.mobilenext.devicekit-ios.BroadcastUploadExtension"
+        "com.mobilenext.devicekit.BroadcastUploadExtension"
 
     var body: some View {
         BroadcastPickerView(preferredExtension: preferredExtension)
