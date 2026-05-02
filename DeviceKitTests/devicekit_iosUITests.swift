@@ -11,14 +11,23 @@ final class DeviceKitUITests: XCTestCase {
         category: "DeviceKitUITests"
     )
 
-    private static var swizzledOutIdle = false
-
     override func setUpWithError() throws {
-        // XCTest internals sometimes use XCTAssert* instead of exceptions.
-        // Setting `continueAfterFailure` so that the xctest runner does not stop
-        // when an XCTest internal error happens (eg: when using .allElementsBoundByIndex
-        // on a ReactNative app)
         continueAfterFailure = true
+
+        // WDA PR #664 (FBFailureProofTestCase): prevent the runner from halting
+        // when testmanagerd is slow to connect on startup (random ~20s timeout).
+        // shouldHaltWhenReceivesControl is a private XCTestCase BOOL property.
+        let sel = NSSelectorFromString("setShouldHaltWhenReceivesControl:")
+        if responds(to: sel) {
+            setValue(NSNumber(value: false), forKey: "shouldHaltWhenReceivesControl")
+        }
+    }
+
+    // WDA PR #664: swallow XCTest issues instead of propagating them up.
+    // The XCTIssue+FBPatcher +load swizzle handles shouldInterruptTest → NO;
+    // this override prevents issues from reaching XCTest's failure machinery.
+    override func record(_ issue: XCTIssue) {
+        Self.logger.warning("XCTest issue (swallowed): \(issue.compactDescription)")
     }
 
     override class func setUp() {

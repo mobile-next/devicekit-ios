@@ -140,6 +140,12 @@ static void swizzledWaitForQuiescenceIncludingAnimationsIdlePreEvent(
     }
 }
 
+// WDA PR #664: C function used to replace XCTIssue.shouldInterruptTest via IMP swap.
+static BOOL dk_swizzledShouldInterruptTest(id __unused self, SEL __unused _cmd)
+{
+    return NO;
+}
+
 #pragma mark - Category Implementation
 
 @implementation XCUIApplicationProcess (FBQuiescence)
@@ -161,6 +167,14 @@ static void swizzledWaitForQuiescenceIncludingAnimationsIdlePreEvent(
  * version.
  */
 + (void)load {
+    // WDA PR #664 (XCTIssue+FBPatcher): swizzle shouldInterruptTest → NO so that
+    // internal XCTest failures during testmanagerd startup don't kill the runner.
+    SEL shouldInterruptTest = NSSelectorFromString(@"shouldInterruptTest");
+    Method m = class_getInstanceMethod(NSClassFromString(@"XCTIssue"), shouldInterruptTest);
+    if (m) {
+        method_setImplementation(m, (IMP)dk_swizzledShouldInterruptTest);
+    }
+
     Method waitForQuiescenceIncludingAnimationsIdleMethod =
         class_getInstanceMethod(self.class, @selector
                                 (waitForQuiescenceIncludingAnimationsIdle:));
