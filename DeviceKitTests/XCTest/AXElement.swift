@@ -20,6 +20,7 @@ struct SourceTreeElement: Codable {
     let label: String?
     let name: String?
     let value: String?
+    let placeholderValue: String?
     let rawIdentifier: String?
     let rect: SourceTreeRect
     let children: [SourceTreeElement]?
@@ -30,6 +31,7 @@ struct SourceTreeElement: Codable {
         let identifier = axElement.identifier.isEmpty ? nil : axElement.identifier
         self.name = identifier ?? (axElement.label.isEmpty ? nil : axElement.label)
         self.value = axElement.value
+        self.placeholderValue = axElement.placeholderValue
         self.rawIdentifier = identifier
         self.rect = SourceTreeRect(frame: axElement.frame)
         self.children = axElement.children?.isEmpty == true ? nil : axElement.children?.map { SourceTreeElement(axElement: $0) }
