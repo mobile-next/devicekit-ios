@@ -4,7 +4,7 @@
 [![Platform](https://img.shields.io/badge/Platform-iOS%2016.0+-blue.svg?style=flat-square)](https://developer.apple.com/ios/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg?style=flat-square)](LICENSE)
 
-DeviceKit iOS is a JSON-RPC server for programmatic iOS device automation. It runs as an XCUITest runner, providing remote control over touch input, app management, UI inspection, screenshots, and real-time screen streaming.
+Control any iOS device or simulator over a simple JSON-RPC API. Tap, swipe, stream video, inspect the UI, from any language, over localhost.
 
 ## Table of Contents
 
@@ -21,21 +21,16 @@ DeviceKit iOS is a JSON-RPC server for programmatic iOS device automation. It ru
 - [Communication](#communication)
 - [License](#license)
 
-## Features
+## What You Can Build
 
-- [x] JSON-RPC 2.0 over WebSocket and HTTP
-- [x] Tap, swipe, long press, and multi-finger gesture synthesis
-- [x] Text input via system keyboard
-- [x] Hardware button simulation (home, lock, volume)
-- [x] App launch, terminate, and foreground detection
-- [x] Full accessibility tree inspection (UI hierarchy dump)
-- [x] Screenshot capture (PNG/JPEG with configurable quality)
-- [x] Real-time MJPEG screen streaming
-- [x] Real-time H264 screen streaming
-- [x] ReplayKit broadcast extension with H264 video and Opus audio
-- [x] Device orientation get/set
-- [x] URL opening
-- [x] Device info (screen size, scale)
+- **Interactive automation** — Tap, swipe, long-press, type text, press hardware buttons (home, lock, volume)
+- **App control** — Launch, terminate, and detect the foreground app by bundle ID
+- **Live screen visibility** — MJPEG and H264 streaming at configurable FPS, bitrate, and quality
+- **UI inspection** — Full accessibility tree dumps for element targeting
+- **Screenshots** — PNG or JPEG capture with configurable quality
+- **System control** — Get/set orientation, open URLs, query screen size and scale
+- **Broadcast audio/video** — ReplayKit extension with H264 video and Opus audio over TCP
+- **Flexible transport** — JSON-RPC 2.0 over WebSocket or HTTP, from any language
 
 ## Requirements
 
@@ -71,6 +66,18 @@ make sim-zip
 | `make sim-zip` | Both simulator zips | arm64 + x86_64 |
 | `make lint` | — | Run SwiftLint |
 | `make clean` | — | Remove build artifacts |
+
+## Quick Start
+
+Once the server is running at `127.0.0.1:12004`, make your first call:
+
+```bash
+curl -X POST http://127.0.0.1:12004/rpc \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"device.screenshot","params":{},"id":1}'
+```
+
+Returns a base64-encoded PNG of the current screen.
 
 ## Usage
 
@@ -216,9 +223,9 @@ devicekit-ios/
 
 ## Communication
 
-- If you **found a bug**, open an issue.
-- If you **have a feature request**, open an issue.
-- If you **want to contribute**, submit a pull request.
+Questions, issues, or ideas? [Open an issue](https://github.com/mobile-next/devicekit-ios/issues) — all feedback is welcome.
+
+Want to contribute? PRs are appreciated. Check open issues for good first tasks.
 
 ## License
 
