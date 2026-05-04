@@ -1,3 +1,11 @@
+## [0.0.18](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.18) (2026-05-04)
+* Fix: Prevent XCTest from resetting shouldHaltWhenReceivesControl back to YES on setup
+
+## [0.0.17](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.17) (2026-05-03)
+* iOS: Include placeholderValue in source tree element JSON format
+* Fix: Prevent test runner from halting on XCTest internal failures (WDA PR #664)
+* General: Improve README copy and add GitHub issue templates
+
 ## [0.0.16](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.16) (2026-04-16)
 * General: Set app version in Info.plist from git tag at build time
 

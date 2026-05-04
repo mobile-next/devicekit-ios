@@ -21,6 +21,12 @@ final class DeviceKitUITests: XCTestCase {
         if responds(to: sel) {
             setValue(NSNumber(value: false), forKey: "shouldHaltWhenReceivesControl")
         }
+
+        // prevent XCTest from resetting shouldHaltWhenReceivesControl back to YES
+        let sel2 = NSSelectorFromString("setShouldSetShouldHaltWhenReceivesControl:")
+        if responds(to: sel2) {
+            setValue(NSNumber(value: false), forKey: "shouldSetShouldHaltWhenReceivesControl")
+        }
     }
 
     // WDA PR #664: swallow XCTest issues instead of propagating them up.
