@@ -80,7 +80,7 @@ Once the server is running at `127.0.0.1:12004`, make your first call:
 ```bash
 curl -X POST http://127.0.0.1:12004/rpc \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","method":"device.screenshot","params":{ "format": "jpg" },"id":1}'
+  -d '{"jsonrpc":"2.0","method":"device.screenshot","params":{ "format": "png" },"id":1}'
 ```
 
 Returns a base64-encoded PNG of the current screen.
