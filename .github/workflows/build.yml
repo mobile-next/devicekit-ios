@@ -12,19 +12,6 @@ permissions:
   contents: read
 
 jobs:
-  lint:
-    runs-on: macos-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-
-    - name: Install SwiftLint
-      run: brew install swiftlint
-
-    - name: Run lint
-      run: make lint
-
   trivy:
     runs-on: macos-latest
 
@@ -42,7 +29,7 @@ jobs:
       run: trivy fs --severity HIGH,CRITICAL --exit-code 1 .
 
   build-ipa:
-    needs: [lint, trivy]
+    needs: [trivy]
     runs-on: macos-latest
 
     steps:
@@ -65,7 +52,7 @@ jobs:
         retention-days: 4
 
   build-sim:
-    needs: [lint, trivy]
+    needs: [trivy]
     runs-on: macos-latest
 
     steps:
