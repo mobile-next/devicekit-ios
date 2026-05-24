@@ -15,7 +15,23 @@ CODE_SIGN_IDENTITY ?= Apple Development
 # Export method for IPA (development, ad-hoc, app-store, enterprise)
 EXPORT_METHOD ?= development
 
-.PHONY: clean build archive ipa-unsigned sim-zip-arm64 sim-zip-x86_64 sim-zip sim-install test-coverage coverage-html lint
+.PHONY: help clean build archive ipa-unsigned sim-zip-arm64 sim-zip-x86_64 sim-zip sim-install test-coverage coverage-html lint
+
+.DEFAULT_GOAL := help
+
+help:
+	@echo "Available targets:"
+	@echo "  sim-zip          Build XCUITest runner zips for both arm64 and x86_64 simulators"
+	@echo "  sim-zip-arm64    Build XCUITest runner zip for iOS Simulator (arm64 / Apple Silicon)"
+	@echo "  sim-zip-x86_64   Build XCUITest runner zip for iOS Simulator (x86_64 / Intel)"
+	@echo "  sim-install      Build and install on the currently booted simulator"
+	@echo "  ipa-unsigned     Build unsigned IPA with XCUITest runner for real iOS devices"
+	@echo "  debug            Build with Debug configuration"
+	@echo "  release          Build with Release configuration"
+	@echo "  clean            Remove build artifacts"
+	@echo "  test-coverage    Run tests with code coverage"
+	@echo "  coverage-html    Generate HTML coverage report (run after test-coverage)"
+	@echo "  lint             Run SwiftLint"
 
 clean:
 	@echo "Cleaning build artifacts..."
