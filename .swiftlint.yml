@@ -2,11 +2,8 @@
 
 # Paths to include/exclude
 included:
-  - devicekit-ios
-  - BroadcastUploadExtension
-  - BroadcastUploadExtensionSetupUI
-  - h264-codec
-  - tcp
+  - DeviceKit
+  - DeviceKitTests
 
 excluded:
   - Pods
