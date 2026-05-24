@@ -2,7 +2,7 @@
 
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg?style=flat-square)](https://swift.org)
 [![Platform](https://img.shields.io/badge/Platform-iOS%2016.0+-blue.svg?style=flat-square)](https://developer.apple.com/ios/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/License-FSL--1.1--Apache--2.0-lightgrey.svg?style=flat-square)](LICENSE)
 
 Control any iOS device or simulator over a simple JSON-RPC API. Tap, swipe, stream video, inspect the UI, from any language, over localhost.
 
@@ -229,4 +229,4 @@ Want to contribute? PRs are appreciated. Check open issues for good first tasks.
 
 ## License
 
-DeviceKit iOS is released under the Apache 2.0 License. See [LICENSE](LICENSE) for details.
+DeviceKit iOS is released under the [Functional Source License 1.1, Apache 2.0 Future License](LICENSE).
