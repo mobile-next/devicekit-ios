@@ -125,7 +125,7 @@ sim-install:
 	xcrun simctl install "$$BOOTED" "$$PRODUCTS/$(SCHEME)UITests-Runner.app"; \
 	echo "Installed on simulator $$BOOTED"
 
-# Build, run mocha tests with code coverage
+# Build, run Playwright tests with code coverage
 test-coverage:
 	@rm -rf $(BUILD_DIR)/coverage.xcresult
 	@BOOTED=$$(xcrun simctl list devices booted -j | jq -r '[.devices[][] | select(.state=="Booted")] | first | .udid'); \

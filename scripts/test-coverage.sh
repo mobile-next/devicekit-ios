@@ -1,5 +1,5 @@
 #!/bin/sh
-# Run mocha tests against a coverage-instrumented XCUITest server.
+# Run Playwright tests against a coverage-instrumented XCUITest server.
 # Usage: scripts/test-coverage.sh <project> <scheme> <simulator-udid> <build-dir>
 
 set -e
@@ -49,8 +49,8 @@ if [ $RETRIES -eq $MAX_RETRIES ]; then
     exit 1
 fi
 
-# Run mocha tests
-echo "Running mocha tests..."
+# Run Playwright tests
+echo "Running Playwright tests..."
 cd tests && npm test
 TEST_EXIT=$?
 cd ..
