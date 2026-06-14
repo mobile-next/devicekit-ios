@@ -40,6 +40,10 @@ Carthage/Build
 # Node
 node_modules/
 
+# Playwright
+tests/playwright-report/
+tests/test-results/
+
 # Coverage
 coverage-html/
 
