@@ -1,19 +1,25 @@
-const assert = require("assert");
-const http = require("http");
+import { test, expect } from "@playwright/test";
+import http from "node:http";
 
 const BASE_URL = "http://localhost:12004";
 const BOUNDARY = "--mjpeg-frame-boundary";
 const JPEG_SOI = Buffer.from([0xff, 0xd8]); // JPEG Start Of Image marker
 
+type StreamResult = { res: http.IncomingMessage; body: Buffer };
+type MjpegFrame = { headers: Record<string, string>; jpegData: Buffer };
+
 /**
  * Connects to the MJPEG stream and collects data for `durationMs`,
  * then destroys the socket and returns the response + accumulated buffer.
  */
-function collectStreamBytes(path, { durationMs = 2000 } = {}) {
+function collectStreamBytes(
+  path: string,
+  { durationMs = 2000 }: { durationMs?: number } = {},
+): Promise<StreamResult> {
   const url = `${BASE_URL}${path}`;
   return new Promise((resolve, reject) => {
     const req = http.get(url, (res) => {
-      const chunks = [];
+      const chunks: Buffer[] = [];
       let resolved = false;
 
       const finish = () => {
@@ -23,17 +29,20 @@ function collectStreamBytes(path, { durationMs = 2000 } = {}) {
         resolve({ res, body: Buffer.concat(chunks) });
       };
 
-      res.on("data", (chunk) => chunks.push(chunk));
+      res.on("data", (chunk: Buffer) => chunks.push(chunk));
       res.on("end", finish);
-      res.on("error", (err) => {
+      res.on("error", (err: NodeJS.ErrnoException) => {
         if (err.code === "ECONNRESET") return finish();
-        if (!resolved) { resolved = true; reject(err); }
+        if (!resolved) {
+          resolved = true;
+          reject(err);
+        }
       });
 
       setTimeout(finish, durationMs);
     });
 
-    req.on("error", (err) => {
+    req.on("error", (err: NodeJS.ErrnoException) => {
       if (err.code === "ECONNRESET") return;
       reject(err);
     });
@@ -44,9 +53,9 @@ function collectStreamBytes(path, { durationMs = 2000 } = {}) {
  * Parses MJPEG frames from a raw buffer.
  * Each frame starts with "--mjpeg-frame-boundary\r\n" followed by headers and JPEG data.
  */
-function parseMjpegFrames(buffer) {
+function parseMjpegFrames(buffer: Buffer): MjpegFrame[] {
   const text = buffer.toString("binary");
-  const frames = [];
+  const frames: MjpegFrame[] = [];
   let searchStart = 0;
 
   while (true) {
@@ -58,7 +67,7 @@ function parseMjpegFrames(buffer) {
     if (headerEnd === -1) break;
 
     const headerBlock = text.slice(headerStart, headerEnd);
-    const headers = {};
+    const headers: Record<string, string> = {};
     for (const line of headerBlock.split("\r\n")) {
       const colon = line.indexOf(":");
       if (colon !== -1) {
@@ -84,120 +93,120 @@ function parseMjpegFrames(buffer) {
 // ---------------------------------------------------------------------------
 // GET /mjpeg
 // ---------------------------------------------------------------------------
-describe("GET /mjpeg", function () {
-  this.timeout(15000);
+test.describe("GET /mjpeg", () => {
+  test.describe.configure({ timeout: 15000 });
 
-  it("returns multipart content type with correct boundary", async function () {
+  test("returns multipart content type with correct boundary", async () => {
     const { res } = await collectStreamBytes("/mjpeg");
     const contentType = res.headers["content-type"];
-    assert.strictEqual(contentType, "multipart/x-mixed-replace; boundary=mjpeg-frame-boundary");
+    expect(contentType).toBe("multipart/x-mixed-replace; boundary=mjpeg-frame-boundary");
   });
 
-  it("returns no-cache headers", async function () {
+  test("returns no-cache headers", async () => {
     const { res } = await collectStreamBytes("/mjpeg");
-    assert.strictEqual(res.headers["cache-control"], "no-cache, no-store, must-revalidate");
-    assert.strictEqual(res.headers["pragma"], "no-cache");
-    assert.strictEqual(res.headers["expires"], "0");
+    expect(res.headers["cache-control"]).toBe("no-cache, no-store, must-revalidate");
+    expect(res.headers["pragma"]).toBe("no-cache");
+    expect(res.headers["expires"]).toBe("0");
   });
 
-  it("returns server header", async function () {
+  test("returns server header", async () => {
     const { res } = await collectStreamBytes("/mjpeg");
-    assert.strictEqual(res.headers["server"], "DeviceKit-iOS");
+    expect(res.headers["server"]).toBe("DeviceKit-iOS");
   });
 
-  it("streams valid MJPEG frames", async function () {
+  test("streams valid MJPEG frames", async () => {
     const { body } = await collectStreamBytes("/mjpeg");
     const frames = parseMjpegFrames(body);
 
-    assert.ok(frames.length >= 1, `expected at least 1 frame, got ${frames.length}`);
+    expect(frames.length, `expected at least 1 frame, got ${frames.length}`).toBeGreaterThanOrEqual(1);
 
     for (const frame of frames) {
-      assert.strictEqual(frame.headers["content-type"], "image/jpeg");
-      assert.ok(frame.headers["content-length"], "frame missing Content-Length");
-      assert.strictEqual(frame.jpegData.length, parseInt(frame.headers["content-length"], 10));
+      expect(frame.headers["content-type"]).toBe("image/jpeg");
+      expect(frame.headers["content-length"], "frame missing Content-Length").toBeTruthy();
+      expect(frame.jpegData.length).toBe(parseInt(frame.headers["content-length"], 10));
     }
   });
 
-  it("each frame contains valid JPEG data", async function () {
+  test("each frame contains valid JPEG data", async () => {
     const { body } = await collectStreamBytes("/mjpeg");
     const frames = parseMjpegFrames(body);
 
-    assert.ok(frames.length >= 1, "no frames received");
+    expect(frames.length, "no frames received").toBeGreaterThanOrEqual(1);
 
     for (const frame of frames) {
       const startsWithJpegMagic = frame.jpegData[0] === JPEG_SOI[0] && frame.jpegData[1] === JPEG_SOI[1];
-      assert.ok(startsWithJpegMagic, "frame data does not start with JPEG SOI marker (0xFF 0xD8)");
-      assert.ok(frame.jpegData.length > 100, "JPEG data suspiciously small");
+      expect(startsWithJpegMagic, "frame data does not start with JPEG SOI marker (0xFF 0xD8)").toBe(true);
+      expect(frame.jpegData.length, "JPEG data suspiciously small").toBeGreaterThan(100);
     }
   });
 
-  it("streams multiple frames over time", async function () {
+  test("streams multiple frames over time", async () => {
     const { body } = await collectStreamBytes("/mjpeg");
     const frames = parseMjpegFrames(body);
-    assert.ok(frames.length >= 2, `expected at least 2 frames, got ${frames.length}`);
+    expect(frames.length, `expected at least 2 frames, got ${frames.length}`).toBeGreaterThanOrEqual(2);
   });
 
-  it("accepts custom fps parameter", async function () {
+  test("accepts custom fps parameter", async () => {
     const { res, body } = await collectStreamBytes("/mjpeg?fps=1", { durationMs: 3000 });
-    assert.strictEqual(res.statusCode, 200);
+    expect(res.statusCode).toBe(200);
     const frames = parseMjpegFrames(body);
-    assert.ok(frames.length >= 1, "no frames received with fps=1");
+    expect(frames.length, "no frames received with fps=1").toBeGreaterThanOrEqual(1);
   });
 
-  it("accepts custom quality parameter", async function () {
+  test("accepts custom quality parameter", async () => {
     const { body: lowQ } = await collectStreamBytes("/mjpeg?quality=1");
     const { body: highQ } = await collectStreamBytes("/mjpeg?quality=100");
 
     const lowFrames = parseMjpegFrames(lowQ);
     const highFrames = parseMjpegFrames(highQ);
 
-    assert.ok(lowFrames.length >= 1, "no frames at quality=1");
-    assert.ok(highFrames.length >= 1, "no frames at quality=100");
+    expect(lowFrames.length, "no frames at quality=1").toBeGreaterThanOrEqual(1);
+    expect(highFrames.length, "no frames at quality=100").toBeGreaterThanOrEqual(1);
 
     // Higher quality should produce larger JPEG data on average
     const avgLow = lowFrames.reduce((sum, f) => sum + f.jpegData.length, 0) / lowFrames.length;
     const avgHigh = highFrames.reduce((sum, f) => sum + f.jpegData.length, 0) / highFrames.length;
-    assert.ok(avgHigh > avgLow, `expected quality=100 (avg ${avgHigh}B) to produce larger frames than quality=1 (avg ${avgLow}B)`);
+    expect(avgHigh, `expected quality=100 (avg ${avgHigh}B) to produce larger frames than quality=1 (avg ${avgLow}B)`).toBeGreaterThan(avgLow);
   });
 
-  it("accepts custom scale parameter", async function () {
+  test("accepts custom scale parameter", async () => {
     const { body: fullScale } = await collectStreamBytes("/mjpeg?scale=100");
     const { body: halfScale } = await collectStreamBytes("/mjpeg?scale=50");
 
     const fullFrames = parseMjpegFrames(fullScale);
     const halfFrames = parseMjpegFrames(halfScale);
 
-    assert.ok(fullFrames.length >= 1, "no frames at scale=100");
-    assert.ok(halfFrames.length >= 1, "no frames at scale=50");
+    expect(fullFrames.length, "no frames at scale=100").toBeGreaterThanOrEqual(1);
+    expect(halfFrames.length, "no frames at scale=50").toBeGreaterThanOrEqual(1);
 
     // Smaller scale should produce smaller JPEG data on average
     const avgFull = fullFrames.reduce((sum, f) => sum + f.jpegData.length, 0) / fullFrames.length;
     const avgHalf = halfFrames.reduce((sum, f) => sum + f.jpegData.length, 0) / halfFrames.length;
-    assert.ok(avgFull > avgHalf, `expected scale=100 (avg ${avgFull}B) to produce larger frames than scale=50 (avg ${avgHalf}B)`);
+    expect(avgFull, `expected scale=100 (avg ${avgFull}B) to produce larger frames than scale=50 (avg ${avgHalf}B)`).toBeGreaterThan(avgHalf);
   });
 
-  it("clamps out-of-range fps values", async function () {
+  test("clamps out-of-range fps values", async () => {
     // fps=0 should be clamped to 1, fps=999 should be clamped to 60 — both should still stream
     const { res: lowRes } = await collectStreamBytes("/mjpeg?fps=0");
-    assert.strictEqual(lowRes.statusCode, 200);
+    expect(lowRes.statusCode).toBe(200);
 
     const { res: highRes } = await collectStreamBytes("/mjpeg?fps=999");
-    assert.strictEqual(highRes.statusCode, 200);
+    expect(highRes.statusCode).toBe(200);
   });
 
-  it("clamps out-of-range quality values", async function () {
+  test("clamps out-of-range quality values", async () => {
     const { res: lowRes } = await collectStreamBytes("/mjpeg?quality=0");
-    assert.strictEqual(lowRes.statusCode, 200);
+    expect(lowRes.statusCode).toBe(200);
 
     const { res: highRes } = await collectStreamBytes("/mjpeg?quality=999");
-    assert.strictEqual(highRes.statusCode, 200);
+    expect(highRes.statusCode).toBe(200);
   });
 
-  it("clamps out-of-range scale values", async function () {
+  test("clamps out-of-range scale values", async () => {
     const { res: lowRes } = await collectStreamBytes("/mjpeg?scale=0");
-    assert.strictEqual(lowRes.statusCode, 200);
+    expect(lowRes.statusCode).toBe(200);
 
     const { res: highRes } = await collectStreamBytes("/mjpeg?scale=999");
-    assert.strictEqual(highRes.statusCode, 200);
+    expect(highRes.statusCode).toBe(200);
   });
 });
