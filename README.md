@@ -52,9 +52,6 @@ cd devicekit-ios
 # Install dependencies
 brew install xcbeautify
 
-# Fetch git submodules
-git submodule update --init --recursive
-
 # Build unsigned IPA for real devices
 make ipa-unsigned
 
