@@ -3,7 +3,7 @@ import os
 
 struct IOKeysCombo: Codable {
     let key: String
-    let modifiers: [String]?
+    let modifiers: [String]
 }
 
 struct IOKeysRequest: Codable {
@@ -22,7 +22,6 @@ private let modifierFlagsByName: [String: XCUIElement.KeyModifierFlags] = [
     "option": .option,
     "shift": .shift,
     "fn": .function,
-    "capslock": .capsLock,
 ]
 
 private let keyboardKeysByName: [String: XCUIKeyboardKey] = [
@@ -77,7 +76,7 @@ struct IOKeysMethodHandler: RPCMethodHandler {
             let resolved = try resolveKey(combo.key)
             return ResolvedKeyCombo(
                 key: resolved.value,
-                flags: try resolveModifiers(combo.modifiers ?? []),
+                flags: try resolveModifiers(combo.modifiers),
                 preferTypeText: resolved.preferTypeText
             )
         }
