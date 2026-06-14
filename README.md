@@ -179,12 +179,26 @@ GET /h264?fps=30&bitrate=4000000&quality=60&scale=50
 
 ### Broadcast Extension
 
-The ReplayKit broadcast extension provides system-level screen and audio capture over TCP, independent of the JSON-RPC server.
+The ReplayKit broadcast extension provides system-level screen and audio capture over raw TCP, independent of the JSON-RPC server. These are **not** HTTP endpoints — connect with `nc` or any raw TCP client.
 
-| Port | Stream |
-|------|--------|
-| 12005 | H264 video |
-| 12006 | Opus audio |
+| Port  | Stream      | Format |
+|-------|-------------|--------|
+| 12005 | H264 video  | Raw NAL units |
+| 12006 | Opus audio  | Length-prefixed frames (4-byte big-endian uint32) |
+
+```bash
+ios tunnel start --userspace &
+ios forward 12005 12005 &
+
+nc localhost 12005 | ffplay \
+  -fflags nobuffer \
+  -flags low_delay \
+  -probesize 32 \
+  -analyzeduration 0 \
+  -framedrop \
+  -sync ext \
+  -f h264 -
+```
 
 ## Testing
 
