@@ -1,3 +1,4 @@
+#if os(iOS)
 import XCTest
 import os
 
@@ -88,3 +89,4 @@ struct IOTextMethodHandler: RPCMethodHandler {
         }
     }
 }
+#endif

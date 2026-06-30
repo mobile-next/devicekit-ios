@@ -1,3 +1,4 @@
+#if os(iOS)
 import Foundation
 import UIKit
 
@@ -50,3 +51,4 @@ final class EventRecord: NSObject {
         return self
     }
 }
+#endif

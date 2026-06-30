@@ -1,3 +1,4 @@
+#if os(iOS)
 import Foundation
 
 struct PointerEventPath {
@@ -60,3 +61,4 @@ struct PointerEventPath {
         method(path, selector, text as NSString, offset, UInt64(typingSpeed), shouldRedact)
     }
 }
+#endif

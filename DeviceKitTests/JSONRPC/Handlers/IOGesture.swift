@@ -1,3 +1,4 @@
+#if os(iOS)
 import Foundation
 import os
 
@@ -226,3 +227,4 @@ struct IOGestureMethodHandler: RPCMethodHandler {
         logger.info("Finger \(fingerIndex): path completed, total duration \(currentOffset)s")
     }
 }
+#endif
