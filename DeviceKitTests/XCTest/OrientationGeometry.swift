@@ -1,3 +1,4 @@
+#if os(iOS)
 import XCTest
 
 struct OrientationGeometry {
@@ -100,3 +101,4 @@ struct OrientationGeometry {
         }
     }
 }
+#endif

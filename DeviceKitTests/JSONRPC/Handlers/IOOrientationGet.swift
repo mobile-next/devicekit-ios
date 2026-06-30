@@ -1,3 +1,4 @@
+#if os(iOS)
 import os
 
 @MainActor
@@ -32,3 +33,4 @@ struct IOOrientationGetMethodHandler: RPCMethodHandler {
         return .object(["orientation": .string(value)])
     }
 }
+#endif

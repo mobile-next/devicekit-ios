@@ -1,3 +1,4 @@
+#if os(iOS)
 import Foundation
 
 @MainActor
@@ -70,3 +71,4 @@ class RunnerDaemonProxy {
         }
     }
 }
+#endif
