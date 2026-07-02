@@ -11,6 +11,14 @@
 # the bundle's Frameworks directory, adding an @rpath so they resolve as siblings,
 # and re-signing the modified Mach-O files ad-hoc for the simulator.
 #
+# It also patches the display name and app icon on the auto-generated Runner.app,
+# mirroring what scripts/patch-runner.sh does for the iOS runner. tvOS icons only
+# work through a compiled asset catalog (Assets.car), so instead of copying loose
+# PNGs we reuse the Assets.car + CFBundleIcons/CFBundleDisplayName that Xcode already
+# compiled into the nested .xctest bundle (from the "App Icon & Top Shelf Image"
+# brandassets in DeviceKitTests/Assets.xcassets) and copy them to the Runner.app root,
+# where the Home Screen actually looks for them.
+#
 # Usage: scripts/patch-tvos-runner.sh <path-to-devicekit-tvosUITests-Runner.app>
 set -e
 
@@ -39,3 +47,20 @@ codesign --force --sign - "$FW/Testing.framework"
 codesign --force --sign - "$FW/_Testing_Foundation.framework"
 
 echo "Patched tvOS runner with Swift Testing support libraries"
+
+# Set display name to match the iOS runner.
+/usr/bin/plutil -replace CFBundleDisplayName -string "Device Kit" "${APP}/Info.plist"
+
+# Copy the compiled app icon catalog from the nested .xctest bundle to the
+# Runner.app root and point the Runner's Info.plist at it, so the icon shows
+# up on the Home Screen instead of the default placeholder.
+XCTEST_DIR="${APP}/PlugIns/devicekit-tvosUITests.xctest"
+if [ -f "${XCTEST_DIR}/Assets.car" ]; then
+    cp "${XCTEST_DIR}/Assets.car" "${APP}/Assets.car"
+    /usr/bin/plutil -replace CFBundleIcons -json \
+        '{"CFBundlePrimaryIcon":"App Icon"}' \
+        "${APP}/Info.plist"
+    echo "Patched tvOS runner: display name and icon applied"
+else
+    echo "warning: no Assets.car found in ${XCTEST_DIR}, skipping icon patch"
+fi
