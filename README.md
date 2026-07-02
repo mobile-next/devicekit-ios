@@ -64,9 +64,11 @@ make sim-zip
 | Target | Output | Description |
 |--------|--------|-------------|
 | `make ipa-unsigned` | `build/export/devicekit-ios-unsigned.ipa` | Unsigned IPA for arm64 devices |
+| `make tvos-ipa-unsigned` | `build/export/devicekit-tvos-runner.ipa` | Unsigned IPA for arm64 Apple TV devices |
 | `make sim-zip-arm64` | `build/export/devicekit-ios-Sim-arm64.zip` | Simulator runner (Apple Silicon) |
 | `make sim-zip-x86_64` | `build/export/devicekit-ios-Sim-x86_64.zip` | Simulator runner (Intel) |
 | `make sim-zip` | Both simulator zips | arm64 + x86_64 |
+| `make tvos-sim-zip-arm64` | `build/export/devicekit-tvos-Sim-arm64.zip` | tvOS Simulator runner (Apple Silicon) |
 | `make lint` | — | Run SwiftLint |
 | `make clean` | — | Remove build artifacts |
 

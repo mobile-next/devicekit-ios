@@ -19,12 +19,31 @@
 # brandassets in DeviceKitTests/Assets.xcassets) and copy them to the Runner.app root,
 # where the Home Screen actually looks for them.
 #
-# Usage: scripts/patch-tvos-runner.sh <path-to-devicekit-tvosUITests-Runner.app>
+# The Swift Testing libraries are pulled from the AppleTVSimulator platform for
+# simulator runners and from the AppleTVOS platform for real-device runners. The
+# ad-hoc signature applied here to the copied binaries is a placeholder for the
+# simulator; real-device runners are re-signed with a provisioning profile at
+# install time (mobilecli's ResignIPA deep-signs Frameworks/), which replaces it.
+#
+# Usage: scripts/patch-tvos-runner.sh <path-to-devicekit-tvosUITests-Runner.app> [simulator|device]
 set -e
 
-APP="${1:?Usage: $0 <runner-app>}"
+APP="${1:?Usage: $0 <runner-app> [simulator|device]}"
+TARGET="${2:-simulator}"
 FW="$APP/Frameworks"
-TVDIR="$(xcode-select -p)/Platforms/AppleTVSimulator.platform/Developer"
+
+case "$TARGET" in
+    device)
+        TVDIR="$(xcode-select -p)/Platforms/AppleTVOS.platform/Developer"
+        ;;
+    simulator)
+        TVDIR="$(xcode-select -p)/Platforms/AppleTVSimulator.platform/Developer"
+        ;;
+    *)
+        echo "error: unknown target '$TARGET' (expected 'simulator' or 'device')"
+        exit 1
+        ;;
+esac
 
 if [ ! -d "$APP" ]; then
     echo "error: runner app not found at $APP"
