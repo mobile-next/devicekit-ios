@@ -30,6 +30,7 @@ enum RPCMethodError: Error {
     case invalidParams(String)
     case internalError(String)
     case timeout(String)
+    case focusNotFound(message: String, data: JSONValue?)
 
     var jsonRPCError: JSONRPCError {
         switch self {
@@ -39,6 +40,8 @@ enum RPCMethodError: Error {
             return .internalError(message: message)
         case .timeout(let message):
             return .timeout(message: message)
+        case .focusNotFound(let message, let data):
+            return .focusNotFound(message: message, data: data)
         }
     }
 }

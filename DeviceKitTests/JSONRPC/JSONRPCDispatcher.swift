@@ -34,6 +34,11 @@ final class JSONRPCDispatcher {
         registerHandler(IOOrientationGetMethodHandler())
         registerHandler(IOOrientationSetMethodHandler())
         #endif
+
+        // Focus-based navigation is tvOS-only (Siri Remote driven).
+        #if os(tvOS)
+        registerHandler(IOFocusMethodHandler())
+        #endif
     }
 
     func registerHandler<T: RPCMethodHandler>(_ handler: T) {

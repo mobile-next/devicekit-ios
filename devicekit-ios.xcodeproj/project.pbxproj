@@ -91,6 +91,7 @@
 		787C48482F228D960027A012 /* JSONRPCMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C48472F228D950027A012 /* JSONRPCMessageHandler.swift */; };
 		787C95982F17F23500AB3BF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787C95972F17F23500AB3BF1 /* Assets.xcassets */; };
 		78A190B62F3A3ADA007F24E0 /* IOButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A190B52F3A3ADA007F24E0 /* IOButton.swift */; };
+		B10F0C05E0000000000A0002 /* IOFocus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10F0C05E0000000000A0001 /* IOFocus.swift */; };
 		78E4A1B12F5C110200D4F1AA /* IOKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E4A1B02F5C110200D4F1AA /* IOKeys.swift */; };
 		78EA9F912F36611B008B17D3 /* AppsTerminate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EA9F902F36611B008B17D3 /* AppsTerminate.swift */; };
 		78F689392F17EF1B0025C8AC /* devicekit_iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F689372F17EF1B0025C8AC /* devicekit_iosApp.swift */; };
@@ -131,6 +132,7 @@
 		F0881FEA5B0136EB00959663 /* IOKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E4A1B02F5C110200D4F1AA /* IOKeys.swift */; };
 		F696916E157EB09BDBCF5132 /* FlyingFox in Frameworks */ = {isa = PBXBuildFile; productRef = EBF28227FF61B70D19DDE281 /* FlyingFox */; };
 		FE73645026930316D712AFBB /* IOButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A190B52F3A3ADA007F24E0 /* IOButton.swift */; };
+		B10F0C05E0000000000A0003 /* IOFocus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10F0C05E0000000000A0001 /* IOFocus.swift */; };
 		FF8B283A8DF6D51B1A7E4CD0 /* PointerEventPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613E87D6299A64BD00FF8551 /* PointerEventPath.swift */; };
 /* End PBXBuildFile section */
 
@@ -210,6 +212,7 @@
 		787C48472F228D950027A012 /* JSONRPCMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRPCMessageHandler.swift; sourceTree = "<group>"; };
 		787C95972F17F23500AB3BF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		78A190B52F3A3ADA007F24E0 /* IOButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOButton.swift; sourceTree = "<group>"; };
+		B10F0C05E0000000000A0001 /* IOFocus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOFocus.swift; sourceTree = "<group>"; };
 		78E4A1B02F5C110200D4F1AA /* IOKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOKeys.swift; sourceTree = "<group>"; };
 		78EA9F902F36611B008B17D3 /* AppsTerminate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsTerminate.swift; sourceTree = "<group>"; };
 		78F689132F17EE190025C8AC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -433,6 +436,7 @@
 				781480362F27CEF000E61E3B /* Screenshot.swift */,
 				7814800A2F27C55500E61E3B /* IOLongpress.swift */,
 				78A190B52F3A3ADA007F24E0 /* IOButton.swift */,
+				B10F0C05E0000000000A0001 /* IOFocus.swift */,
 				78147FCA2F27C03500E61E3B /* IOSwipe.swift */,
 				7865E50E2F42596200D0F45F /* AppsForeground.swift */,
 				78147F3C2F27BDBC00E61E3B /* AppsLaunch.swift */,
@@ -677,6 +681,7 @@
 				787C47E02F228B770027A012 /* DumpUI.swift in Sources */,
 				521C1F102D8051FC0024EE42 /* XCTestDaemonsProxy.m in Sources */,
 				78A190B62F3A3ADA007F24E0 /* IOButton.swift in Sources */,
+				B10F0C05E0000000000A0002 /* IOFocus.swift in Sources */,
 				613E87D7299A64BD00FF8551 /* PointerEventPath.swift in Sources */,
 				78147FCB2F27C04400E61E3B /* IOSwipe.swift in Sources */,
 				787C48482F228D960027A012 /* JSONRPCMessageHandler.swift in Sources */,
@@ -724,6 +729,7 @@
 				4EB43A87FBDB74F092EE24E6 /* DumpUI.swift in Sources */,
 				ECDFA922C0117DEBE58D1F69 /* XCTestDaemonsProxy.m in Sources */,
 				FE73645026930316D712AFBB /* IOButton.swift in Sources */,
+				B10F0C05E0000000000A0003 /* IOFocus.swift in Sources */,
 				FF8B283A8DF6D51B1A7E4CD0 /* PointerEventPath.swift in Sources */,
 				30151A4111977439D0303164 /* IOSwipe.swift in Sources */,
 				C7330BE333EB2E786B2D9C74 /* JSONRPCMessageHandler.swift in Sources */,
