@@ -285,6 +285,6 @@ struct DumpUIMethodHandler: RPCMethodHandler {
 
     private func elementHierarchy(xcuiElement: XCUIElement) throws -> AXElement {
         let snapshotDictionary = try xcuiElement.snapshot().dictionaryRepresentation
-        return AXElement(snapshotDictionary)
+        return AXElement(snapshotDictionary).resolvingNestedWindowOffsets()
     }
 }

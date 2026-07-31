@@ -212,4 +212,64 @@ struct AXElement: Codable {
 
         return max ?? 1
     }
+
+    // XCTest reports frames relative to the screen, except when an element is hosted in a
+    // nested window (e.g. a WidgetKit extension) - there, frames reset to be relative to that
+    // window's own origin. windowContextID marks the boundary: fix it up by re-basing the
+    // subtree's frames onto where the parent element already placed it on screen.
+    // windowContextID == 0 shows up on placeholder/group nodes with no real window of their
+    // own, so only a nonzero-to-different-nonzero transition counts as a real boundary.
+    func resolvingNestedWindowOffsets(
+        parentWindowContextID: Double? = nil,
+        parentResolvedFrame: AXFrame? = nil,
+        inheritedOffsetX: Double = 0,
+        inheritedOffsetY: Double = 0
+    ) -> AXElement {
+        var offsetX = inheritedOffsetX
+        var offsetY = inheritedOffsetY
+        if let parentWindowContextID, parentWindowContextID != 0,
+           windowContextID != 0, windowContextID != parentWindowContextID,
+           let parentResolvedFrame {
+            // Crossing into a nested window: its frames are relative to its own origin, not
+            // the parent's. Compute a fresh offset that rebases this node onto the
+            // screen-absolute position the parent already resolved, and carry that same
+            // offset down to every descendant still inside this window.
+            offsetX = (parentResolvedFrame["X"] ?? 0) - (frame["X"] ?? 0)
+            offsetY = (parentResolvedFrame["Y"] ?? 0) - (frame["Y"] ?? 0)
+        }
+
+        let resolvedFrame: AXFrame = [
+            "X": (frame["X"] ?? 0) + offsetX,
+            "Y": (frame["Y"] ?? 0) + offsetY,
+            "Width": frame["Width"] ?? 0,
+            "Height": frame["Height"] ?? 0,
+        ]
+
+        let resolvedChildren = children?.map {
+            $0.resolvingNestedWindowOffsets(
+                parentWindowContextID: windowContextID,
+                parentResolvedFrame: resolvedFrame,
+                inheritedOffsetX: offsetX,
+                inheritedOffsetY: offsetY
+            )
+        }
+
+        return AXElement(
+            identifier: identifier,
+            frame: resolvedFrame,
+            value: value,
+            title: title,
+            label: label,
+            elementType: elementType,
+            enabled: enabled,
+            horizontalSizeClass: horizontalSizeClass,
+            verticalSizeClass: verticalSizeClass,
+            placeholderValue: placeholderValue,
+            selected: selected,
+            hasFocus: hasFocus,
+            displayID: displayID,
+            windowContextID: windowContextID,
+            children: resolvedChildren
+        )
+    }
 }
