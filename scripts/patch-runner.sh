@@ -15,6 +15,36 @@ if [ ! -d "${RUNNER_APP}" ] || [ ! -f "${RUNNER_APP}/Info.plist" ]; then
     exit 1
 fi
 
+# Newer Xcode versions split XCTest/Swift Testing support into separate runtime
+# artifacts. Xcode supplies them through its DYLD paths for normal test runs,
+# but a standalone runner must carry its own copies.
+PLATFORM_NAME=$(/usr/libexec/PlistBuddy -c "Print :DTPlatformName" "${RUNNER_APP}/Info.plist")
+case "${PLATFORM_NAME}" in
+    iphonesimulator)
+        XCODE_PLATFORM="iPhoneSimulator"
+        ;;
+    iphoneos)
+        XCODE_PLATFORM="iPhoneOS"
+        ;;
+    *)
+        XCODE_PLATFORM=""
+        ;;
+esac
+
+if [ -n "${XCODE_PLATFORM}" ]; then
+    SELECTED_DEVELOPER_DIR="${DEVELOPER_DIR:-$(xcode-select -p)}"
+    TESTING_INTEROP_LIBRARY="${SELECTED_DEVELOPER_DIR}/Platforms/${XCODE_PLATFORM}.platform/Developer/usr/lib/lib_TestingInterop.dylib"
+    TESTING_FOUNDATION_FRAMEWORK="${SELECTED_DEVELOPER_DIR}/Platforms/${XCODE_PLATFORM}.platform/Developer/Library/Frameworks/_Testing_Foundation.framework"
+    if [ -f "${TESTING_INTEROP_LIBRARY}" ]; then
+        mkdir -p "${RUNNER_APP}/Frameworks"
+        cp "${TESTING_INTEROP_LIBRARY}" "${RUNNER_APP}/Frameworks/"
+    fi
+    if [ -d "${TESTING_FOUNDATION_FRAMEWORK}" ]; then
+        mkdir -p "${RUNNER_APP}/Frameworks"
+        cp -R "${TESTING_FOUNDATION_FRAMEWORK}" "${RUNNER_APP}/Frameworks/"
+    fi
+fi
+
 # Set display name
 /usr/bin/plutil -replace CFBundleDisplayName -string "Device Kit" "${RUNNER_APP}/Info.plist"
 
