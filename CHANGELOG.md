@@ -1,5 +1,8 @@
+## [0.0.23](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.23) (2026-08-01)
+* Fix: support xcode 26.5 by adding two missing testing frameworks ([#57](https://github.com/mobile-next/devicekit-ios/pull/57))
+
 ## [0.0.22](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.22) (2026-07-31)
-* Fix: correct element position if it belongs to another window (fixes elements within widgets and such)
+* Fix: correct element position if it belongs to another window (fixes elements within widgets and such) ([#55](https://github.com/mobile-next/devicekit-ios/pull/55))
 
 ## [0.0.20](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.20) (2026-06-15)
 * Feat: device.io.keys handler for sending key combos ([#51](https://github.com/mobile-next/devicekit-ios/pull/51))
