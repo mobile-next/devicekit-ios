@@ -15,7 +15,7 @@ CODE_SIGN_IDENTITY ?= Apple Development
 # Export method for IPA (development, ad-hoc, app-store, enterprise)
 EXPORT_METHOD ?= development
 
-.PHONY: help clean build archive ipa-unsigned sim-zip-arm64 sim-zip-x86_64 sim-zip sim-install test-coverage coverage-html lint
+.PHONY: help clean build archive ipa-unsigned tvos-ipa-unsigned sim-zip-arm64 sim-zip-x86_64 sim-zip sim-install tvos-sim-zip-arm64 tvos-sim-install test-coverage coverage-html lint
 
 .DEFAULT_GOAL := help
 
@@ -25,7 +25,10 @@ help:
 	@echo "  sim-zip-arm64    Build XCUITest runner zip for iOS Simulator (arm64 / Apple Silicon)"
 	@echo "  sim-zip-x86_64   Build XCUITest runner zip for iOS Simulator (x86_64 / Intel)"
 	@echo "  sim-install      Build and install on the currently booted simulator"
+	@echo "  tvos-sim-zip-arm64  Build XCUITest runner zip for tvOS Simulator (arm64 / Apple Silicon)"
+	@echo "  tvos-sim-install    Build and install the tvOS runner on the booted tvOS simulator"
 	@echo "  ipa-unsigned     Build unsigned IPA with XCUITest runner for real iOS devices"
+	@echo "  tvos-ipa-unsigned   Build unsigned IPA with XCUITest runner for real Apple TV devices"
 	@echo "  debug            Build with Debug configuration"
 	@echo "  release          Build with Release configuration"
 	@echo "  clean            Remove build artifacts"
@@ -108,6 +111,65 @@ sim-zip-x86_64:
 
 # Build both simulator zips
 sim-zip: sim-zip-arm64 sim-zip-x86_64
+
+# Build XCUITest runner for tvOS Simulator (arm64 — Apple Silicon)
+tvos-sim-zip-arm64:
+	@echo "Building devicekit-tvos XCUITest runner for tvOS Simulator (arm64)..."
+	xcodebuild build-for-testing \
+		-project $(PROJECT) \
+		-scheme devicekit-tvos \
+		-configuration $(CONFIGURATION) \
+		-destination 'generic/platform=tvOS Simulator' \
+		-derivedDataPath $(BUILD_DIR) \
+		CODE_SIGN_IDENTITY="" \
+		CODE_SIGNING_REQUIRED=NO \
+		CODE_SIGNING_ALLOWED=NO \
+		ARCHS=arm64 | xcbeautify
+	@mkdir -p $(EXPORT_PATH)
+	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-appletvsimulator/devicekit-tvosUITests-Runner.app" $(EXPORT_PATH)/
+	@scripts/patch-tvos-runner.sh "$(EXPORT_PATH)/devicekit-tvosUITests-Runner.app"
+	@codesign --force --sign - "$(EXPORT_PATH)/devicekit-tvosUITests-Runner.app"
+	@cd $(EXPORT_PATH) && zip -r devicekit-tvos-Sim-arm64.zip devicekit-tvosUITests-Runner.app
+	@rm -rf "$(EXPORT_PATH)/devicekit-tvosUITests-Runner.app"
+	@echo "Simulator zip created at: $(EXPORT_PATH)/devicekit-tvos-Sim-arm64.zip"
+
+# Create unsigned IPA with XCUITest runner for real Apple TV devices
+tvos-ipa-unsigned:
+	@echo "Building unsigned tvOS test runner for arm64 Apple TV devices..."
+	xcodebuild build-for-testing \
+		-project $(PROJECT) \
+		-scheme devicekit-tvos \
+		-configuration $(CONFIGURATION) \
+		-destination 'generic/platform=tvOS' \
+		-derivedDataPath $(BUILD_DIR) \
+		CODE_SIGN_IDENTITY="" \
+		CODE_SIGNING_REQUIRED=NO \
+		CODE_SIGNING_ALLOWED=NO | xcbeautify
+	@scripts/patch-tvos-runner.sh "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-appletvos/devicekit-tvosUITests-Runner.app" device
+	@echo "Packaging tvOS runner IPA..."
+	@rm -rf $(EXPORT_PATH)/Payload
+	@rm -f $(EXPORT_PATH)/devicekit-tvos-runner.ipa
+	@mkdir -p $(EXPORT_PATH)/Payload
+	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-appletvos/devicekit-tvosUITests-Runner.app" $(EXPORT_PATH)/Payload/
+	@cd $(EXPORT_PATH) && zip -r devicekit-tvos-runner.ipa Payload
+	@rm -rf $(EXPORT_PATH)/Payload
+	@echo "Runner IPA created at: $(EXPORT_PATH)/devicekit-tvos-runner.ipa"
+
+# Build and install tvOS runner on the booted tvOS simulator
+tvos-sim-install:
+	@BOOTED=$$(xcrun simctl list devices booted -j | jq -r '[.devices[][] | select(.state=="Booted")] | first | .udid'); \
+	echo "Building tvOS runner for simulator $$BOOTED..."; \
+	xcodebuild build-for-testing \
+		-project $(PROJECT) \
+		-scheme devicekit-tvos \
+		-configuration $(CONFIGURATION) \
+		-destination "id=$$BOOTED" \
+		-derivedDataPath $(BUILD_DIR)/local-tvos | xcbeautify; \
+	PRODUCTS="$(BUILD_DIR)/local-tvos/Build/Products/$(CONFIGURATION)-appletvsimulator"; \
+	scripts/patch-tvos-runner.sh "$$PRODUCTS/devicekit-tvosUITests-Runner.app"; \
+	codesign --force --sign - "$$PRODUCTS/devicekit-tvosUITests-Runner.app"; \
+	xcrun simctl install "$$BOOTED" "$$PRODUCTS/devicekit-tvosUITests-Runner.app"; \
+	echo "Installed tvOS runner on simulator $$BOOTED"
 
 # Build and install on booted simulator
 sim-install:

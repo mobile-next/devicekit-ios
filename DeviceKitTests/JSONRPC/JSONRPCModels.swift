@@ -90,6 +90,10 @@ struct JSONRPCError: Codable {
     static func preconditionFailed(message: String) -> JSONRPCError {
         JSONRPCError(code: -32001, message: message)
     }
+
+    static func focusNotFound(message: String, data: JSONValue? = nil) -> JSONRPCError {
+        JSONRPCError(code: -32002, message: message, data: data)
+    }
 }
 
 enum JSONValue: Codable, Equatable {

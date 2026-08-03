@@ -1,4 +1,5 @@
 import FlyingFox
+import FlyingSocks
 import Foundation
 import os
 
@@ -100,7 +101,7 @@ final class XCTestServer {
     func start() async throws {
         let port = ProcessInfo.processInfo.environment["DEVICEKIT_LISTEN_PORT"]?.toUInt16() ?? defaultPort
         let server = HTTPServer(
-            address: try .inet(ip4: localhost, port: port),
+            address: try listenAddress(host: localhost, port: port),
             timeout: defaultTimeout
         )
 
@@ -134,5 +135,11 @@ final class XCTestServer {
         logger.info("Server is ready (WebSocket: ws://\(self.localhost):\(port)/ws, HTTP: POST http://\(self.localhost):\(port)/rpc, MJPEG: http://\(self.localhost):\(port)/mjpeg)")
         try await server.run()
     }
-}
 
+    private func listenAddress(host: String, port: UInt16) throws -> any SocketAddress {
+        if host.contains(":") {
+            return try sockaddr_in6.inet6(ip6: host, port: port)
+        }
+        return try sockaddr_in.inet(ip4: host, port: port)
+    }
+}

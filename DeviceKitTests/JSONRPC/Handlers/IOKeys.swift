@@ -1,3 +1,4 @@
+#if os(iOS)
 import XCTest
 import os
 
@@ -126,3 +127,4 @@ struct IOKeysMethodHandler: RPCMethodHandler {
         return flags
     }
 }
+#endif

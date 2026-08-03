@@ -54,9 +54,15 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         do {
             let foregroundApp = RunningApp.getForegroundApp()
             guard let foregroundApp = foregroundApp else {
+                #if os(iOS)
                 logger.warning("No foreground app found, returning springboard app hierarchy")
                 let springboardHierarchy = try elementHierarchy(xcuiElement: springboardApplication)
                 return try formatResponse(axElement: springboardHierarchy, format: format)
+                #else
+                // tvOS has no SpringBoard; without a foreground app there is no
+                // hierarchy to serialise.
+                throw RPCMethodError.internalError("No foreground app found")
+                #endif
             }
 
             logger.info("[Start] View hierarchy snapshot for \(foregroundApp)")
@@ -106,6 +112,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         SystemPermissionManager.handleSystemPermissionAlertIfNeeded(foregroundApp: foregroundApp)
         let appHierarchy = try getHierarchyWithFallback(foregroundApp)
 
+        #if os(iOS)
         let statusBars = logger.measure(message: "Fetch status bar hierarchy") {
             fullStatusBars(springboardApplication)
         } ?? []
@@ -134,6 +141,11 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         }
 
         return buildRootElement(app: appHierarchy, statusBars: statusBars, safari: safariWebViewHierarchy)
+        #else
+        // tvOS has no SpringBoard / status bars / Safari view service. Use the
+        // foreground app's own root hierarchy directly.
+        return buildRootElement(app: appHierarchy, statusBars: [], safari: nil)
+        #endif
     }
 
     private func buildRootElement(app: AXElement, statusBars: [AXElement], safari: AXElement?) -> AXElement {

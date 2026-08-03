@@ -21,6 +21,7 @@ final class SystemPermissionManager {
     static func handleSystemPermissionAlertIfNeeded(
         foregroundApp: XCUIApplication
     ) {
+        #if os(iOS)
         let predicate = NSPredicate(
             format: "label CONTAINS[c] %@",
             notificationsPermissionLabel
@@ -70,5 +71,6 @@ final class SystemPermissionManager {
         NSLog(
             "[Done] Foreground app is springboard attempting to tap on permissions dialog"
         )
+        #endif
     }
 }

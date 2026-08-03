@@ -12,22 +12,33 @@ final class JSONRPCDispatcher {
     private var handlers: [String: any RPCMethodHandler] = [:]
 
     init() {
-        registerHandler(IOTapMethodHandler())
+        // Shared handlers (available on both iOS and tvOS).
         registerHandler(DumpUIMethodHandler())
-        registerHandler(IOTextMethodHandler())
-        registerHandler(IOKeysMethodHandler())
         registerHandler(AppsLaunchMethodHandler())
         registerHandler(AppsTerminateMethodHandler())
-        registerHandler(IOSwipeMethodHandler())
-        registerHandler(IOLongpressMethodHandler())
         registerHandler(ScreenshotMethodHandler())
         registerHandler(URLMethodHandler())
-        registerHandler(IOGestureMethodHandler())
         registerHandler(IOButtonMethodHandler())
-        registerHandler(IOOrientationGetMethodHandler())
-        registerHandler(IOOrientationSetMethodHandler())
         registerHandler(DeviceInfoMethodHandler())
         registerHandler(AppsForegroundMethodHandler())
+
+        // Touch- and keyboard-driven input is iOS-only. tvOS uses focus-based
+        // remote navigation via the (shared) device.io.button handler.
+        #if os(iOS)
+        registerHandler(IOTapMethodHandler())
+        registerHandler(IOTextMethodHandler())
+        registerHandler(IOKeysMethodHandler())
+        registerHandler(IOSwipeMethodHandler())
+        registerHandler(IOLongpressMethodHandler())
+        registerHandler(IOGestureMethodHandler())
+        registerHandler(IOOrientationGetMethodHandler())
+        registerHandler(IOOrientationSetMethodHandler())
+        #endif
+
+        // Focus-based navigation is tvOS-only (Siri Remote driven).
+        #if os(tvOS)
+        registerHandler(IOFocusMethodHandler())
+        #endif
     }
 
     func registerHandler<T: RPCMethodHandler>(_ handler: T) {
