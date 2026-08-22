@@ -2,6 +2,7 @@ import os
 
 private enum Constants {
     static let defaultSwipeDuration = 0.1
+    static let maxSwipeDuration = 60.0
 }
 
 struct IOSwipeRequest: Decodable {
@@ -9,6 +10,7 @@ struct IOSwipeRequest: Decodable {
     let y1: Int
     let x2: Int
     let y2: Int
+    let duration: TimeInterval?
 }
 
 @MainActor
@@ -23,11 +25,21 @@ struct IOSwipeMethodHandler: RPCMethodHandler {
     func execute(params: JSONValue?) async throws -> JSONValue {
         let request = try decodeParams(IOSwipeRequest.self, from: params)
 
+        let duration = request.duration ?? Constants.defaultSwipeDuration
+        guard duration >= 0 else {
+            throw RPCMethodError.invalidParams("Duration cannot be negative, got \(duration)")
+        }
+        guard duration <= Constants.maxSwipeDuration else {
+            throw RPCMethodError.invalidParams(
+                "Duration \(duration) exceeds the maximum of \(Constants.maxSwipeDuration) seconds"
+            )
+        }
+
         do {
             try await swipePrivateAPI(
                 start: CGPoint(x: request.x1, y: request.y1),
                 end: CGPoint(x: request.x2, y: request.y2),
-                duration: Constants.defaultSwipeDuration
+                duration: duration
             )
 
             return .object(["success": .bool(true)])
