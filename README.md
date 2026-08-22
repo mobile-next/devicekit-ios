@@ -123,7 +123,7 @@ All methods follow the [JSON-RPC 2.0](https://www.jsonrpc.org/specification) spe
 | Method | Description |
 |--------|-------------|
 | `device.io.tap` | Tap at (x, y) coordinates |
-| `device.io.swipe` | Swipe from (x1, y1) to (x2, y2) with an optional duration |
+| `device.io.swipe` | Swipe from (x1, y1) to (x2, y2) with an optional duration in seconds (default 0.1, max 60) |
 | `device.io.longpress` | Long press at (x, y) for a duration |
 | `device.io.gesture` | Multi-finger gesture with press/move/release actions |
 | `device.io.text` | Type text into the focused field |
