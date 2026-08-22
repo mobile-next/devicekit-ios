@@ -25,7 +25,7 @@ help:
 	@echo "  sim-zip-arm64    Build XCUITest runner zip for iOS Simulator (arm64 / Apple Silicon)"
 	@echo "  sim-zip-x86_64   Build XCUITest runner zip for iOS Simulator (x86_64 / Intel)"
 	@echo "  sim-install      Build and install on the currently booted simulator"
-	@echo "  ipa-unsigned     Build unsigned IPA with XCUITest runner for real iOS devices"
+	@echo "  ipa-unsigned     Build unsigned runner IPA + main app IPA for real iOS devices"
 	@echo "  debug            Build with Debug configuration"
 	@echo "  release          Build with Release configuration"
 	@echo "  clean            Remove build artifacts"
@@ -65,6 +65,14 @@ ipa-unsigned:
 	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-runner.ipa Payload
 	@rm -rf $(EXPORT_PATH)/Payload
 	@echo "Runner IPA created at: $(EXPORT_PATH)/$(SCHEME)-runner.ipa"
+	@echo "Packaging main app IPA..."
+	@rm -rf $(EXPORT_PATH)/Payload
+	@rm -f $(EXPORT_PATH)/$(SCHEME).ipa
+	@mkdir -p $(EXPORT_PATH)/Payload
+	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME).app" $(EXPORT_PATH)/Payload/
+	@cd $(EXPORT_PATH) && zip -r $(SCHEME).ipa Payload
+	@rm -rf $(EXPORT_PATH)/Payload
+	@echo "App IPA created at: $(EXPORT_PATH)/$(SCHEME).ipa"
 
 # Build XCUITest runner for iOS Simulator (arm64 — Apple Silicon)
 sim-zip-arm64:
