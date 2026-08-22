@@ -1,3 +1,7 @@
+## [0.0.24](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.24) (2026-08-22)
+* Fix: sample the swipe path over its requested duration ([#62](https://github.com/mobile-next/devicekit-ios/pull/62)), thanks to [@hakanor](https://github.com/hakanor)
+* Build: package main app (devicekit-ios.ipa) in ipa-unsigned so releases ship it ([#61](https://github.com/mobile-next/devicekit-ios/pull/61))
+
 ## [0.0.23](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.23) (2026-08-01)
 * Fix: support xcode 26.5 by adding two missing testing frameworks ([#57](https://github.com/mobile-next/devicekit-ios/pull/57))
 
