@@ -152,8 +152,36 @@ test.describe("device.io.swipe", () => {
     expect(result).toBeTruthy();
   });
 
+  test("swipes over an explicit duration", async ({ request }) => {
+    const started = Date.now();
+    const result = returnsResult(
+      await rpc(request, "device.io.swipe", {
+        x1: 200,
+        y1: 400,
+        x2: 200,
+        y2: 200,
+        duration: 1.5,
+      }),
+    );
+    expect(result).toBeTruthy();
+    expect(Date.now() - started).toBeGreaterThanOrEqual(1400);
+  });
+
   test("fails without coordinates", async ({ request }) => {
     const error = returnsError(await rpc(request, "device.io.swipe"));
+    expect(error.code).toBeTruthy();
+  });
+
+  test("rejects a negative duration", async ({ request }) => {
+    const error = returnsError(
+      await rpc(request, "device.io.swipe", {
+        x1: 200,
+        y1: 400,
+        x2: 200,
+        y2: 200,
+        duration: -1,
+      }),
+    );
     expect(error.code).toBeTruthy();
   });
 });
