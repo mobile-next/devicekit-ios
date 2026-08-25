@@ -1,3 +1,4 @@
+#if os(iOS)
 import os
 
 struct IOTapRequest: Codable {
@@ -42,3 +43,4 @@ struct IOTapMethodHandler: RPCMethodHandler {
     }
 }
 
+#endif

@@ -1,3 +1,4 @@
+#if os(iOS)
 import os
 
 struct IOLongpressRequest: Codable {
@@ -44,3 +45,4 @@ struct IOLongpressMethodHandler: RPCMethodHandler {
         }
     }
 }
+#endif

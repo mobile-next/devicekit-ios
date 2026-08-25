@@ -1,3 +1,4 @@
+#if os(iOS)
 import os
 
 struct IOOrientationSetRequest: Codable {
@@ -35,3 +36,4 @@ struct IOOrientationSetMethodHandler: RPCMethodHandler {
         return .object(["success": .bool(true)])
     }
 }
+#endif

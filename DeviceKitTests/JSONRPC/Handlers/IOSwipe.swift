@@ -1,3 +1,4 @@
+#if os(iOS)
 import os
 
 private enum Constants {
@@ -58,3 +59,4 @@ struct IOSwipeMethodHandler: RPCMethodHandler {
         try await RunnerDaemonProxy().synthesize(eventRecord: eventRecord)
     }
 }
+#endif
