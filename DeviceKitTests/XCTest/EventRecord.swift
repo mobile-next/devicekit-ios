@@ -8,6 +8,9 @@ final class EventRecord: NSObject {
 
     static let defaultTapDuration = 0.1
 
+    static let swipeSampleRate: TimeInterval = 60
+    static let maxSwipeSamples = 240
+
     enum Style: String {
         case singleFinger = "Single-Finger Touch Action"
         case multiFinger = "Multi-Finger Touch Action"
@@ -36,10 +39,25 @@ final class EventRecord: NSObject {
     func addSwipeEvent(start: CGPoint, end: CGPoint, duration: TimeInterval) -> Self {
         var path = PointerEventPath.pathForTouch(at: start)
         path.offset += Self.defaultTapDuration
-        path.moveTo(point: end)
-        path.offset += duration
+
+        let sampleCount = Self.swipeSampleCount(for: duration)
+        let step = duration / TimeInterval(sampleCount)
+        for sample in 1...sampleCount {
+            let progress = CGFloat(sample) / CGFloat(sampleCount)
+            path.offset += step
+            path.moveTo(point: CGPoint(
+                x: start.x + (end.x - start.x) * progress,
+                y: start.y + (end.y - start.y) * progress
+            ))
+        }
+
         path.liftUp()
         return add(path)
+    }
+
+    private static func swipeSampleCount(for duration: TimeInterval) -> Int {
+        let sampled = Int((duration * Self.swipeSampleRate).rounded())
+        return min(max(sampled, 1), Self.maxSwipeSamples)
     }
 
     func add(_ path: PointerEventPath) -> Self {
