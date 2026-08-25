@@ -137,6 +137,8 @@ All methods follow the [JSON-RPC 2.0](https://www.jsonrpc.org/specification) spe
 | `device.io.orientation.get` | Get current orientation (`PORTRAIT` / `LANDSCAPE`) |
 | `device.io.orientation.set` | Set orientation to `PORTRAIT` or `LANDSCAPE` |
 | `device.url` | Open a URL |
+| `device.clipboard.get` | Read the clipboard text |
+| `device.clipboard.set` | Replace the clipboard text |
 
 #### Apps
 
