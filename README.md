@@ -153,6 +153,13 @@ All methods follow the [JSON-RPC 2.0](https://www.jsonrpc.org/specification) spe
 | `device.dump.ui` | Return the full accessibility view hierarchy |
 | `device.screenshot` | Capture a screenshot (base64 PNG/JPEG) |
 
+#### Broadcast
+
+| Method | Description |
+|--------|-------------|
+| `device.h264.start` | Confirm the system broadcast picker and start the [ReplayKit extension](#broadcast-extension) |
+| `device.h264.stop` | Stop the broadcast over the extension's TCP control channel |
+
 ### Streaming Endpoints
 
 #### MJPEG
@@ -226,11 +233,11 @@ devicekit-ios/
   DeviceKitTests/               # XCUITest runner (automation server)
     JSONRPC/                    #   JSON-RPC protocol + 15 method handlers
     Streamer/                   #   MJPEG and H264 HTTP streaming
+      H264/                     #     Screenshot-based H264 streaming
     XCTest/                     #   Private API wrappers (touch synthesis, accessibility)
-    H264Stream/                 #   Screenshot-based H264 streaming
-  BroadcastUploadExtension/     # ReplayKit extension (H264 + Opus over TCP)
-  h264-codec/                   # Swift package: H264 encoder (VideoToolbox)
-  opus-codec/                   # Swift package: Opus encoder (wraps libopus)
+  h264-codec-screenshot/        # Swift package: H264 encoder (VideoToolbox)
+  Dependencies/
+    devicekit-ios-h264/         # Submodule: ReplayKit extension (H264 + Opus over TCP)
 ```
 
 ## Dependencies

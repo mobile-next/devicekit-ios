@@ -131,7 +131,11 @@ final class XCTestServer {
         let mjpegHandler = MJPEGHTTPHandler()
         await server.appendRoute("GET /mjpeg", to: mjpegHandler)
 
-        logger.info("Server is ready (WebSocket: ws://\(self.localhost):\(port)/ws, HTTP: POST http://\(self.localhost):\(port)/rpc, MJPEG: http://\(self.localhost):\(port)/mjpeg)")
+        // H264 streaming endpoint
+        let h264Handler = H264HTTPHandler()
+        await server.appendRoute("GET /h264", to: h264Handler)
+
+        logger.info("Server is ready (WebSocket: ws://\(self.localhost):\(port)/ws, HTTP: POST http://\(self.localhost):\(port)/rpc, MJPEG: http://\(self.localhost):\(port)/mjpeg, H264: http://\(self.localhost):\(port)/h264)")
         try await server.run()
     }
 }
