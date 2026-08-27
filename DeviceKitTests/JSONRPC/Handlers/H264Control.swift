@@ -43,6 +43,10 @@ struct H264StartMethodHandler: RPCMethodHandler {
             logger.info("Home press \(attempt) did not leave the host app foregrounded, retrying")
         }
 
+        guard RunningApp.getForegroundApp()?.bundleID != Constants.hostAppBundleId else {
+            throw RPCMethodError.internalError("Could not return to the home screen")
+        }
+
         return .object(["success": .bool(true)])
     }
 
@@ -126,7 +130,11 @@ private enum H264ControlClient {
                     var message = Data(bytes: &length, count: 4)
                     message.append(payload)
                     connection.send(content: message, completion: .contentProcessed { error in
-                        finish(error.map { .failure($0) } ?? .success(()))
+                        if let error {
+                            finish(.failure(error))
+                            return
+                        }
+                        Self.receiveAck(on: connection, finish: finish)
                     })
                 case .failed, .cancelled:
                     finish(.failure(ControlError.notRunning))
@@ -139,6 +147,38 @@ private enum H264ControlClient {
 
             DispatchQueue.main.asyncAfter(deadline: .now() + Constants.controlTimeout) {
                 finish(.failure(ControlError.connectionFailed))
+            }
+        }
+    }
+
+    private static func receiveAck(
+        on connection: NWConnection,
+        finish: @escaping (Result<Void, Error>) -> Void
+    ) {
+        connection.receive(minimumIncompleteLength: 4, maximumLength: 4) { lengthData, _, _, error in
+            if let error {
+                finish(.failure(error))
+                return
+            }
+            guard let lengthData, lengthData.count == 4 else {
+                finish(.failure(ControlError.connectionFailed))
+                return
+            }
+            let length = Int(UInt32(bigEndian: lengthData.withUnsafeBytes { $0.load(as: UInt32.self) }))
+
+            connection.receive(minimumIncompleteLength: length, maximumLength: length) { payload, _, _, error in
+                if let error {
+                    finish(.failure(error))
+                    return
+                }
+                guard let payload,
+                      let json = try? JSONSerialization.jsonObject(with: payload) as? [String: Any],
+                      let result = json["result"] as? [String: Any],
+                      result["success"] as? Bool == true else {
+                    finish(.failure(ControlError.connectionFailed))
+                    return
+                }
+                finish(.success(()))
             }
         }
     }

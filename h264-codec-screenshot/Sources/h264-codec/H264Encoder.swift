@@ -63,7 +63,7 @@ public final class H264Encoder: NSObject {
             compressionSessionOut: &session
         )
 
-        guard error == errSecSuccess,
+        guard error == noErr,
               let session = session else {
             throw ConfigurationError.cannotCreateSession
         }

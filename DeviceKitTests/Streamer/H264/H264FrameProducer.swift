@@ -28,6 +28,7 @@ final class H264FrameProducer: @unchecked Sendable {
     private var frameCount: UInt64 = 0
 
     private var continuation: AsyncStream<Data>.Continuation?
+    private var pendingFrameData = Data()
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier ?? "devicekit-ios",
@@ -37,7 +38,7 @@ final class H264FrameProducer: @unchecked Sendable {
     init() {}
 
     func makeNALUnitStream() -> AsyncStream<Data> {
-        AsyncStream { continuation in
+        AsyncStream(bufferingPolicy: .bufferingNewest(2)) { continuation in
             self.continuation = continuation
 
             continuation.onTermination = { [weak self] _ in
@@ -97,7 +98,11 @@ final class H264FrameProducer: @unchecked Sendable {
             value: CMTimeValue(frameCount),
             timescale: CMTimeScale(fps)
         )
+        pendingFrameData.removeAll(keepingCapacity: true)
         encoder.encode(pixelBuffer: pixelBuffer, timestamp: timestamp)
+        if !pendingFrameData.isEmpty {
+            continuation?.yield(pendingFrameData)
+        }
         frameCount += 1
 
         let elapsed = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) - frameStart
@@ -118,8 +123,8 @@ final class H264FrameProducer: @unchecked Sendable {
 
         var scaledWidth = Int(originalWidth * CGFloat(scale))
         var scaledHeight = Int(originalHeight * CGFloat(scale))
-        scaledWidth = scaledWidth - (scaledWidth % 2)
-        scaledHeight = scaledHeight - (scaledHeight % 2)
+        scaledWidth -= scaledWidth % 2
+        scaledHeight -= scaledHeight % 2
         scaledWidth = max(64, scaledWidth)
         scaledHeight = max(64, scaledHeight)
 
@@ -149,7 +154,7 @@ final class H264FrameProducer: @unchecked Sendable {
         ))
 
         enc.naluHandling = { [weak self] data in
-            self?.continuation?.yield(data)
+            self?.pendingFrameData.append(data)
         }
 
         encoder = enc
