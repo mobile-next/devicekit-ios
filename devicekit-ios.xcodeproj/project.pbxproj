@@ -28,8 +28,6 @@
 		52D8FAA52D6DD1950015FAB3 /* XCUIApplicationImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA7E2D6DCC600015FAB3 /* XCUIApplicationImpl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52D8FAA62D6DD1950015FAB3 /* XCUIApplicationProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA7F2D6DCC600015FAB3 /* XCUIApplicationProcess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52D8FAA82D6DD1950015FAB3 /* XCUIDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA812D6DCC600015FAB3 /* XCUIDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		52D8FAAC2D6DD3A20015FAB3 /* FBLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D8FAAB2D6DD3A20015FAB3 /* FBLogger.m */; };
-		52D8FAAD2D6DD3A20015FAB3 /* FBLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FAAA2D6DD3A20015FAB3 /* FBLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52D8FAB02D6DD4100015FAB3 /* FBConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D8FAAF2D6DD4100015FAB3 /* FBConfiguration.m */; };
 		52D8FAB12D6DD4100015FAB3 /* FBConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FAAE2D6DD4100015FAB3 /* FBConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52D8FAB42D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D8FAB32D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.m */; };
@@ -114,8 +112,6 @@
 		52D8FA922D6DCF2C0015FAB3 /* devicekit-iosUITests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "devicekit-iosUITests-Bridging-Header.h"; sourceTree = "<group>"; };
 		52D8FA9B2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCUIApplicationProcess+FBQuiescence.h"; sourceTree = "<group>"; };
 		52D8FA9C2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCUIApplicationProcess+FBQuiescence.m"; sourceTree = "<group>"; };
-		52D8FAAA2D6DD3A20015FAB3 /* FBLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBLogger.h; sourceTree = "<group>"; };
-		52D8FAAB2D6DD3A20015FAB3 /* FBLogger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBLogger.m; sourceTree = "<group>"; };
 		52D8FAAE2D6DD4100015FAB3 /* FBConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBConfiguration.h; sourceTree = "<group>"; };
 		52D8FAAF2D6DD4100015FAB3 /* FBConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBConfiguration.m; sourceTree = "<group>"; };
 		52D8FAB22D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCUIApplication+FBQuiescence.h"; sourceTree = "<group>"; };
@@ -296,8 +292,6 @@
 				521C1F022D8014340024EE42 /* AXClientProxy.h */,
 				52D8FAAE2D6DD4100015FAB3 /* FBConfiguration.h */,
 				52D8FAAF2D6DD4100015FAB3 /* FBConfiguration.m */,
-				52D8FAAA2D6DD3A20015FAB3 /* FBLogger.h */,
-				52D8FAAB2D6DD3A20015FAB3 /* FBLogger.m */,
 				521C1F042D8016950024EE42 /* XCAccessibilityElement.h */,
 			);
 			path = Utilities;
@@ -372,7 +366,6 @@
 				52D8FAA42D6DD1950015FAB3 /* XCUIApplication.h in Headers */,
 				526111782DE5E8DA007C356B /* XCAXClient_iOS+FBSnapshotReqParams.h in Headers */,
 				521C1F092D8018590024EE42 /* XCUIApplication+Helper.h in Headers */,
-				52D8FAAD2D6DD3A20015FAB3 /* FBLogger.h in Headers */,
 				521C1F0C2D8030A30024EE42 /* XCTestManager_ManagerInterface-Protocol.h in Headers */,
 				52D8FAB12D6DD4100015FAB3 /* FBConfiguration.h in Headers */,
 				52D8FAA02D6DD0E60015FAB3 /* XCAXClient_iOS.h in Headers */,
@@ -513,7 +506,6 @@
 				781480FF2F27DEE600E61E3B /* IOGesture.swift in Sources */,
 				612DE4122984114B003C2BE0 /* RunnerDaemonProxy.swift in Sources */,
 				94826F4429DB082100795E9B /* SystemPermissionManager.swift in Sources */,
-				52D8FAAC2D6DD3A20015FAB3 /* FBLogger.m in Sources */,
 				7852814A2F2BEC40002A7531 /* FBScreenshot.m in Sources */,
 				7865E50F2F42596200D0F45F /* AppsForeground.swift in Sources */,
 				521C1F072D8017480024EE42 /* AXClientProxy.m in Sources */,
