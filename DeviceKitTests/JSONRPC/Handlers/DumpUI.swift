@@ -104,7 +104,11 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         excludeKeyboardElements: Bool
     ) throws -> AXElement {
         SystemPermissionManager.handleSystemPermissionAlertIfNeeded(foregroundApp: foregroundApp)
-        let appHierarchy = try getHierarchyWithFallback(foregroundApp)
+        var appHierarchy = try getHierarchyWithFallback(foregroundApp)
+
+        if let focusedFrame = keyboardFocusedElementFrame(foregroundApp) {
+            appHierarchy.markKeyboardFocus(at: focusedFrame)
+        }
 
         let statusBars = logger.measure(message: "Fetch status bar hierarchy") {
             fullStatusBars(springboardApplication)
@@ -166,6 +170,26 @@ struct DumpUIMethodHandler: RPCMethodHandler {
             windowContextID: element.windowContextID,
             children: adjustedChildren
         )
+    }
+
+    // the snapshot's hasFocus attribute is tvOS-only; on iOS the element
+    // holding keyboard focus is only reachable through a predicate query
+    // against the private hasKeyboardFocus property, same as WebDriverAgent
+    private func keyboardFocusedElementFrame(_ app: XCUIApplication) -> AXFrame? {
+        let focused = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "hasKeyboardFocus == true"))
+            .firstMatch
+        guard focused.exists else {
+            return nil
+        }
+
+        let frame = focused.frame
+        return [
+            "X": Double(frame.minX),
+            "Y": Double(frame.minY),
+            "Width": Double(frame.width),
+            "Height": Double(frame.height),
+        ]
     }
 
     private func getHierarchyWithFallback(_ element: XCUIElement) throws -> AXElement {

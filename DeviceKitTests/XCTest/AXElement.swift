@@ -102,7 +102,7 @@ struct AXElement: Codable {
     let verticalSizeClass: Int
     let placeholderValue: String?
     let selected: Bool
-    let hasFocus: Bool
+    var hasFocus: Bool
     var children: [AXElement]?
     let windowContextID: Double
     let displayID: Int
@@ -182,6 +182,20 @@ struct AXElement: Codable {
         let childrenDictionaries =
             valueFor("children") as? [[XCUIElement.AttributeName: Any]]
         self.children = childrenDictionaries?.map { AXElement($0) } ?? []
+    }
+
+    // the snapshot's hasFocus attribute is the tvOS focus engine and is always
+    // false on iPhone/iPad; keyboard focus is resolved by a separate query and
+    // stamped onto the node with the matching frame
+    mutating func markKeyboardFocus(at focusedFrame: AXFrame) {
+        if frame == focusedFrame {
+            hasFocus = true
+        }
+        children = children?.map {
+            var child = $0
+            child.markKeyboardFocus(at: focusedFrame)
+            return child
+        }
     }
 
     func encode(to encoder: Encoder) throws {
