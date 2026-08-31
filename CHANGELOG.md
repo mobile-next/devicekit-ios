@@ -1,3 +1,6 @@
+## [0.0.26](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.26) (2026-08-31)
+* Feat: include enabled, selected and focused state attributes in json ui dump ([#68](https://github.com/mobile-next/devicekit-ios/pull/68), [#69](https://github.com/mobile-next/devicekit-ios/pull/69))
+
 ## [0.0.25](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.25) (2026-08-25)
 * Feat: device.clipboard.get and device.clipboard.set handlers ([#64](https://github.com/mobile-next/devicekit-ios/pull/64)), thanks to [@hakanor](https://github.com/hakanor)
 
