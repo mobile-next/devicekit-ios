@@ -22,6 +22,9 @@ struct SourceTreeElement: Codable {
     let value: String?
     let placeholderValue: String?
     let rawIdentifier: String?
+    let enabled: Bool?
+    let selected: Bool?
+    let hasFocus: Bool?
     let rect: SourceTreeRect
     let children: [SourceTreeElement]?
 
@@ -33,6 +36,10 @@ struct SourceTreeElement: Codable {
         self.value = axElement.value
         self.placeholderValue = axElement.placeholderValue
         self.rawIdentifier = identifier
+        // only emit state attributes when they differ from the default, to keep the tree small
+        self.enabled = axElement.enabled ? nil : false
+        self.selected = axElement.selected ? true : nil
+        self.hasFocus = axElement.hasFocus ? true : nil
         self.rect = SourceTreeRect(frame: axElement.frame)
         self.children = axElement.children?.isEmpty == true ? nil : axElement.children?.map { SourceTreeElement(axElement: $0) }
     }
