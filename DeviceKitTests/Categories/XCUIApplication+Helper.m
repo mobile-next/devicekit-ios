@@ -4,7 +4,6 @@
  */
 
 #import "AXClientProxy.h"
-#import "FBLogger.h"
 #import "XCAccessibilityElement.h"
 #import "XCTestDaemonsProxy.h"
 #import "XCTestManager_ManagerInterface-Protocol.h"
@@ -45,10 +44,9 @@
                                    if (nil == error) {
                                        bundleId = bundleID;
                                    } else {
-                                       [FBLogger
-                                           logFmt:@"Cannot request the bundle "
-                                                  @"ID for process ID %@: %@",
-                                                  @(pid), error.description];
+                                       NSLog(@"Cannot request the bundle "
+                                             @"ID for process ID %@: %@",
+                                             @(pid), error.description);
                                    }
                                    dispatch_semaphore_signal(sem);
                                  }];
