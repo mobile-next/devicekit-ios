@@ -1,0 +1,3 @@
+[submodule "Dependencies/devicekit-ios-h264"]
+	path = Dependencies/devicekit-ios-h264
+	url = https://github.com/mobile-next/devicekit-ios-h264.git

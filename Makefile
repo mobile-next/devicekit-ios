@@ -57,12 +57,29 @@ ipa-unsigned:
 		CODE_SIGNING_REQUIRED=NO \
 		CODE_SIGNING_ALLOWED=NO | xcbeautify
 	@scripts/patch-runner.sh "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos"
-	@echo "Packaging runner IPA..."
-	@rm -rf $(EXPORT_PATH)/Payload
-	@rm -f $(EXPORT_PATH)/$(SCHEME)-runner.ipa
-	@mkdir -p $(EXPORT_PATH)/Payload
-	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/Payload/
-	@cd $(EXPORT_PATH) && zip -r $(SCHEME)-runner.ipa Payload
+        @echo "Packaging main app IPA..."
+        @rm -rf $(EXPORT_PATH)/Payload
+        @rm -f $(EXPORT_PATH)/$(SCHEME).ipa
+        @mkdir -p $(EXPORT_PATH)/Payload
+        @cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/$(SCHEME).app" "$(EXPORT_PATH)/Payload/"
+
+        @echo "Checking for BroadcastUploadExtension..."
+        @EXTENSION="$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos/BroadcastUploadExtension.appex"; \
+        if [ ! -d "$$EXTENSION" ]; then \
+                EXTENSION=$$(find "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos" -name "BroadcastUploadExtension.appex" -type d -print -quit); \
+        fi; \
+        if [ -z "$$EXTENSION" ] || [ ! -d "$$EXTENSION" ]; then \
+                echo "ERROR: BroadcastUploadExtension.appex was not built."; \
+                exit 1; \
+        fi; \
+        mkdir -p "$(EXPORT_PATH)/Payload/$(SCHEME).app/PlugIns"; \
+        rm -rf "$(EXPORT_PATH)/Payload/$(SCHEME).app/PlugIns/BroadcastUploadExtension.appex"; \
+        cp -R "$$EXTENSION" "$(EXPORT_PATH)/Payload/$(SCHEME).app/PlugIns/BroadcastUploadExtension.appex"
+
+        @echo "Verifying embedded extension..."
+        @test -d "$(EXPORT_PATH)/Payload/$(SCHEME).app/PlugIns/BroadcastUploadExtension.appex"
+        @cd $(EXPORT_PATH) && zip -r $(SCHEME).ipa Payload
+        @rm -rf $(EXPORT_PATH)/Payload
 	@rm -rf $(EXPORT_PATH)/Payload
 	@echo "Runner IPA created at: $(EXPORT_PATH)/$(SCHEME)-runner.ipa"
 	@echo "Packaging main app IPA..."
