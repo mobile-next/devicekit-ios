@@ -2,6 +2,7 @@ name: Build
 
 on:
   push:
+  workflow_dispatch:
     branches: [ main ]
     tags:
       - "*.*.*"
@@ -84,6 +85,9 @@ jobs:
       attestations: write
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+
     - name: Download IPA artifacts
       uses: actions/download-artifact@v5
       with:
@@ -101,12 +105,16 @@ jobs:
           *.ipa
           *-Sim-*.zip
 
+    - name: Extract release notes from CHANGELOG.md
+      run: awk -v tag="$GITHUB_REF_NAME" '/^## \[/{f = ($0 ~ "^## \\[" tag "\\]")} f' CHANGELOG.md > release-notes.md
+
     - name: Upload to GitHub Release
       uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         name: Version ${{ github.ref_name }}
+        body_path: release-notes.md
         files: |
           *.ipa
           *-Sim-*.zip

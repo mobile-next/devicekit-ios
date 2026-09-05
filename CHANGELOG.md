@@ -1,3 +1,9 @@
+## [0.0.26](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.26) (2026-08-31)
+* Feat: include enabled, selected and focused state attributes in json ui dump ([#68](https://github.com/mobile-next/devicekit-ios/pull/68), [#69](https://github.com/mobile-next/devicekit-ios/pull/69))
+
+## [0.0.25](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.25) (2026-08-25)
+* Feat: device.clipboard.get and device.clipboard.set handlers ([#64](https://github.com/mobile-next/devicekit-ios/pull/64)), thanks to [@hakanor](https://github.com/hakanor)
+
 ## [0.0.24](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.24) (2026-08-22)
 * Fix: sample the swipe path over its requested duration ([#62](https://github.com/mobile-next/devicekit-ios/pull/62)), thanks to [@hakanor](https://github.com/hakanor)
 * Build: package main app (devicekit-ios.ipa) in ipa-unsigned so releases ship it ([#61](https://github.com/mobile-next/devicekit-ios/pull/61))

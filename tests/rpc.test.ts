@@ -367,6 +367,29 @@ test.describe("device.url", () => {
 });
 
 // ---------------------------------------------------------------------------
+// device.clipboard
+// ---------------------------------------------------------------------------
+test.describe("device.clipboard", () => {
+  test("reads back what it wrote", async ({ request }) => {
+    const text = `devicekit-${Date.now()}`;
+    returnsResult(await rpc(request, "device.clipboard.set", { text }));
+    const result = returnsResult(await rpc(request, "device.clipboard.get"));
+    expect(result.text).toBe(text);
+  });
+
+  test("returns empty text after setting an empty clipboard", async ({ request }) => {
+    returnsResult(await rpc(request, "device.clipboard.set", { text: "" }));
+    const result = returnsResult(await rpc(request, "device.clipboard.get"));
+    expect(result.text).toBe("");
+  });
+
+  test("fails without text", async ({ request }) => {
+    const error = returnsError(await rpc(request, "device.clipboard.set"));
+    expect(error.code).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // error handling
 // ---------------------------------------------------------------------------
 test.describe("error handling", () => {

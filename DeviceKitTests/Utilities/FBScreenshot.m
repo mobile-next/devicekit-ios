@@ -4,7 +4,6 @@
  */
 
 #import "FBScreenshot.h"
-#import "FBLogger.h"
 #import "XCTestDaemonsProxy.h"
 #import "XCTestManager_ManagerInterface-Protocol.h"
 #import "XCUIScreen.h"
@@ -107,7 +106,7 @@
                                          NSLocalizedDescriptionKey: @"Screenshot capture timed out"
                                      }];
         }
-        [FBLogger logFmt:@"Screenshot capture timed out after %.2fs", timeout];
+        NSLog(@"Screenshot capture timed out after %.2fs", timeout);
         return nil;
     }
 
@@ -115,7 +114,7 @@
         if (error != nil) {
             *error = innerError;
         }
-        [FBLogger logFmt:@"Screenshot capture failed: %@", innerError.localizedDescription];
+        NSLog(@"Screenshot capture failed: %@", innerError.localizedDescription);
         return nil;
     }
 
@@ -175,7 +174,7 @@
                                          NSLocalizedDescriptionKey: @"Screenshot capture timed out"
                                      }];
         }
-        [FBLogger logFmt:@"Screenshot capture timed out after %.2fs", timeout];
+        NSLog(@"Screenshot capture timed out after %.2fs", timeout);
         return nil;
     }
 
@@ -183,7 +182,7 @@
         if (error != nil) {
             *error = innerError;
         }
-        [FBLogger logFmt:@"Screenshot capture failed: %@", innerError.localizedDescription];
+        NSLog(@"Screenshot capture failed: %@", innerError.localizedDescription);
         return nil;
     }
 

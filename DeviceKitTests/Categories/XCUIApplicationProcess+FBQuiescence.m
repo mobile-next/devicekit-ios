@@ -40,7 +40,6 @@
 #import <objc/runtime.h>
 
 #import "FBConfiguration.h"
-#import "FBLogger.h"
 
 #pragma mark - Original Method Pointers
 
@@ -81,19 +80,18 @@ swizzledWaitForQuiescenceIncludingAnimationsIdle(id self, SEL _cmd,
     NSString *bundleId = [self bundleID];
     if (![[self fb_shouldWaitForQuiescence] boolValue] ||
         FBConfiguration.waitForIdleTimeout < DBL_EPSILON) {
-        [FBLogger logFmt:@"Quiescence checks are disabled for %@ application. "
-                         @"Making it to believe it is idling",
-                         bundleId];
+        NSLog(@"Quiescence checks are disabled for %@ application. "
+              @"Making it to believe it is idling",
+              bundleId);
         return;
     }
 
     NSTimeInterval desiredTimeout = FBConfiguration.waitForIdleTimeout;
     NSTimeInterval previousTimeout = _XCTApplicationStateTimeout();
     _XCTSetApplicationStateTimeout(desiredTimeout);
-    [FBLogger
-        logFmt:@"Waiting up to %@s until %@ is in idle state (%@ animations)",
-               @(desiredTimeout), bundleId,
-               includingAnimations ? @"including" : @"excluding"];
+    NSLog(@"Waiting up to %@s until %@ is in idle state (%@ animations)",
+          @(desiredTimeout), bundleId,
+          includingAnimations ? @"including" : @"excluding");
     @try {
         original_waitForQuiescenceIncludingAnimationsIdle(self, _cmd,
                                                           includingAnimations);
@@ -119,19 +117,18 @@ static void swizzledWaitForQuiescenceIncludingAnimationsIdlePreEvent(
     NSString *bundleId = [self bundleID];
     if (![[self fb_shouldWaitForQuiescence] boolValue] ||
         FBConfiguration.waitForIdleTimeout < DBL_EPSILON) {
-        [FBLogger logFmt:@"Quiescence checks are disabled for %@ application. "
-                         @"Making it to believe it is idling",
-                         bundleId];
+        NSLog(@"Quiescence checks are disabled for %@ application. "
+              @"Making it to believe it is idling",
+              bundleId);
         return;
     }
 
     NSTimeInterval desiredTimeout = FBConfiguration.waitForIdleTimeout;
     NSTimeInterval previousTimeout = _XCTApplicationStateTimeout();
     _XCTSetApplicationStateTimeout(desiredTimeout);
-    [FBLogger
-        logFmt:@"Waiting up to %@s until %@ is in idle state (%@ animations)",
-               @(desiredTimeout), bundleId,
-               includingAnimations ? @"including" : @"excluding"];
+    NSLog(@"Waiting up to %@s until %@ is in idle state (%@ animations)",
+          @(desiredTimeout), bundleId,
+          includingAnimations ? @"including" : @"excluding");
     @try {
         original_waitForQuiescenceIncludingAnimationsIdlePreEvent(
             self, _cmd, includingAnimations, isPreEvent);
@@ -195,8 +192,8 @@ static BOOL dk_swizzledShouldInterruptTest(id __unused self, SEL __unused _cmd)
                 waitForQuiescenceIncludingAnimationsIdlePreEventMethod,
                 swizzledImp);
     } else {
-        [FBLogger log:@"Could not find method -[XCUIApplicationProcess "
-                      @"waitForQuiescenceIncludingAnimationsIdle:]"];
+        NSLog(@"Could not find method -[XCUIApplicationProcess "
+              @"waitForQuiescenceIncludingAnimationsIdle:]");
     }
 }
 

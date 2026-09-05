@@ -22,6 +22,9 @@ struct SourceTreeElement: Codable {
     let value: String?
     let placeholderValue: String?
     let rawIdentifier: String?
+    let enabled: Bool?
+    let selected: Bool?
+    let hasFocus: Bool?
     let rect: SourceTreeRect
     let children: [SourceTreeElement]?
 
@@ -33,6 +36,10 @@ struct SourceTreeElement: Codable {
         self.value = axElement.value
         self.placeholderValue = axElement.placeholderValue
         self.rawIdentifier = identifier
+        // only emit state attributes when they differ from the default, to keep the tree small
+        self.enabled = axElement.enabled == false ? false : nil
+        self.selected = axElement.selected ? true : nil
+        self.hasFocus = axElement.hasFocus ? true : nil
         self.rect = SourceTreeRect(frame: axElement.frame)
         self.children = axElement.children?.isEmpty == true ? nil : axElement.children?.map { SourceTreeElement(axElement: $0) }
     }
@@ -89,12 +96,13 @@ struct AXElement: Codable {
     let title: String?
     let label: String
     let elementType: Int
-    let enabled: Bool
+    // nil when XCTest did not report the attribute, so unknown is not confused with disabled
+    let enabled: Bool?
     let horizontalSizeClass: Int
     let verticalSizeClass: Int
     let placeholderValue: String?
     let selected: Bool
-    let hasFocus: Bool
+    var hasFocus: Bool
     var children: [AXElement]?
     let windowContextID: Double
     let displayID: Int
@@ -114,7 +122,7 @@ struct AXElement: Codable {
         self.placeholderValue = nil
         self.value = nil
         self.frame = .zero
-        self.enabled = false
+        self.enabled = nil
         self.title = nil
     }
 
@@ -125,7 +133,7 @@ struct AXElement: Codable {
         title: String?,
         label: String,
         elementType: Int,
-        enabled: Bool,
+        enabled: Bool?,
         horizontalSizeClass: Int,
         verticalSizeClass: Int,
         placeholderValue: String?,
@@ -169,11 +177,25 @@ struct AXElement: Codable {
         self.placeholderValue = valueFor("placeholderValue") as? String
         self.value = valueFor("value") as? String
         self.frame = valueFor("frame") as? AXFrame ?? .zero
-        self.enabled = valueFor("enabled") as? Bool ?? false
+        self.enabled = valueFor("enabled") as? Bool
         self.title = valueFor("title") as? String
         let childrenDictionaries =
             valueFor("children") as? [[XCUIElement.AttributeName: Any]]
         self.children = childrenDictionaries?.map { AXElement($0) } ?? []
+    }
+
+    // the snapshot's hasFocus attribute is the tvOS focus engine and is always
+    // false on iPhone/iPad; keyboard focus is resolved by a separate query and
+    // stamped onto the node with the matching frame
+    mutating func markKeyboardFocus(at focusedFrame: AXFrame) {
+        if frame == focusedFrame {
+            hasFocus = true
+        }
+        children = children?.map {
+            var child = $0
+            child.markKeyboardFocus(at: focusedFrame)
+            return child
+        }
     }
 
     func encode(to encoder: Encoder) throws {
@@ -184,7 +206,7 @@ struct AXElement: Codable {
         try container.encodeIfPresent(self.title, forKey: .title)
         try container.encode(self.label, forKey: .label)
         try container.encode(self.elementType, forKey: .elementType)
-        try container.encode(self.enabled, forKey: .enabled)
+        try container.encodeIfPresent(self.enabled, forKey: .enabled)
         try container.encode(
             self.horizontalSizeClass,
             forKey: .horizontalSizeClass
