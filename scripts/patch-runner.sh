@@ -45,6 +45,14 @@ if [ -n "${XCODE_PLATFORM}" ]; then
     fi
 fi
 
+# Below iOS 15 XCTest needs libswift_Concurrency in the runner's Frameworks too, or it hangs.
+for lib in "${RUNNER_APP}"/PlugIns/*.xctest/Frameworks/libswift*.dylib; do
+    [ -f "${lib}" ] || continue
+    mkdir -p "${RUNNER_APP}/Frameworks"
+    cp "${lib}" "${RUNNER_APP}/Frameworks/"
+    echo "note: mirrored $(basename "${lib}") into runner Frameworks"
+done
+
 # Set display name
 /usr/bin/plutil -replace CFBundleDisplayName -string "Device Kit" "${RUNNER_APP}/Info.plist"
 
