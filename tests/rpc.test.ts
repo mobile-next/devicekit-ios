@@ -89,12 +89,15 @@ test.describe("device.apps.foreground", () => {
     await rpc(request, "device.apps.launch", { bundleId: "com.apple.Preferences" });
     await sleep(2000);
 
-    const result = returnsResult(await rpc(request, "device.apps.foreground"));
-    expect(result.bundleId).toBe("com.apple.Preferences");
-    expect(typeof result.viewController).toBe("string");
-    expect(result.viewController.length).toBeGreaterThan(0);
-
-    await rpc(request, "device.apps.terminate", { bundleId: "com.apple.Preferences" });
+    try {
+      const result = returnsResult(await rpc(request, "device.apps.foreground"));
+      expect(result.bundleId).toBe("com.apple.Preferences");
+      expect(typeof result.viewController).toBe("string");
+      expect(result.viewController.length).toBeGreaterThan(0);
+    } finally {
+      // leaving Settings in the foreground would change what later tests see
+      await rpc(request, "device.apps.terminate", { bundleId: "com.apple.Preferences" });
+    }
   });
 });
 

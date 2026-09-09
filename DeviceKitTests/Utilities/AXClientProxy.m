@@ -100,6 +100,15 @@ static NSString *DemangledClassName(NSString *name) {
  */
 static NSString *_Nullable DeepestViewControllerClassName(id snapshot, NSInteger depth,
                                                           NSInteger *foundDepth) {
+    // these keys are private API and could disappear between XCTest versions;
+    // valueForKey: would raise and take the test host down with it
+    if (![snapshot respondsToSelector:@selector(additionalAttributes)] ||
+        ![snapshot respondsToSelector:@selector(children)]) {
+        NSLog(@"Snapshot of class %@ does not expose the expected keys",
+              NSStringFromClass([snapshot class]));
+        return nil;
+    }
+
     NSString *result = nil;
     NSDictionary *attributes = [snapshot valueForKey:@"additionalAttributes"];
     id className = attributes[@(AXViewControllerClassNameAttribute)];
@@ -144,12 +153,9 @@ static NSString *_Nullable DeepestViewControllerClassName(id snapshot, NSInteger
                                          attributes:@[ AXViewControllerClassNameAttributeName ]
                                          parameters:parameters
                                               error:&error];
-    if (nil != error) {
-        NSLog(@"View controller snapshot failed: %@", error);
-        return nil;
-    }
-
+    // the return value decides success; error is only diagnostic
     if (nil == result) {
+        NSLog(@"View controller snapshot failed: %@", error);
         return nil;
     }
 

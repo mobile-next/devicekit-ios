@@ -35,7 +35,7 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
         var result: [String: JSONValue] = [
             "bundleId": .string(bundleId),
             "name": .string(name),
-            "pid": .int(Int(pid)),
+            "pid": .int(Int(pid))
         ]
 
         if let viewController {
