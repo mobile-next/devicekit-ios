@@ -27,10 +27,21 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
 
         let name = foregroundApp.label
         let pid = foregroundApp.processID
+        let viewController = AXClientProxy.sharedClient().viewControllerClassName(forProcessIdentifier: pid)
 
         let duration = Date().timeIntervalSince(start)
         logger.info("[Done] Foreground app: \(bundleId) (pid: \(pid)), took \(duration)")
 
-        return .object(["bundleId": .string(bundleId), "name": .string(name), "pid": .int(Int(pid))])
+        var result: [String: JSONValue] = [
+            "bundleId": .string(bundleId),
+            "name": .string(name),
+            "pid": .int(Int(pid)),
+        ]
+
+        if let viewController {
+            result["viewController"] = .string(viewController)
+        }
+
+        return .object(result)
     }
 }
