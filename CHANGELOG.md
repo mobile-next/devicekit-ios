@@ -1,3 +1,8 @@
+## [0.0.27](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.27) (2026-09-15)
+* Feat: device.settings.apply with light/dark appearance ([#78](https://github.com/mobile-next/devicekit-ios/pull/78))
+* Feat: report the on-screen view controller in device.apps.foreground ([#77](https://github.com/mobile-next/devicekit-ios/pull/77))
+* Fix: restore iOS 14 support, mirror swift concurrency runtime into runner below iOS 15 ([#75](https://github.com/mobile-next/devicekit-ios/pull/75), [#76](https://github.com/mobile-next/devicekit-ios/pull/76)), thanks to [@hakanor](https://github.com/hakanor)
+
 ## [0.0.26](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.26) (2026-08-31)
 * Feat: include enabled, selected and focused state attributes in json ui dump ([#68](https://github.com/mobile-next/devicekit-ios/pull/68), [#69](https://github.com/mobile-next/devicekit-ios/pull/69))
 
