@@ -202,8 +202,13 @@ nc localhost 12005 | ffplay \
   -analyzeduration 0 \
   -framedrop \
   -sync ext \
-  -f h264 -
+  -f h264 -framerate 60 -
 ```
+
+`-framerate` matters: a raw H264 stream carries no timestamps ffplay can read, so
+ffplay assumes 25 fps. The broadcast sends up to 60 fps, and without the flag
+playback falls further behind every second. Any value at or above the real rate
+works, since ffplay simply waits for the next frame.
 
 ## Testing
 
