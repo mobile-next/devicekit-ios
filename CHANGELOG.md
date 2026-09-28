@@ -1,3 +1,9 @@
+## [0.0.28](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.28) (2026-09-28)
+* Feat: device.io.hinge.set to fold and unfold foldable simulators ([#81](https://github.com/mobile-next/devicekit-ios/pull/81))
+* Fix: background the test runner on iOS 27 simulators ([#84](https://github.com/mobile-next/devicekit-ios/pull/84))
+* Fix: use portrait screen size when mapping landscape tap and swipe coordinates ([#83](https://github.com/mobile-next/devicekit-ios/pull/83)), thanks to [@hakanor](https://github.com/hakanor)
+* Fix: screenshot the active screen on foldable simulators ([#82](https://github.com/mobile-next/devicekit-ios/pull/82))
+
 ## [0.0.27](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.27) (2026-09-15)
 * Feat: device.settings.apply with light/dark appearance ([#78](https://github.com/mobile-next/devicekit-ios/pull/78))
 * Feat: report the on-screen view controller in device.apps.foreground ([#77](https://github.com/mobile-next/devicekit-ios/pull/77))
