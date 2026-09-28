@@ -127,7 +127,11 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         ]
         let appFrame = appHierarchy.frame
 
-        if deviceAxFrame != appFrame,
+        // in landscape springboard stays portrait while the app is rotated;
+        // the app frames are already in screen coordinates, don't shift them
+        let isRotatedDeviceFrame = deviceAxFrame["Width"] == appFrame["Height"] && deviceAxFrame["Height"] == appFrame["Width"]
+
+        if deviceAxFrame != appFrame, !isRotatedDeviceFrame,
            let deviceWidth = deviceAxFrame["Width"], deviceWidth > 0,
            let deviceHeight = deviceAxFrame["Height"], deviceHeight > 0,
            let appWidth = appFrame["Width"], appWidth > 0,
