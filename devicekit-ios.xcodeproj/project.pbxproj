@@ -16,7 +16,7 @@
 		521C1F0C2D8030A30024EE42 /* XCTestManager_ManagerInterface-Protocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA622D6DCC600015FAB3 /* XCTestManager_ManagerInterface-Protocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		521C1F0E2D80518A0024EE42 /* XCTestDaemonsProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 521C1F0D2D8051890024EE42 /* XCTestDaemonsProxy.h */; };
 		521C1F102D8051FC0024EE42 /* XCTestDaemonsProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 521C1F0F2D8051F20024EE42 /* XCTestDaemonsProxy.m */; };
-		521C1F102D8051FC0024EE43 /* FBRunnerBackgrounding.m in Sources */ = {isa = PBXBuildFile; fileRef = 521C1F0F2D8051F20024EE43 /* FBRunnerBackgrounding.m */; };
+		521C1F102D8051FC0024EE43 /* RunnerBackgrounding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521C1F0F2D8051F20024EE43 /* RunnerBackgrounding.swift */; };
 		526111782DE5E8DA007C356B /* XCAXClient_iOS+FBSnapshotReqParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 526111772DE5E8D0007C356B /* XCAXClient_iOS+FBSnapshotReqParams.h */; };
 		5261117A2DE5E8E7007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m in Sources */ = {isa = PBXBuildFile; fileRef = 526111792DE5E8E5007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m */; };
 		5279BFD62935ECE20056C609 /* FlyingFox in Frameworks */ = {isa = PBXBuildFile; productRef = 5279BFD52935ECE20056C609 /* FlyingFox */; };
@@ -96,7 +96,7 @@
 		521C1F0A2D801A350024EE42 /* XCUIApplication+Helper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCUIApplication+Helper.m"; sourceTree = "<group>"; };
 		521C1F0D2D8051890024EE42 /* XCTestDaemonsProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCTestDaemonsProxy.h; sourceTree = "<group>"; };
 		521C1F0F2D8051F20024EE42 /* XCTestDaemonsProxy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XCTestDaemonsProxy.m; sourceTree = "<group>"; };
-		521C1F0F2D8051F20024EE43 /* FBRunnerBackgrounding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBRunnerBackgrounding.m; sourceTree = "<group>"; };
+		521C1F0F2D8051F20024EE43 /* RunnerBackgrounding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerBackgrounding.swift; sourceTree = "<group>"; };
 		526111772DE5E8D0007C356B /* XCAXClient_iOS+FBSnapshotReqParams.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCAXClient_iOS+FBSnapshotReqParams.h"; sourceTree = "<group>"; };
 		526111792DE5E8E5007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCAXClient_iOS+FBSnapshotReqParams.m"; sourceTree = "<group>"; };
 		52D8FA332D6DCC600015FAB3 /* CDStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDStructures.h; sourceTree = "<group>"; };
@@ -291,7 +291,7 @@
 				785281472F2BEC40002A7531 /* FBScreenshot.h */,
 				785281482F2BEC40002A7531 /* FBScreenshot.m */,
 				521C1F0F2D8051F20024EE42 /* XCTestDaemonsProxy.m */,
-				521C1F0F2D8051F20024EE43 /* FBRunnerBackgrounding.m */,
+				521C1F0F2D8051F20024EE43 /* RunnerBackgrounding.swift */,
 				521C1F0D2D8051890024EE42 /* XCTestDaemonsProxy.h */,
 				521C1F062D8017460024EE42 /* AXClientProxy.m */,
 				521C1F022D8014340024EE42 /* AXClientProxy.h */,
@@ -522,7 +522,7 @@
 				787C47DF2F228B770027A012 /* IOTap.swift in Sources */,
 				787C47E02F228B770027A012 /* DumpUI.swift in Sources */,
 				521C1F102D8051FC0024EE42 /* XCTestDaemonsProxy.m in Sources */,
-				521C1F102D8051FC0024EE43 /* FBRunnerBackgrounding.m in Sources */,
+				521C1F102D8051FC0024EE43 /* RunnerBackgrounding.swift in Sources */,
 				78A190B62F3A3ADA007F24E0 /* IOButton.swift in Sources */,
 				78A190D32F3A3ADA007F24E2 /* ClipboardSet.swift in Sources */,
 				78A190D12F3A3ADA007F24E2 /* ClipboardGet.swift in Sources */,
@@ -760,6 +760,7 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Device Kit";
+				INFOPLIST_KEY_NSPrincipalClass = RunnerBackgrounding;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -792,6 +793,7 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Device Kit";
+				INFOPLIST_KEY_NSPrincipalClass = RunnerBackgrounding;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
