@@ -1,3 +1,6 @@
+## [0.0.29](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.29) (2026-09-28)
+* Fix: don't offset ui dump frames when the app is rotated to landscape ([#86](https://github.com/mobile-next/devicekit-ios/pull/86))
+
 ## [0.0.28](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.28) (2026-09-28)
 * Feat: device.io.hinge.set to fold and unfold foldable simulators ([#81](https://github.com/mobile-next/devicekit-ios/pull/81))
 * Fix: background the test runner on iOS 27 simulators ([#84](https://github.com/mobile-next/devicekit-ios/pull/84))
