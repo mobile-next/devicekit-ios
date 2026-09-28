@@ -131,7 +131,11 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         // the app frames are already in screen coordinates, don't shift them
         let isRotatedDeviceFrame = deviceAxFrame["Width"] == appFrame["Height"] && deviceAxFrame["Height"] == appFrame["Width"]
 
-        if deviceAxFrame != appFrame, !isRotatedDeviceFrame,
+        // springboard lives on the main display; an app on another display
+        // (an unfolded foldable) has nothing to line up with it
+        let isOnSecondaryDisplay = OrientationGeometry.secondaryDisplayID(of: foregroundApp) != nil
+
+        if deviceAxFrame != appFrame, !isRotatedDeviceFrame, !isOnSecondaryDisplay,
            let deviceWidth = deviceAxFrame["Width"], deviceWidth > 0,
            let deviceHeight = deviceAxFrame["Height"], deviceHeight > 0,
            let appWidth = appFrame["Width"], appWidth > 0,

@@ -35,23 +35,16 @@ struct IOSwipeMethodHandler: RPCMethodHandler {
             )
         }
 
-        let (width, height) = OrientationGeometry.physicalScreenSize()
-        let start = OrientationGeometry.orientationAwarePoint(
-            width: width,
-            height: height,
-            point: CGPoint(x: request.x1, y: request.y1)
-        )
-        let end = OrientationGeometry.orientationAwarePoint(
-            width: width,
-            height: height,
-            point: CGPoint(x: request.x2, y: request.y2)
-        )
+        let geometry = OrientationGeometry.current()
+        let start = geometry.touchPoint(for: CGPoint(x: request.x1, y: request.y1))
+        let end = geometry.touchPoint(for: CGPoint(x: request.x2, y: request.y2))
 
         do {
             try await swipePrivateAPI(
                 start: start,
                 end: end,
-                duration: duration
+                duration: duration,
+                displayID: geometry.displayID
             )
 
             return .object(["success": .bool(true)])
@@ -61,10 +54,10 @@ struct IOSwipeMethodHandler: RPCMethodHandler {
         }
     }
 
-    func swipePrivateAPI(start: CGPoint, end: CGPoint, duration: Double) async throws {
+    func swipePrivateAPI(start: CGPoint, end: CGPoint, duration: Double, displayID: UInt64?) async throws {
         logger.info("Swipe (v1) from \(start.debugDescription) to \(end.debugDescription) with duration \(duration)")
 
-        let eventRecord = EventRecord(orientation: .portrait)
+        let eventRecord = EventRecord(orientation: .portrait, displayID: displayID)
         _ = eventRecord.addSwipeEvent(start: start, end: end, duration: duration)
 
         try await RunnerDaemonProxy().synthesize(eventRecord: eventRecord)

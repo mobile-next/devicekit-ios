@@ -15,9 +15,19 @@ final class EventRecord: NSObject {
         case multiFinger = "Multi-Finger Touch Action"
     }
 
-    init(orientation: UIInterfaceOrientation, style: Style = .singleFinger) {
+    init(orientation: UIInterfaceOrientation, style: Style = .singleFinger, displayID: UInt64? = nil) {
+        let recordClass: AnyClass = objc_lookUpClass("XCSynthesizedEventRecord")!
+        let displaySelector = NSSelectorFromString("initWithName:displayID:interfaceOrientation:")
+        if let displayID, recordClass.instancesRespond(to: displaySelector) {
+            let instance = recordClass.alloc() as! NSObject
+            typealias Method = @convention(c) (NSObject, Selector, NSString, UInt64, Int) -> NSObject
+            let method = unsafeBitCast(instance.method(for: displaySelector), to: Method.self)
+            eventRecord = method(instance, displaySelector, style.rawValue as NSString, displayID, orientation.rawValue)
+            return
+        }
+
         eventRecord =
-            objc_lookUpClass("XCSynthesizedEventRecord")?.alloc()
+            (recordClass.alloc() as AnyObject)
             .perform(
                 NSSelectorFromString("initWithName:interfaceOrientation:"),
                 with: style.rawValue,

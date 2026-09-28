@@ -18,17 +18,13 @@ struct IOLongpressMethodHandler: RPCMethodHandler {
     func execute(params: JSONValue?) async throws -> JSONValue {
         let request = try decodeParams(IOLongpressRequest.self, from: params)
 
-        let (width, height) = OrientationGeometry.physicalScreenSize()
-        let point = OrientationGeometry.orientationAwarePoint(
-            width: width,
-            height: height,
-            point: CGPoint(x: CGFloat(request.x), y: CGFloat(request.y))
-        )
+        let geometry = OrientationGeometry.current()
+        let point = geometry.touchPoint(for: CGPoint(x: CGFloat(request.x), y: CGFloat(request.y)))
 
         logger.info("Long pressing \(point.x), \(point.y) for \(request.duration)s")
 
         do {
-            let eventRecord = EventRecord(orientation: .portrait)
+            let eventRecord = EventRecord(orientation: .portrait, displayID: geometry.displayID)
             _ = eventRecord.addPointerTouchEvent(
                 at: point,
                 touchUpAfter: request.duration
