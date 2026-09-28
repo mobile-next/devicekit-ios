@@ -26,6 +26,7 @@ final class JSONRPCDispatcher {
         registerHandler(IOButtonMethodHandler())
         registerHandler(IOOrientationGetMethodHandler())
         registerHandler(IOOrientationSetMethodHandler())
+        registerHandler(IOHingeSetMethodHandler())
         registerHandler(DeviceInfoMethodHandler())
         registerHandler(AppsForegroundMethodHandler())
         registerHandler(ClipboardGetMethodHandler())
