@@ -36,7 +36,7 @@ Control any iOS device or simulator over a simple JSON-RPC API. Tap, swipe, stre
 
 | Platform | Minimum Version |
 |----------|----------------|
-| iOS      | 16.0           |
+| iOS      | 14.0           |
 | Swift    | 5.9            |
 | Xcode    | 15.0+          |
 
@@ -69,6 +69,20 @@ make sim-zip
 | `make sim-zip` | Both simulator zips | arm64 + x86_64 |
 | `make lint` | — | Run SwiftLint |
 | `make clean` | — | Remove build artifacts |
+
+### Building with Newer Xcode
+
+The project deliberately targets iOS 14.0 so the agent keeps running on older devices; don't raise the project's deployment target. Newer Xcode versions only accept iOS 15.0 and above and fail with `The iOS Simulator deployment target 'IPHONEOS_DEPLOYMENT_TARGET' is set to 14.0`. Override it for your local build only:
+
+```bash
+xcodebuild build-for-testing \
+  -project devicekit-ios.xcodeproj \
+  -scheme devicekit-ios \
+  -configuration Release \
+  -destination "id=<simulator-udid>" \
+  -derivedDataPath build/local \
+  IPHONEOS_DEPLOYMENT_TARGET=15.0
+```
 
 ## Quick Start
 
