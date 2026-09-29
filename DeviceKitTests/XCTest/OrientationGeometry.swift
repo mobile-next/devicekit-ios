@@ -102,6 +102,20 @@ struct OrientationGeometry {
         return windows.first { $0.displayID != 0 && $0.displayID != mainDisplayID }?.displayID
     }
 
+    // portrait size of the unfolded inner display, nil when the app is on the
+    // main display. single-display devices skip the foreground app lookup
+    static func secondaryDisplaySize() -> CGSize? {
+        guard isMultiDisplay() else {
+            return nil
+        }
+
+        let geometry = current()
+        guard geometry.displayID != nil else {
+            return nil
+        }
+        return CGSize(width: geometry.portraitWidth, height: geometry.portraitHeight)
+    }
+
     private static func isMultiDisplay() -> Bool {
         XCUIScreen.screens.count > 1
     }
