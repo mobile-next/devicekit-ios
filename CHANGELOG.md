@@ -1,3 +1,6 @@
+## [0.0.31](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.31) (2026-09-29)
+* Fix: taps on folded foldables and unfolded springboard ([#89](https://github.com/mobile-next/devicekit-ios/pull/89))
+
 ## [0.0.30](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.30) (2026-09-28)
 * Fix: tap, swipe and gestures on unfolded foldable simulators, and ui dump frames on the unfolded screen ([#88](https://github.com/mobile-next/devicekit-ios/pull/88))
 
