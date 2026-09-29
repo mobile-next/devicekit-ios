@@ -1,5 +1,11 @@
 import XCTest
 
+struct AppWindow {
+    // 0 when the window is on the main display
+    let displayID: UInt64
+    let size: CGSize
+}
+
 // maps screen points, as seen in screenshots, onto the touch space of the
 // display the foreground app is on
 struct OrientationGeometry {
@@ -21,11 +27,22 @@ struct OrientationGeometry {
             size = XCUIApplication(bundleIdentifier: springboardBundleId).frame.size
         }
 
+        let windows = isMultiDisplay() ? appWindows(of: app) : []
+        let displayID = secondaryDisplayID(of: app, windows: windows)
+
+        // springboard reports the cover display's frame even when unfolded
+        if let displayID {
+            let displaySizes = windows.filter { $0.displayID == displayID }.map(\.size)
+            if !displaySizes.contains(size), let displaySize = mostCommon(displaySizes) {
+                size = displaySize
+            }
+        }
+
         return OrientationGeometry(
             portraitWidth: min(size.width, size.height),
             portraitHeight: max(size.width, size.height),
             orientation: touchOrientation(of: app),
-            displayID: secondaryDisplayID(of: app)
+            displayID: displayID
         )
     }
 
@@ -67,14 +84,26 @@ struct OrientationGeometry {
     // a display id go to the main one and never reach the app. single-display
     // devices skip the snapshot this needs
     static func secondaryDisplayID(of app: XCUIApplication) -> UInt64? {
-        guard XCUIScreen.screens.count > 1, let appDisplayID = windowDisplayID(of: app) else {
+        guard isMultiDisplay() else {
             return nil
         }
+        return secondaryDisplayID(of: app, windows: appWindows(of: app))
+    }
 
-        if appDisplayID == displayID(of: XCUIScreen.main) {
+    private static func secondaryDisplayID(of app: XCUIApplication, windows: [AppWindow]) -> UInt64? {
+        let mainDisplayID = displayID(of: XCUIScreen.main)
+        let isOnMainDisplay = windows.contains { $0.displayID == 0 || $0.displayID == mainDisplayID }
+
+        // springboard keeps windows on both displays of a foldable, lit or
+        // not; it draws in landscape only on the unfolded inner display
+        if isOnMainDisplay, !touchOrientation(of: app).isLandscape {
             return nil
         }
-        return appDisplayID
+        return windows.first { $0.displayID != 0 && $0.displayID != mainDisplayID }?.displayID
+    }
+
+    private static func isMultiDisplay() -> Bool {
+        XCUIScreen.screens.count > 1
     }
 
     private static func displayID(of screen: XCUIScreen) -> UInt64? {
@@ -84,9 +113,14 @@ struct OrientationGeometry {
         return (screen.value(forKey: "displayID") as? NSNumber)?.uint64Value
     }
 
+    private static func mostCommon(_ sizes: [CGSize]) -> CGSize? {
+        let counts = Dictionary(grouping: sizes, by: { "\($0.width)x\($0.height)" })
+        return counts.values.max { $0.count < $1.count }?.first
+    }
+
     // the application element reports display 0; its windows carry the real
     // display id, so a snapshot two levels deep is enough
-    private static func windowDisplayID(of app: XCUIApplication) -> UInt64? {
+    private static func appWindows(of app: XCUIApplication) -> [AppWindow] {
         let previousMaxDepth = AXClientSwizzler.overwriteDefaultParameters["maxDepth"]
         AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = 2
         defer {
@@ -94,17 +128,20 @@ struct OrientationGeometry {
         }
 
         guard let root = try? app.snapshot().dictionaryRepresentation else {
-            return nil
+            return []
         }
 
         let displayKey = XCUIElement.AttributeName(rawValue: "displayID")
+        let frameKey = XCUIElement.AttributeName(rawValue: "frame")
         let childrenKey = XCUIElement.AttributeName(rawValue: "children")
         let windows = root[childrenKey] as? [[XCUIElement.AttributeName: Any]] ?? []
-        for window in windows {
-            if let displayID = window[displayKey] as? Int, displayID != 0 {
-                return UInt64(displayID)
+        return windows.compactMap { window in
+            guard let displayID = window[displayKey] as? Int,
+                  let frame = window[frameKey] as? AXFrame,
+                  let width = frame["Width"], let height = frame["Height"] else {
+                return nil
             }
+            return AppWindow(displayID: UInt64(displayID), size: CGSize(width: width, height: height))
         }
-        return nil
     }
 }
