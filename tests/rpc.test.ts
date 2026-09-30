@@ -4,8 +4,12 @@ import {
   request as playwrightRequest,
   type APIRequestContext,
 } from "@playwright/test";
+import { EXIF_UPRIGHT, exifOrientationOf, sizeOf, type ImageSize } from "./image";
 
 const BASE_URL = "http://localhost:12004";
+
+// rotates with the device, which the home screen of an iphone does not
+const SAFARI_BUNDLE_ID = "com.apple.mobilesafari";
 
 type RpcError = { code: number; message?: string };
 type RpcResponse = {
@@ -51,6 +55,46 @@ function returnsError(response: RpcResponse): RpcError {
   expect(response.jsonrpc).toBe("2.0");
   expect(response.error, "expected error, got result").toBeDefined();
   return response.error!;
+}
+
+async function takeScreenshot(request: APIRequestContext, format: string): Promise<Buffer> {
+  const result = returnsResult(await rpc(request, "device.screenshot", { format }));
+  const base64 = (result.data as string).split(",")[1];
+  return Buffer.from(base64, "base64");
+}
+
+// the size of the app on screen in points: the space taps and the ui tree use
+async function foregroundAppSize(request: APIRequestContext): Promise<ImageSize> {
+  const tree = returnsResult(await rpc(request, "device.dump.ui"));
+  const app = (tree.children as any[]).find((child) => child.type === "XCUIElementTypeApplication");
+  expect(app, "no application in the ui tree").toBeDefined();
+  return { width: app.rect.width, height: app.rect.height };
+}
+
+async function foregroundAppSizeInPixels(request: APIRequestContext): Promise<ImageSize> {
+  const { scale } = returnsResult(await rpc(request, "device.info"));
+  const { width, height } = await foregroundAppSize(request);
+  return { width: width * scale, height: height * scale };
+}
+
+async function isForegroundAppInLandscape(request: APIRequestContext): Promise<boolean> {
+  const { width, height } = await foregroundAppSize(request);
+  return width > height;
+}
+
+async function showSafariInLandscape(request: APIRequestContext): Promise<void> {
+  returnsResult(await rpc(request, "device.apps.launch", { bundleId: SAFARI_BUNDLE_ID }));
+  returnsResult(await rpc(request, "device.io.orientation.set", { orientation: "LANDSCAPE" }));
+
+  // the app rotates a moment after the device does
+  await expect
+    .poll(() => isForegroundAppInLandscape(request), { message: "safari never rotated to landscape" })
+    .toBe(true);
+}
+
+async function returnToPortraitHomeScreen(request: APIRequestContext): Promise<void> {
+  returnsResult(await rpc(request, "device.io.orientation.set", { orientation: "PORTRAIT" }));
+  returnsResult(await rpc(request, "device.io.button", { button: "home" }));
 }
 
 // ---------------------------------------------------------------------------
@@ -325,6 +369,35 @@ test.describe("device.screenshot", () => {
     const error = returnsError(await rpc(request, "device.screenshot"));
     expect(error.code).toBeTruthy();
   });
+});
+
+// ---------------------------------------------------------------------------
+// device.screenshot in landscape
+// ---------------------------------------------------------------------------
+test.describe("device.screenshot in landscape", () => {
+  test.beforeEach(async ({ request }) => {
+    await showSafariInLandscape(request);
+  });
+
+  test.afterEach(async ({ request }) => {
+    await returnToPortraitHomeScreen(request);
+  });
+
+  for (const format of ["png", "jpeg"]) {
+    // taps and the ui tree are expressed in the rotated screen, so a screenshot
+    // that is not has every coordinate read off it land somewhere else
+    test(`a ${format} screenshot is as wide and as tall as the rotated screen`, async ({ request }) => {
+      const screenshot = await takeScreenshot(request, format);
+      expect(sizeOf(screenshot)).toEqual(await foregroundAppSizeInPixels(request));
+    });
+
+    // the rotation must be in the pixels: a tag asking the viewer to rotate is
+    // ignored by some decoders and applied by others
+    test(`a ${format} screenshot does not ask its viewer to rotate it`, async ({ request }) => {
+      const screenshot = await takeScreenshot(request, format);
+      expect(exifOrientationOf(screenshot)).toBe(EXIF_UPRIGHT);
+    });
+  }
 });
 
 // ---------------------------------------------------------------------------

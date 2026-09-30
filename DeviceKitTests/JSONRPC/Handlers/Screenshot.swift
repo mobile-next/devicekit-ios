@@ -28,15 +28,17 @@ struct ScreenshotMethodHandler: RPCMethodHandler {
         let request = try decodeParams(ScreenshotRequest.self, from: params)
         
         let fullScreenshot = captureActiveScreen()
+        let rotated = pixelsRotatedUpright(fullScreenshot.image)
         var imageData: Data?
         
         switch request.format.lowercased() {
         case "png":
-            imageData = fullScreenshot.pngRepresentation
+            imageData = rotated?.pngData() ?? fullScreenshot.pngRepresentation
             
         case "jpg", "jpeg":
             let clampedQuality = min(max(request.quality ?? Constants.defaultJpegQuality, 0), 100)
-            imageData = fullScreenshot.image.jpegData(compressionQuality: Double(clampedQuality) / 100.0)
+            let image = rotated ?? fullScreenshot.image
+            imageData = image.jpegData(compressionQuality: Double(clampedQuality) / 100.0)
             
         default:
             throw RPCMethodError.invalidParams("Unsupported image format: \(request.format)")
@@ -50,6 +52,24 @@ struct ScreenshotMethodHandler: RPCMethodHandler {
             "format": .string(request.format),
             "data": .string("data:image/\(request.format);base64,\(imageData.base64EncodedString())")
         ])
+    }
+
+    /// XCTest hands a rotated screen back as the panel's portrait pixels plus an orientation,
+    /// which the encoders write as an EXIF tag. Decoders disagree on honouring that tag, so
+    /// redraw the image with the rotation applied to the pixels themselves.
+    /// Returns nil when the image is already upright.
+    private func pixelsRotatedUpright(_ image: UIImage) -> UIImage? {
+        guard image.imageOrientation != .up else {
+            return nil
+        }
+
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = image.scale
+        format.opaque = true
+        format.preferredRange = .standard
+        return UIGraphicsImageRenderer(size: image.size, format: format).image { _ in
+            image.draw(in: CGRect(origin: .zero, size: image.size))
+        }
     }
 
     /// Foldables (e.g. iPhone Duo) have two screens and XCUIScreen.main is always the cover screen,
