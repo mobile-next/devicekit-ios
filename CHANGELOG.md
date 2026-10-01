@@ -1,3 +1,10 @@
+## [0.0.32](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.32) (2026-10-01)
+* Feat: listen on multiple addresses, including IPv6, in DEVICEKIT_LISTEN_HOST ([#92](https://github.com/mobile-next/devicekit-ios/pull/92)), thanks to [@hillct](https://github.com/hillct)
+* Fix: report the unfolded screen size in device.info on foldables ([#91](https://github.com/mobile-next/devicekit-ios/pull/91))
+* Fix: rotate landscape screenshots in the pixels, not with an exif tag ([#93](https://github.com/mobile-next/devicekit-ios/pull/93))
+* Fix: fail the test run when the server can't start, log ready only once bound ([#94](https://github.com/mobile-next/devicekit-ios/pull/94))
+* Chore: default deployment target to iOS 15.0, keep 14.0 for release builds ([#95](https://github.com/mobile-next/devicekit-ios/pull/95))
+
 ## [0.0.31](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.31) (2026-09-29)
 * Fix: taps on folded foldables and unfolded springboard ([#89](https://github.com/mobile-next/devicekit-ios/pull/89))
 
