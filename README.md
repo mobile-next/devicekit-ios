@@ -116,12 +116,15 @@ Xcode keeps a private IPv6 tunnel to each paired device, reachable only from the
 ```bash
 TUNNEL=$(xcrun devicectl device info details --device <udid> | awk '/Tunnel IP Address/{print $NF}')
 TEST_RUNNER_DEVICEKIT_LISTEN_HOST="127.0.0.1,$TUNNEL" xcodebuild test-without-building \
-  -project devicekit-ios.xcodeproj -scheme devicekit-ios -destination "id=<udid>"
+  -project devicekit-ios.xcodeproj -scheme devicekit-ios -destination "id=<udid>" \
+  -collect-test-diagnostics never
 curl -g -X POST "http://[$TUNNEL]:12004/rpc" -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"device.info","params":{},"id":1}'
 ```
 
 Avoid binding `0.0.0.0`, `::` or the device's Wi-Fi address instead: the server has no authentication, so that exposes device control to the whole network.
+
+If the server can't start (for example, an address that can't be bound), the test fails. `-collect-test-diagnostics never` stops `xcodebuild` from collecting a sysdiagnose on that failure, which otherwise can stall it for minutes.
 
 **Endpoints:**
 
