@@ -115,9 +115,16 @@ Xcode keeps a private IPv6 tunnel to each paired device, reachable only from the
 
 ```bash
 TUNNEL=$(xcrun devicectl device info details --device <udid> | awk '/Tunnel IP Address/{print $NF}')
+# Keeps running until the server is stopped with POST /shutdown
 TEST_RUNNER_DEVICEKIT_LISTEN_HOST="127.0.0.1,$TUNNEL" xcodebuild test-without-building \
   -project devicekit-ios.xcodeproj -scheme devicekit-ios -destination "id=<udid>" \
   -collect-test-diagnostics never
+```
+
+Then, from a second terminal while it runs:
+
+```bash
+TUNNEL=$(xcrun devicectl device info details --device <udid> | awk '/Tunnel IP Address/{print $NF}')
 curl -g -X POST "http://[$TUNNEL]:12004/rpc" -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"device.info","params":{},"id":1}'
 ```
