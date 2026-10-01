@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  build-ipa:
+  build:
     runs-on: macos-latest
 
     steps:
@@ -35,15 +35,6 @@ jobs:
         path: build/export/*.ipa
         retention-days: 4
 
-  build-sim:
-    runs-on: macos-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-      with:
-        submodules: recursive
-
     - name: Build simulator zips (arm64 + x86_64)
       run: make sim-zip
       env:
@@ -59,7 +50,7 @@ jobs:
         retention-days: 4
 
   release:
-    needs: [build-ipa, build-sim]
+    needs: [build]
     if: github.ref_type == 'tag' && github.event_name == 'push'
     runs-on: macos-latest
     permissions:
