@@ -10,6 +10,25 @@ extension String {
     }
 }
 
+/// Set by `/shutdown`. FlyingFox's `run()` throws once `stop()` closes the socket,
+/// so this is how `start()` tells a requested shutdown apart from a real failure.
+private final class ShutdownRequest: @unchecked Sendable {
+    private let lock = NSLock()
+    private var requested = false
+
+    var isRequested: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return requested
+    }
+
+    func request() {
+        lock.lock()
+        defer { lock.unlock() }
+        requested = true
+    }
+}
+
 // MARK: - WebSocket HTTP & JSON-RPC Server
 
 /// WebSocket server with JSON-RPC 2.0 protocol for UI automation.
@@ -110,26 +129,39 @@ final class XCTestServer {
     func start() async throws {
         let port = ProcessInfo.processInfo.environment["DEVICEKIT_LISTEN_PORT"]?.toUInt16() ?? defaultPort
         let servers = try listenHosts.map { try makeServer(host: $0, port: port) }
+        let shutdown = ShutdownRequest()
 
-        for (host, server) in zip(listenHosts, servers) {
-            await configureRoutes(on: server, stopping: servers)
-            let displayHost = host.contains(":") ? "[\(host)]" : host
-            let base = "\(displayHost):\(port)"
-            logger.info("Server is ready (WebSocket: ws://\(base)/ws, HTTP: POST http://\(base)/rpc, MJPEG: http://\(base)/mjpeg)")
+        for server in servers {
+            await configureRoutes(on: server, stopping: servers, shutdown: shutdown)
         }
 
         // Returns once every listener has stopped; if one fails, the rest are cancelled and the error propagates.
         try await withThrowingTaskGroup(of: Void.self) { group in
-            for server in servers {
+            for (host, server) in zip(listenHosts, servers) {
                 group.addTask { try await server.run() }
+                group.addTask { await self.logWhenListening(server, host: host, port: port) }
             }
             do {
                 while try await group.next() != nil {}
             } catch {
                 group.cancelAll()
+                if shutdown.isRequested {
+                    return
+                }
                 throw error
             }
         }
+    }
+
+    /// Logs "Server is ready" only once the socket is actually bound, so a failed bind never claims readiness.
+    private func logWhenListening(_ server: HTTPServer, host: String, port: UInt16) async {
+        try? await server.waitUntilListening()
+        guard await server.isListening else {
+            return
+        }
+        let displayHost = host.contains(":") ? "[\(host)]" : host
+        let base = "\(displayHost):\(port)"
+        logger.info("Server is ready (WebSocket: ws://\(base)/ws, HTTP: POST http://\(base)/rpc, MJPEG: http://\(base)/mjpeg)")
     }
 
     /// Builds an HTTPServer for one IPv4/IPv6 literal. `.inet(ip4:)` rejects IPv6 literals such as the Xcode CoreDevice tunnel address, so pick by address family.
@@ -141,7 +173,7 @@ final class XCTestServer {
     }
 
     /// Registers all routes on `server`; `/shutdown` stops every server in `servers`.
-    private func configureRoutes(on server: HTTPServer, stopping servers: [HTTPServer]) async {
+    private func configureRoutes(on server: HTTPServer, stopping servers: [HTTPServer], shutdown: ShutdownRequest) async {
         // WebSocket endpoint for JSON-RPC
         let messageHandler = JSONRPCMessageHandler(dispatcher: dispatcher)
         let frameHandler = MessageFrameWSHandler(handler: messageHandler)
@@ -159,6 +191,7 @@ final class XCTestServer {
 
         // Shutdown endpoint — stops every listener gracefully
         await server.appendRoute("POST /shutdown") { _ in
+            shutdown.request()
             Task { for server in servers { await server.stop() } }
             return HTTPResponse(statusCode: .ok, body: Data("OK".utf8))
         }

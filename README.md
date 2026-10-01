@@ -121,7 +121,7 @@ curl -g -X POST "http://[$TUNNEL]:12004/rpc" -H "Content-Type: application/json"
   -d '{"jsonrpc":"2.0","method":"device.info","params":{},"id":1}'
 ```
 
-Avoid binding `0.0.0.0` or the device's Wi-Fi address instead: the server has no authentication, so that exposes device control to the whole network.
+Avoid binding `0.0.0.0`, `::` or the device's Wi-Fi address instead: the server has no authentication, so that exposes device control to the whole network.
 
 **Endpoints:**
 

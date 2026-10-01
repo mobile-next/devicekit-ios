@@ -44,7 +44,14 @@ final class DeviceKitUITests: XCTestCase {
     func testRunAutomation() async throws {
         let server = XCTestServer()
         DeviceKitUITests.logger.info("Will start WebSocket JSON-RPC server")
-        try await server.start()
+        do {
+            try await server.start()
+        } catch {
+            // record(_:) above swallows every issue; go straight to super so a server that
+            // never started fails the test run instead of reporting it as passed.
+            DeviceKitUITests.logger.error("Server failed: \(error)")
+            super.record(XCTIssue(type: .thrownError, compactDescription: "Server failed: \(error)"))
+        }
     }
 
     override class func tearDown() {
