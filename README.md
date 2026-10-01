@@ -72,16 +72,10 @@ make sim-zip
 
 ### Building with Newer Xcode
 
-The project deliberately targets iOS 14.0 so the agent keeps running on older devices; don't raise the project's deployment target. Newer Xcode versions only accept iOS 15.0 and above and fail with `The iOS Simulator deployment target 'IPHONEOS_DEPLOYMENT_TARGET' is set to 14.0`. Override it for your local build only:
+The project targets iOS 15.0, the lowest Xcode 27 accepts, so local builds work out of the box. Release builds still support iOS 14: the build workflow sets `IPHONEOS_DEPLOYMENT_TARGET=14.0`, and the `ipa-unsigned` and `sim-zip*` targets pass it to `xcodebuild`. To reproduce a release build with an Xcode that still accepts 14.0:
 
 ```bash
-xcodebuild build-for-testing \
-  -project devicekit-ios.xcodeproj \
-  -scheme devicekit-ios \
-  -configuration Release \
-  -destination "id=<simulator-udid>" \
-  -derivedDataPath build/local \
-  IPHONEOS_DEPLOYMENT_TARGET=15.0
+make sim-zip IPHONEOS_DEPLOYMENT_TARGET=14.0
 ```
 
 ## Quick Start

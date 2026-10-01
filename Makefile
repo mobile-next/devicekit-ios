@@ -15,6 +15,11 @@ CODE_SIGN_IDENTITY ?= Apple Development
 # Export method for IPA (development, ad-hoc, app-store, enterprise)
 EXPORT_METHOD ?= development
 
+# Minimum iOS version override. Unset uses the project's 15.0, the lowest Xcode 27 accepts;
+# the release workflow sets 14.0 so published builds keep running on iOS 14.
+IPHONEOS_DEPLOYMENT_TARGET ?=
+DEPLOYMENT_TARGET_SETTING = $(if $(IPHONEOS_DEPLOYMENT_TARGET),IPHONEOS_DEPLOYMENT_TARGET=$(IPHONEOS_DEPLOYMENT_TARGET))
+
 .PHONY: help clean build archive ipa-unsigned sim-zip-arm64 sim-zip-x86_64 sim-zip sim-install test-coverage coverage-html lint
 
 .DEFAULT_GOAL := help
@@ -55,7 +60,8 @@ ipa-unsigned:
 		-derivedDataPath $(BUILD_DIR) \
 		CODE_SIGN_IDENTITY="" \
 		CODE_SIGNING_REQUIRED=NO \
-		CODE_SIGNING_ALLOWED=NO | xcbeautify
+		CODE_SIGNING_ALLOWED=NO \
+		$(DEPLOYMENT_TARGET_SETTING) | xcbeautify
 	@scripts/patch-runner.sh "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphoneos"
 	@echo "Packaging runner IPA..."
 	@rm -rf $(EXPORT_PATH)/Payload
@@ -86,7 +92,8 @@ sim-zip-arm64:
 		CODE_SIGN_IDENTITY="" \
 		CODE_SIGNING_REQUIRED=NO \
 		CODE_SIGNING_ALLOWED=NO \
-		ARCHS=arm64 | xcbeautify
+		ARCHS=arm64 \
+		$(DEPLOYMENT_TARGET_SETTING) | xcbeautify
 	@mkdir -p $(EXPORT_PATH)
 	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/
 	@scripts/patch-runner.sh "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator" "$(EXPORT_PATH)"
@@ -106,7 +113,8 @@ sim-zip-x86_64:
 		CODE_SIGN_IDENTITY="" \
 		CODE_SIGNING_REQUIRED=NO \
 		CODE_SIGNING_ALLOWED=NO \
-		ARCHS=x86_64 | xcbeautify
+		ARCHS=x86_64 \
+		$(DEPLOYMENT_TARGET_SETTING) | xcbeautify
 	@mkdir -p $(EXPORT_PATH)
 	@cp -r "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator/$(SCHEME)UITests-Runner.app" $(EXPORT_PATH)/
 	@scripts/patch-runner.sh "$(BUILD_DIR)/Build/Products/$(CONFIGURATION)-iphonesimulator" "$(EXPORT_PATH)"
