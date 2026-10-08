@@ -123,7 +123,7 @@ curl -g -X POST "http://[$TUNNEL]:12004/rpc" -H "Content-Type: application/json"
   -d '{"jsonrpc":"2.0","method":"device.info","params":{},"id":1}'
 ```
 
-The tunnel address can change when the tunnel reconnects (for example during a long build), and a stale address fails to bind. Read it right before starting the runner.
+The tunnel address can change when the tunnel reconnects (for example during a long build), and a stale address fails to bind. Read it right before starting the runner, and if the tunnel reconnects while the runner is up, stop the runner (`POST /shutdown`) and start it again with the new address, since it does not rebind on its own.
 
 Avoid binding `0.0.0.0`, `::` or the device's Wi-Fi address instead: the server has no authentication, so that exposes device control to the whole network.
 
