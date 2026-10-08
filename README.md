@@ -108,7 +108,7 @@ DeviceKit runs as an XCUITest. Once installed and launched on a device or simula
 Xcode keeps a private IPv6 tunnel to each paired device, reachable only from the paired Mac and kept when the device switches from USB to Wi-Fi. Add the device side of that tunnel to the listen list to reach DeviceKit without USB port forwarding, while keeping the loopback listener for existing clients. `xcodebuild` passes `TEST_RUNNER_`-prefixed variables into the test runner:
 
 ```bash
-TUNNEL=$(xcrun devicectl device info details --device <udid> | awk '/Tunnel IP Address/{print $NF}')
+TUNNEL=$(xcrun devicectl device info details --device <udid> | awk '/Tunnel IP Address|tunnelIPAddress/{print $NF}')
 # Keeps running until the server is stopped with POST /shutdown
 TEST_RUNNER_DEVICEKIT_LISTEN_HOST="127.0.0.1,$TUNNEL" xcodebuild test-without-building \
   -project devicekit-ios.xcodeproj -scheme devicekit-ios -destination "id=<udid>" \
@@ -118,10 +118,12 @@ TEST_RUNNER_DEVICEKIT_LISTEN_HOST="127.0.0.1,$TUNNEL" xcodebuild test-without-bu
 Then, from a second terminal while it runs:
 
 ```bash
-TUNNEL=$(xcrun devicectl device info details --device <udid> | awk '/Tunnel IP Address/{print $NF}')
+TUNNEL=$(xcrun devicectl device info details --device <udid> | awk '/Tunnel IP Address|tunnelIPAddress/{print $NF}')
 curl -g -X POST "http://[$TUNNEL]:12004/rpc" -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"device.info","params":{},"id":1}'
 ```
+
+The tunnel address can change when the tunnel reconnects (for example during a long build), and a stale address fails to bind. Read it right before starting the runner.
 
 Avoid binding `0.0.0.0`, `::` or the device's Wi-Fi address instead: the server has no authentication, so that exposes device control to the whole network.
 
