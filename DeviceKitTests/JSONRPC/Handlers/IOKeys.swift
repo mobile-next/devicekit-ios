@@ -46,6 +46,36 @@ private let keyboardKeysByName: [String: XCUIKeyboardKey] = [
     "f9": .F9, "f10": .F10, "f11": .F11, "f12": .F12,
 ]
 
+// HID "Keyboard Clear" (page 0x07, usage 0x9C) wipes the focused text field in one event.
+// Sent as a device event like WebDriverAgent does (appium/appium#19389), not through typeKey.
+private let hidClearKeyName = "clear"
+private let hidKeyboardPage: UInt32 = 0x07
+private let hidKeyboardClearUsage: UInt32 = 0x9C
+private let hidKeyPressDuration: Double = 0.01
+
+private func sendHIDKeyboardClear() throws {
+    typealias DeviceEventFactory = @convention(c) (AnyClass, Selector, UInt32, UInt32, Double) -> AnyObject?
+    let selector = NSSelectorFromString("deviceEventWithPage:usage:duration:")
+    guard let eventClass = NSClassFromString("XCDeviceEvent"),
+          let method = class_getClassMethod(eventClass, selector) else {
+        throw RPCMethodError.internalError("XCDeviceEvent is not available")
+    }
+    let factory = unsafeBitCast(method_getImplementation(method), to: DeviceEventFactory.self)
+    guard let event = factory(eventClass, selector, hidKeyboardPage, hidKeyboardClearUsage, hidKeyPressDuration) else {
+        throw RPCMethodError.internalError("Failed to create the clear key event")
+    }
+    typealias PerformDeviceEvent = @convention(c) (AnyObject, Selector, AnyObject, UnsafeMutablePointer<AnyObject?>?) -> Bool
+    let performSelector = NSSelectorFromString("performDeviceEvent:error:")
+    guard let performMethod = class_getInstanceMethod(XCUIDevice.self, performSelector) else {
+        throw RPCMethodError.internalError("performDeviceEvent is not available")
+    }
+    let perform = unsafeBitCast(method_getImplementation(performMethod), to: PerformDeviceEvent.self)
+    var error: AnyObject?
+    if !perform(XCUIDevice.shared, performSelector, event, &error) {
+        throw RPCMethodError.internalError("Failed to send the clear key: \(String(describing: error))")
+    }
+}
+
 // Named keys whose XCUIKeyboardKey rawValue is a real control character that
 // typeText delivers correctly without a modifier. Every other named key (arrows,
 // home/end, page nav, F-keys) carries a scalar that typeText would insert as a
@@ -73,6 +103,9 @@ struct IOKeysMethodHandler: RPCMethodHandler {
         // resolve all combos upfront, so an invalid combo fails before any
         // key is pressed
         let resolvedCombos = try request.keys.map { combo -> ResolvedKeyCombo in
+            if combo.key.lowercased() == hidClearKeyName && combo.modifiers.isEmpty {
+                return ResolvedKeyCombo(key: hidClearKeyName, flags: [], preferTypeText: false)
+            }
             let resolved = try resolveKey(combo.key)
             return ResolvedKeyCombo(
                 key: resolved.value,
@@ -89,7 +122,9 @@ struct IOKeysMethodHandler: RPCMethodHandler {
             // typeKey delivers modifier combos and navigation/function keys;
             // typeText handles literal characters and control-character keys,
             // which typeKey does not deliver reliably without a modifier.
-            if combo.flags.isEmpty && combo.preferTypeText {
+            if combo.key == hidClearKeyName {
+                try sendHIDKeyboardClear()
+            } else if combo.flags.isEmpty && combo.preferTypeText {
                 app.typeText(combo.key)
             } else {
                 app.typeKey(combo.key, modifierFlags: combo.flags)
