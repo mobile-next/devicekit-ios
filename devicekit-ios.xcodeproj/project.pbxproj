@@ -35,6 +35,7 @@
 		52D8FAB52D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FAB22D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.h */; };
 		52E35D432A654F67001D97A8 /* RunningApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E35D422A654F67001D97A8 /* RunningApp.swift */; };
 		52E35D512A654F67001D97A9 /* Pasteboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E35D502A654F67001D97A9 /* Pasteboard.swift */; };
+		52E35D602A654F67001D97A9 /* HIDEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E35D5F2A654F67001D97A9 /* HIDEvent.swift */; };
 		610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */; };
 		6124329E2A4DA5BB00F5F619 /* AXElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6124329D2A4DA5BB00F5F619 /* AXElement.swift */; };
 		612DE40229801F71003C2BE0 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 612DE40129801F71003C2BE0 /* XCTest.framework */; };
@@ -122,6 +123,7 @@
 		52D8FAB32D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCUIApplication+FBQuiescence.m"; sourceTree = "<group>"; };
 		52E35D422A654F67001D97A8 /* RunningApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningApp.swift; sourceTree = "<group>"; };
 		52E35D502A654F67001D97A9 /* Pasteboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pasteboard.swift; sourceTree = "<group>"; };
+		52E35D5F2A654F67001D97A9 /* HIDEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HIDEvent.swift; sourceTree = "<group>"; };
 		610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AXClientSwizzler.swift; sourceTree = "<group>"; };
 		6124329D2A4DA5BB00F5F619 /* AXElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXElement.swift; sourceTree = "<group>"; };
 		612DE40129801F71003C2BE0 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -316,6 +318,7 @@
 				613E87D6299A64BD00FF8551 /* PointerEventPath.swift */,
 				52E35D422A654F67001D97A8 /* RunningApp.swift */,
 				52E35D502A654F67001D97A9 /* Pasteboard.swift */,
+				52E35D5F2A654F67001D97A9 /* HIDEvent.swift */,
 			);
 			path = XCTest;
 			sourceTree = "<group>";
@@ -555,6 +558,7 @@
 				6124329E2A4DA5BB00F5F619 /* AXElement.swift in Sources */,
 				52E35D432A654F67001D97A8 /* RunningApp.swift in Sources */,
 				52E35D512A654F67001D97A9 /* Pasteboard.swift in Sources */,
+				52E35D602A654F67001D97A9 /* HIDEvent.swift in Sources */,
 				52D8FAB42D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

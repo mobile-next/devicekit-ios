@@ -51,30 +51,6 @@ private let keyboardKeysByName: [String: XCUIKeyboardKey] = [
 private let hidClearKeyName = "clear"
 private let hidKeyboardPage: UInt32 = 0x07
 private let hidKeyboardClearUsage: UInt32 = 0x9C
-private let hidKeyPressDuration: Double = 0.01
-
-private func sendHIDKeyboardClear() throws {
-    typealias DeviceEventFactory = @convention(c) (AnyClass, Selector, UInt32, UInt32, Double) -> AnyObject?
-    let selector = NSSelectorFromString("deviceEventWithPage:usage:duration:")
-    guard let eventClass = NSClassFromString("XCDeviceEvent"),
-          let method = class_getClassMethod(eventClass, selector) else {
-        throw RPCMethodError.internalError("XCDeviceEvent is not available")
-    }
-    let factory = unsafeBitCast(method_getImplementation(method), to: DeviceEventFactory.self)
-    guard let event = factory(eventClass, selector, hidKeyboardPage, hidKeyboardClearUsage, hidKeyPressDuration) else {
-        throw RPCMethodError.internalError("Failed to create the clear key event")
-    }
-    typealias PerformDeviceEvent = @convention(c) (AnyObject, Selector, AnyObject, UnsafeMutablePointer<AnyObject?>?) -> Bool
-    let performSelector = NSSelectorFromString("performDeviceEvent:error:")
-    guard let performMethod = class_getInstanceMethod(XCUIDevice.self, performSelector) else {
-        throw RPCMethodError.internalError("performDeviceEvent is not available")
-    }
-    let perform = unsafeBitCast(method_getImplementation(performMethod), to: PerformDeviceEvent.self)
-    var error: AnyObject?
-    if !perform(XCUIDevice.shared, performSelector, event, &error) {
-        throw RPCMethodError.internalError("Failed to send the clear key: \(String(describing: error))")
-    }
-}
 
 // Named keys whose XCUIKeyboardKey rawValue is a real control character that
 // typeText delivers correctly without a modifier. Every other named key (arrows,
@@ -123,7 +99,7 @@ struct IOKeysMethodHandler: RPCMethodHandler {
             // typeText handles literal characters and control-character keys,
             // which typeKey does not deliver reliably without a modifier.
             if combo.key == hidClearKeyName {
-                try sendHIDKeyboardClear()
+                try sendHIDEvent(page: hidKeyboardPage, usage: hidKeyboardClearUsage)
             } else if combo.flags.isEmpty && combo.preferTypeText {
                 app.typeText(combo.key)
             } else {
