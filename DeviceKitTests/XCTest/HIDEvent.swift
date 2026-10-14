@@ -2,8 +2,7 @@ import Foundation
 import XCTest
 
 // Sends a raw HID usage (e.g. page 0x07 keyboard, page 0x0C consumer) through
-// XCUIDevice's private device-event API, like WebDriverAgent's
-// fb_performIOHIDEventWithPage:usage:duration:. The selectors take primitive
+// XCUIDevice's private device-event API. The selectors take primitive
 // arguments, so they're called through their IMPs instead of perform(_:).
 func sendHIDEvent(page: UInt32, usage: UInt32, duration: Double = 0.01) throws {
     typealias DeviceEventFactory = @convention(c) (AnyClass, Selector, UInt32, UInt32, Double) -> AnyObject?

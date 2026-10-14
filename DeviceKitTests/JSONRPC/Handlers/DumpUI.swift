@@ -182,7 +182,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
 
     // the snapshot's hasFocus attribute is tvOS-only; on iOS the element
     // holding keyboard focus is only reachable through a predicate query
-    // against the private hasKeyboardFocus property, same as WebDriverAgent
+    // against the private hasKeyboardFocus property
     private func keyboardFocusedElementFrame(_ app: XCUIApplication) -> AXFrame? {
         let focused = app.descendants(matching: .any)
             .matching(NSPredicate(format: "hasKeyboardFocus == true"))

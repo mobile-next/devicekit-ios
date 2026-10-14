@@ -29,7 +29,7 @@ final class MJPEGFrameProducer {
 
         let startTime = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW)
 
-        guard var jpegData = try? FBScreenshot.captureJPEG(
+        guard var jpegData = try? DKScreenshot.captureJPEG(
             withQuality: quality,
             timeout: captureTimeout
         ) else {

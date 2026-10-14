@@ -14,7 +14,7 @@ final class DeviceKitUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = true
 
-        // WDA PR #664 (FBFailureProofTestCase): prevent the runner from halting
+        // prevent the runner from halting
         // when testmanagerd is slow to connect on startup (random ~20s timeout).
         // shouldHaltWhenReceivesControl is a private XCTestCase BOOL property.
         let sel = NSSelectorFromString("setShouldHaltWhenReceivesControl:")
@@ -29,9 +29,9 @@ final class DeviceKitUITests: XCTestCase {
         }
     }
 
-    // WDA PR #664: swallow XCTest issues instead of propagating them up.
-    // The XCTIssue+FBPatcher +load swizzle handles shouldInterruptTest → NO;
-    // this override prevents issues from reaching XCTest's failure machinery.
+    // swallow XCTest issues instead of propagating them up. XCTestPatches makes
+    // shouldInterruptTest return NO; this override keeps issues away from XCTest's
+    // failure machinery.
     override func record(_ issue: XCTIssue) {
         Self.logger.warning("XCTest issue (swallowed): \(issue.compactDescription)")
     }

@@ -1,7 +1,7 @@
 import UIKit
 
 /// Principal class of the test bundle (NSPrincipalClass): XCTest instantiates it when the bundle
-/// loads, before UI testing initializes.
+/// loads, before UI testing initializes, which also makes it the place to install XCTestPatches.
 ///
 /// XCUIInitializeForUITesting waits up to 30s for the test runner to enter the background.
 /// xcodebuild's testmanagerd session does that, but on iOS 27 simulators nothing backgrounds a
@@ -13,6 +13,7 @@ final class RunnerBackgrounding: NSObject {
 
     override init() {
         super.init()
+        XCTestPatches.install()
         DispatchQueue.main.asyncAfter(deadline: .now() + Self.suspendDelay) {
             Self.suspendIfInForeground()
         }

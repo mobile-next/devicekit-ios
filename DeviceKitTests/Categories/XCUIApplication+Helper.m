@@ -5,7 +5,7 @@
 
 #import "AXClientProxy.h"
 #import "XCAccessibilityElement.h"
-#import "XCTestDaemonsProxy.h"
+#import "XCTRunnerDaemonSession.h"
 #import "XCTestManager_ManagerInterface-Protocol.h"
 #import "XCUIApplication+Helper.h"
 
@@ -27,7 +27,7 @@
     NSMutableArray<NSDictionary<NSString *, id> *> *result =
         [NSMutableArray array];
     id<XCTestManager_ManagerInterface> proxy =
-        [XCTestDaemonsProxy testRunnerProxy];
+        [XCTRunnerDaemonSession sharedSession].daemonProxy;
 
     for (id<XCAccessibilityElement> axElement in axElements) {
         NSMutableDictionary<NSString *, id> *appInfo =

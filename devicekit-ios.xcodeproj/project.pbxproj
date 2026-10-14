@@ -14,14 +14,8 @@
 		521C1F092D8018590024EE42 /* XCUIApplication+Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 521C1F082D80184D0024EE42 /* XCUIApplication+Helper.h */; };
 		521C1F0B2D801A360024EE42 /* XCUIApplication+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 521C1F0A2D801A350024EE42 /* XCUIApplication+Helper.m */; };
 		521C1F0C2D8030A30024EE42 /* XCTestManager_ManagerInterface-Protocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA622D6DCC600015FAB3 /* XCTestManager_ManagerInterface-Protocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		521C1F0E2D80518A0024EE42 /* XCTestDaemonsProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 521C1F0D2D8051890024EE42 /* XCTestDaemonsProxy.h */; };
-		521C1F102D8051FC0024EE42 /* XCTestDaemonsProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 521C1F0F2D8051F20024EE42 /* XCTestDaemonsProxy.m */; };
 		521C1F102D8051FC0024EE43 /* RunnerBackgrounding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521C1F0F2D8051F20024EE43 /* RunnerBackgrounding.swift */; };
-		526111782DE5E8DA007C356B /* XCAXClient_iOS+FBSnapshotReqParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 526111772DE5E8D0007C356B /* XCAXClient_iOS+FBSnapshotReqParams.h */; };
-		5261117A2DE5E8E7007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m in Sources */ = {isa = PBXBuildFile; fileRef = 526111792DE5E8E5007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m */; };
 		5279BFD62935ECE20056C609 /* FlyingFox in Frameworks */ = {isa = PBXBuildFile; productRef = 5279BFD52935ECE20056C609 /* FlyingFox */; };
-		52D8FA9D2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D8FA9C2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.m */; };
-		52D8FA9F2D6DD0B50015FAB3 /* XCUIApplicationProcess+FBQuiescence.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA9B2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.h */; };
 		52D8FAA02D6DD0E60015FAB3 /* XCAXClient_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA402D6DCC600015FAB3 /* XCAXClient_iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52D8FAA22D6DD1580015FAB3 /* devicekit-iosUITests-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA922D6DCF2C0015FAB3 /* devicekit-iosUITests-Bridging-Header.h */; };
 		52D8FAA32D6DD16F0015FAB3 /* CDStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA332D6DCC600015FAB3 /* CDStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -29,13 +23,10 @@
 		52D8FAA52D6DD1950015FAB3 /* XCUIApplicationImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA7E2D6DCC600015FAB3 /* XCUIApplicationImpl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52D8FAA62D6DD1950015FAB3 /* XCUIApplicationProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA7F2D6DCC600015FAB3 /* XCUIApplicationProcess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52D8FAA82D6DD1950015FAB3 /* XCUIDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FA812D6DCC600015FAB3 /* XCUIDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		52D8FAB02D6DD4100015FAB3 /* FBConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D8FAAF2D6DD4100015FAB3 /* FBConfiguration.m */; };
-		52D8FAB12D6DD4100015FAB3 /* FBConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FAAE2D6DD4100015FAB3 /* FBConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		52D8FAB42D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D8FAB32D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.m */; };
-		52D8FAB52D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D8FAB22D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.h */; };
 		52E35D432A654F67001D97A8 /* RunningApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E35D422A654F67001D97A8 /* RunningApp.swift */; };
 		52E35D512A654F67001D97A9 /* Pasteboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E35D502A654F67001D97A9 /* Pasteboard.swift */; };
 		52E35D602A654F67001D97A9 /* HIDEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E35D5F2A654F67001D97A9 /* HIDEvent.swift */; };
+		DC4F7A022F9B000000000001 /* XCTestPatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC4F7A012F9B000000000001 /* XCTestPatches.swift */; };
 		610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */; };
 		6124329E2A4DA5BB00F5F619 /* AXElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6124329D2A4DA5BB00F5F619 /* AXElement.swift */; };
 		612DE40229801F71003C2BE0 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 612DE40129801F71003C2BE0 /* XCTest.framework */; };
@@ -50,8 +41,8 @@
 		781480372F27CEF000E61E3B /* Screenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480362F27CEF000E61E3B /* Screenshot.swift */; };
 		781480752F27D2BB00E61E3B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480742F27D2B900E61E3B /* URL.swift */; };
 		781480FF2F27DEE600E61E3B /* IOGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781480FE2F27DEE600E61E3B /* IOGesture.swift */; };
-		785281492F2BEC40002A7531 /* FBScreenshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 785281472F2BEC40002A7531 /* FBScreenshot.h */; };
-		7852814A2F2BEC40002A7531 /* FBScreenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 785281482F2BEC40002A7531 /* FBScreenshot.m */; };
+		785281492F2BEC40002A7531 /* DKScreenshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 785281472F2BEC40002A7531 /* DKScreenshot.h */; };
+		7852814A2F2BEC40002A7531 /* DKScreenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 785281482F2BEC40002A7531 /* DKScreenshot.m */; };
 		7865E4C42F423A8700D0F45F /* IOOrientationSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865E4C32F423A8700D0F45F /* IOOrientationSet.swift */; };
 		7865E4C42F423A8700DA0001 /* DeviceSettingsApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865E4C32F423A8700DA0001 /* DeviceSettingsApply.swift */; };
 		7865E4C42F423A8700DA0002 /* IOHingeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865E4C32F423A8700DA0002 /* IOHingeSet.swift */; };
@@ -96,11 +87,7 @@
 		521C1F062D8017460024EE42 /* AXClientProxy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AXClientProxy.m; sourceTree = "<group>"; };
 		521C1F082D80184D0024EE42 /* XCUIApplication+Helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCUIApplication+Helper.h"; sourceTree = "<group>"; };
 		521C1F0A2D801A350024EE42 /* XCUIApplication+Helper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCUIApplication+Helper.m"; sourceTree = "<group>"; };
-		521C1F0D2D8051890024EE42 /* XCTestDaemonsProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCTestDaemonsProxy.h; sourceTree = "<group>"; };
-		521C1F0F2D8051F20024EE42 /* XCTestDaemonsProxy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XCTestDaemonsProxy.m; sourceTree = "<group>"; };
 		521C1F0F2D8051F20024EE43 /* RunnerBackgrounding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerBackgrounding.swift; sourceTree = "<group>"; };
-		526111772DE5E8D0007C356B /* XCAXClient_iOS+FBSnapshotReqParams.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCAXClient_iOS+FBSnapshotReqParams.h"; sourceTree = "<group>"; };
-		526111792DE5E8E5007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCAXClient_iOS+FBSnapshotReqParams.m"; sourceTree = "<group>"; };
 		52D8FA332D6DCC600015FAB3 /* CDStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDStructures.h; sourceTree = "<group>"; };
 		52D8FA402D6DCC600015FAB3 /* XCAXClient_iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCAXClient_iOS.h; sourceTree = "<group>"; };
 		52D8FA422D6DCC600015FAB3 /* XCEventGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCEventGenerator.h; sourceTree = "<group>"; };
@@ -115,15 +102,10 @@
 		52D8FA812D6DCC600015FAB3 /* XCUIDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCUIDevice.h; sourceTree = "<group>"; };
 		52D8FA8C2D6DCC600015FAB3 /* XCUIScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCUIScreen.h; sourceTree = "<group>"; };
 		52D8FA922D6DCF2C0015FAB3 /* devicekit-iosUITests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "devicekit-iosUITests-Bridging-Header.h"; sourceTree = "<group>"; };
-		52D8FA9B2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCUIApplicationProcess+FBQuiescence.h"; sourceTree = "<group>"; };
-		52D8FA9C2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCUIApplicationProcess+FBQuiescence.m"; sourceTree = "<group>"; };
-		52D8FAAE2D6DD4100015FAB3 /* FBConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBConfiguration.h; sourceTree = "<group>"; };
-		52D8FAAF2D6DD4100015FAB3 /* FBConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBConfiguration.m; sourceTree = "<group>"; };
-		52D8FAB22D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCUIApplication+FBQuiescence.h"; sourceTree = "<group>"; };
-		52D8FAB32D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCUIApplication+FBQuiescence.m"; sourceTree = "<group>"; };
 		52E35D422A654F67001D97A8 /* RunningApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningApp.swift; sourceTree = "<group>"; };
 		52E35D502A654F67001D97A9 /* Pasteboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pasteboard.swift; sourceTree = "<group>"; };
 		52E35D5F2A654F67001D97A9 /* HIDEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HIDEvent.swift; sourceTree = "<group>"; };
+		DC4F7A012F9B000000000001 /* XCTestPatches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestPatches.swift; sourceTree = "<group>"; };
 		610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AXClientSwizzler.swift; sourceTree = "<group>"; };
 		6124329D2A4DA5BB00F5F619 /* AXElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXElement.swift; sourceTree = "<group>"; };
 		612DE40129801F71003C2BE0 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -138,8 +120,8 @@
 		781480362F27CEF000E61E3B /* Screenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screenshot.swift; sourceTree = "<group>"; };
 		781480742F27D2B900E61E3B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		781480FE2F27DEE600E61E3B /* IOGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOGesture.swift; sourceTree = "<group>"; };
-		785281472F2BEC40002A7531 /* FBScreenshot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBScreenshot.h; sourceTree = "<group>"; };
-		785281482F2BEC40002A7531 /* FBScreenshot.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBScreenshot.m; sourceTree = "<group>"; };
+		785281472F2BEC40002A7531 /* DKScreenshot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DKScreenshot.h; sourceTree = "<group>"; };
+		785281482F2BEC40002A7531 /* DKScreenshot.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DKScreenshot.m; sourceTree = "<group>"; };
 		7865E4C22F423A8700D0F45F /* IOOrientationGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOOrientationGet.swift; sourceTree = "<group>"; };
 		7865E4C32F423A8700D0F45F /* IOOrientationSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOOrientationSet.swift; sourceTree = "<group>"; };
 		7865E4C32F423A8700DA0001 /* DeviceSettingsApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingsApply.swift; sourceTree = "<group>"; };
@@ -276,14 +258,8 @@
 		52D8FA8E2D6DCF010015FAB3 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				526111792DE5E8E5007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m */,
-				526111772DE5E8D0007C356B /* XCAXClient_iOS+FBSnapshotReqParams.h */,
 				521C1F0A2D801A350024EE42 /* XCUIApplication+Helper.m */,
 				521C1F082D80184D0024EE42 /* XCUIApplication+Helper.h */,
-				52D8FAB22D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.h */,
-				52D8FAB32D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.m */,
-				52D8FA9B2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.h */,
-				52D8FA9C2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.m */,
 				52D8FA922D6DCF2C0015FAB3 /* devicekit-iosUITests-Bridging-Header.h */,
 			);
 			path = Categories;
@@ -292,15 +268,11 @@
 		52D8FAA92D6DD3850015FAB3 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				785281472F2BEC40002A7531 /* FBScreenshot.h */,
-				785281482F2BEC40002A7531 /* FBScreenshot.m */,
-				521C1F0F2D8051F20024EE42 /* XCTestDaemonsProxy.m */,
+				785281472F2BEC40002A7531 /* DKScreenshot.h */,
+				785281482F2BEC40002A7531 /* DKScreenshot.m */,
 				521C1F0F2D8051F20024EE43 /* RunnerBackgrounding.swift */,
-				521C1F0D2D8051890024EE42 /* XCTestDaemonsProxy.h */,
 				521C1F062D8017460024EE42 /* AXClientProxy.m */,
 				521C1F022D8014340024EE42 /* AXClientProxy.h */,
-				52D8FAAE2D6DD4100015FAB3 /* FBConfiguration.h */,
-				52D8FAAF2D6DD4100015FAB3 /* FBConfiguration.m */,
 				521C1F042D8016950024EE42 /* XCAccessibilityElement.h */,
 			);
 			path = Utilities;
@@ -312,6 +284,7 @@
 				9811C9082C49751D00DDACA0 /* OrientationGeometry.swift */,
 				94826F4329DB082100795E9B /* SystemPermissionManager.swift */,
 				6124329D2A4DA5BB00F5F619 /* AXElement.swift */,
+				DC4F7A012F9B000000000001 /* XCTestPatches.swift */,
 				610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */,
 				612DE4112984114B003C2BE0 /* RunnerDaemonProxy.swift */,
 				612DE413298426EF003C2BE0 /* EventRecord.swift */,
@@ -371,21 +344,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				52D8FAA52D6DD1950015FAB3 /* XCUIApplicationImpl.h in Headers */,
-				785281492F2BEC40002A7531 /* FBScreenshot.h in Headers */,
-				52D8FAB52D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.h in Headers */,
+				785281492F2BEC40002A7531 /* DKScreenshot.h in Headers */,
 				52D8FAA62D6DD1950015FAB3 /* XCUIApplicationProcess.h in Headers */,
 				52D8FAA82D6DD1950015FAB3 /* XCUIDevice.h in Headers */,
 				52D8FAA42D6DD1950015FAB3 /* XCUIApplication.h in Headers */,
-				526111782DE5E8DA007C356B /* XCAXClient_iOS+FBSnapshotReqParams.h in Headers */,
 				521C1F092D8018590024EE42 /* XCUIApplication+Helper.h in Headers */,
 				521C1F0C2D8030A30024EE42 /* XCTestManager_ManagerInterface-Protocol.h in Headers */,
-				52D8FAB12D6DD4100015FAB3 /* FBConfiguration.h in Headers */,
 				52D8FAA02D6DD0E60015FAB3 /* XCAXClient_iOS.h in Headers */,
-				521C1F0E2D80518A0024EE42 /* XCTestDaemonsProxy.h in Headers */,
 				521C1F052D8016950024EE42 /* XCAccessibilityElement.h in Headers */,
 				52D8FAA32D6DD16F0015FAB3 /* CDStructures.h in Headers */,
 				52D8FAA22D6DD1580015FAB3 /* devicekit-iosUITests-Bridging-Header.h in Headers */,
-				52D8FA9F2D6DD0B50015FAB3 /* XCUIApplicationProcess+FBQuiescence.h in Headers */,
 				521C1F032D8014410024EE42 /* AXClientProxy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -518,16 +486,15 @@
 				781480FF2F27DEE600E61E3B /* IOGesture.swift in Sources */,
 				612DE4122984114B003C2BE0 /* RunnerDaemonProxy.swift in Sources */,
 				94826F4429DB082100795E9B /* SystemPermissionManager.swift in Sources */,
-				7852814A2F2BEC40002A7531 /* FBScreenshot.m in Sources */,
+				7852814A2F2BEC40002A7531 /* DKScreenshot.m in Sources */,
 				7865E50F2F42596200D0F45F /* AppsForeground.swift in Sources */,
 				521C1F072D8017480024EE42 /* AXClientProxy.m in Sources */,
 				7865E4C72F423ACA00D0F45F /* DeviceInfo.swift in Sources */,
-				5261117A2DE5E8E7007C356B /* XCAXClient_iOS+FBSnapshotReqParams.m in Sources */,
 				78147F3D2F27BDBC00E61E3B /* AppsLaunch.swift in Sources */,
+				DC4F7A022F9B000000000001 /* XCTestPatches.swift in Sources */,
 				610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */,
 				787C47DF2F228B770027A012 /* IOTap.swift in Sources */,
 				787C47E02F228B770027A012 /* DumpUI.swift in Sources */,
-				521C1F102D8051FC0024EE42 /* XCTestDaemonsProxy.m in Sources */,
 				521C1F102D8051FC0024EE43 /* RunnerBackgrounding.swift in Sources */,
 				78A190B62F3A3ADA007F24E0 /* IOButton.swift in Sources */,
 				78A190D32F3A3ADA007F24E2 /* ClipboardSet.swift in Sources */,
@@ -549,17 +516,14 @@
 				781480752F27D2BB00E61E3B /* URL.swift in Sources */,
 				787C479A2F227F6B0027A012 /* JSONRPCDispatcher.swift in Sources */,
 				521C1F0B2D801A360024EE42 /* XCUIApplication+Helper.m in Sources */,
-				52D8FA9D2D6DCFAF0015FAB3 /* XCUIApplicationProcess+FBQuiescence.m in Sources */,
 				52049BF8293503A200807AA3 /* devicekit_iosUITests.swift in Sources */,
 				78EA9F912F36611B008B17D3 /* AppsTerminate.swift in Sources */,
-				52D8FAB02D6DD4100015FAB3 /* FBConfiguration.m in Sources */,
 				78147F0F2F27AA6B00E61E3B /* IOText.swift in Sources */,
 				78E4A1B12F5C110200D4F1AA /* IOKeys.swift in Sources */,
 				6124329E2A4DA5BB00F5F619 /* AXElement.swift in Sources */,
 				52E35D432A654F67001D97A8 /* RunningApp.swift in Sources */,
 				52E35D512A654F67001D97A9 /* Pasteboard.swift in Sources */,
 				52E35D602A654F67001D97A9 /* HIDEvent.swift in Sources */,
-				52D8FAB42D6DD54F0015FAB3 /* XCUIApplication+FBQuiescence.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

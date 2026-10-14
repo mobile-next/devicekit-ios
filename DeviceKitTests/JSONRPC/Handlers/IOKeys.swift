@@ -47,7 +47,7 @@ private let keyboardKeysByName: [String: XCUIKeyboardKey] = [
 ]
 
 // HID "Keyboard Clear" (page 0x07, usage 0x9C) wipes the focused text field in one event.
-// Sent as a device event like WebDriverAgent does (appium/appium#19389), not through typeKey.
+// Sent as a device event, not through typeKey, which has no key for it.
 private let hidClearKeyName = "clear"
 private let hidKeyboardPage: UInt32 = 0x07
 private let hidKeyboardClearUsage: UInt32 = 0x9C
