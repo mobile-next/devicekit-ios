@@ -28,6 +28,7 @@
 		52E35D602A654F67001D97A9 /* HIDEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E35D5F2A654F67001D97A9 /* HIDEvent.swift */; };
 		DC4F7A022F9B000000000001 /* XCTestPatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC4F7A012F9B000000000001 /* XCTestPatches.swift */; };
 		610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */; };
+		78AA10022F3A0002000A0002 /* WholeAppSnapshotSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AA10012F3A0001000A0001 /* WholeAppSnapshotSupport.swift */; };
 		6124329E2A4DA5BB00F5F619 /* AXElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6124329D2A4DA5BB00F5F619 /* AXElement.swift */; };
 		612DE40229801F71003C2BE0 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 612DE40129801F71003C2BE0 /* XCTest.framework */; };
 		612DE4122984114B003C2BE0 /* RunnerDaemonProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612DE4112984114B003C2BE0 /* RunnerDaemonProxy.swift */; };
@@ -107,6 +108,7 @@
 		52E35D5F2A654F67001D97A9 /* HIDEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HIDEvent.swift; sourceTree = "<group>"; };
 		DC4F7A012F9B000000000001 /* XCTestPatches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestPatches.swift; sourceTree = "<group>"; };
 		610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AXClientSwizzler.swift; sourceTree = "<group>"; };
+		78AA10012F3A0001000A0001 /* WholeAppSnapshotSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WholeAppSnapshotSupport.swift; sourceTree = "<group>"; };
 		6124329D2A4DA5BB00F5F619 /* AXElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXElement.swift; sourceTree = "<group>"; };
 		612DE40129801F71003C2BE0 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		612DE4112984114B003C2BE0 /* RunnerDaemonProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerDaemonProxy.swift; sourceTree = "<group>"; };
@@ -286,6 +288,7 @@
 				6124329D2A4DA5BB00F5F619 /* AXElement.swift */,
 				DC4F7A012F9B000000000001 /* XCTestPatches.swift */,
 				610D58FA2A49E3CA00B4BBEB /* AXClientSwizzler.swift */,
+				78AA10012F3A0001000A0001 /* WholeAppSnapshotSupport.swift */,
 				612DE4112984114B003C2BE0 /* RunnerDaemonProxy.swift */,
 				612DE413298426EF003C2BE0 /* EventRecord.swift */,
 				613E87D6299A64BD00FF8551 /* PointerEventPath.swift */,
@@ -493,6 +496,7 @@
 				78147F3D2F27BDBC00E61E3B /* AppsLaunch.swift in Sources */,
 				DC4F7A022F9B000000000001 /* XCTestPatches.swift in Sources */,
 				610D58FB2A49E3CA00B4BBEB /* AXClientSwizzler.swift in Sources */,
+				78AA10022F3A0002000A0002 /* WholeAppSnapshotSupport.swift in Sources */,
 				787C47DF2F228B770027A012 /* IOTap.swift in Sources */,
 				787C47E02F228B770027A012 /* DumpUI.swift in Sources */,
 				521C1F102D8051FC0024EE43 /* RunnerBackgrounding.swift in Sources */,
