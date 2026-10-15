@@ -47,12 +47,7 @@ static id _Nullable DKMakeJPEGScreenshotRequest(double quality) {
 }
 
 static id<XCTestManager_ManagerInterface> DKDaemonProxy(void) {
-    static id<XCTestManager_ManagerInterface> proxy;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-      proxy = [XCTRunnerDaemonSession sharedSession].daemonProxy;
-    });
-    return proxy;
+    return [XCTRunnerDaemonSession sharedSession].daemonProxy;
 }
 
 @implementation DKScreenshot
