@@ -104,11 +104,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         excludeKeyboardElements: Bool
     ) throws -> AXElement {
         SystemPermissionManager.handleSystemPermissionAlertIfNeeded(foregroundApp: foregroundApp)
-        var appHierarchy = try getHierarchyWithFallback(foregroundApp)
-
-        if let focusedFrame = keyboardFocusedElementFrame(foregroundApp) {
-            appHierarchy.markKeyboardFocus(at: focusedFrame)
-        }
+        let appHierarchy = try getHierarchyWithFallback(foregroundApp)
 
         let statusBars = logger.measure(message: "Fetch status bar hierarchy") {
             fullStatusBars(springboardApplication)
@@ -178,26 +174,6 @@ struct DumpUIMethodHandler: RPCMethodHandler {
             windowContextID: element.windowContextID,
             children: adjustedChildren
         )
-    }
-
-    // the snapshot's hasFocus attribute is tvOS-only; on iOS the element
-    // holding keyboard focus is only reachable through a predicate query
-    // against the private hasKeyboardFocus property
-    private func keyboardFocusedElementFrame(_ app: XCUIApplication) -> AXFrame? {
-        let focused = app.descendants(matching: .any)
-            .matching(NSPredicate(format: "hasKeyboardFocus == true"))
-            .firstMatch
-        guard focused.exists else {
-            return nil
-        }
-
-        let frame = focused.frame
-        return [
-            "X": Double(frame.minX),
-            "Y": Double(frame.minY),
-            "Width": Double(frame.width),
-            "Height": Double(frame.height),
-        ]
     }
 
     private func getHierarchyWithFallback(_ element: XCUIElement) throws -> AXElement {
@@ -316,7 +292,9 @@ struct DumpUIMethodHandler: RPCMethodHandler {
     }
 
     private func elementHierarchy(xcuiElement: XCUIElement) throws -> AXElement {
-        let snapshotDictionary = try xcuiElement.snapshot().dictionaryRepresentation
-        return AXElement(snapshotDictionary).resolvingNestedWindowOffsets()
+        let snapshot = try xcuiElement.snapshot()
+        var hierarchy = AXElement(snapshot.dictionaryRepresentation)
+        hierarchy.applyKeyboardFocus(from: snapshot)
+        return hierarchy.resolvingNestedWindowOffsets()
     }
 }

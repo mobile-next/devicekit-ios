@@ -185,17 +185,22 @@ struct AXElement: Codable {
     }
 
     // the snapshot's hasFocus attribute is the tvOS focus engine and is always
-    // false on iPhone/iPad; keyboard focus is resolved by a separate query and
-    // stamped onto the node with the matching frame
-    mutating func markKeyboardFocus(at focusedFrame: AXFrame) {
-        if frame == focusedFrame {
+    // false on iPhone/iPad; keyboard focus is the private hasKeyboardFocus
+    // property of each snapshot object (what WebDriverAgent reads), which
+    // dictionaryRepresentation leaves out, so walk both trees side by side
+    mutating func applyKeyboardFocus(from snapshot: XCUIElementSnapshot) {
+        if let object = snapshot as? NSObject,
+           object.responds(to: NSSelectorFromString("hasKeyboardFocus")),
+           object.value(forKey: "hasKeyboardFocus") as? Bool == true {
             hasFocus = true
         }
-        children = children?.map {
-            var child = $0
-            child.markKeyboardFocus(at: focusedFrame)
-            return child
+        guard var children, children.count == snapshot.children.count else {
+            return
         }
+        for index in children.indices {
+            children[index].applyKeyboardFocus(from: snapshot.children[index])
+        }
+        self.children = children
     }
 
     func encode(to encoder: Encoder) throws {
