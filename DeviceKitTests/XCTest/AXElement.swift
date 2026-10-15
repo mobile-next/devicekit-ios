@@ -186,8 +186,8 @@ struct AXElement: Codable {
 
     // the snapshot's hasFocus attribute is the tvOS focus engine and is always
     // false on iPhone/iPad; keyboard focus is the private hasKeyboardFocus
-    // property of each snapshot object (what WebDriverAgent reads), which
-    // dictionaryRepresentation leaves out, so walk both trees side by side
+    // property of each snapshot object, which dictionaryRepresentation
+    // leaves out, so walk both trees side by side
     mutating func applyKeyboardFocus(from snapshot: XCUIElementSnapshot) {
         if let object = snapshot as? NSObject,
            object.responds(to: NSSelectorFromString("hasKeyboardFocus")),
