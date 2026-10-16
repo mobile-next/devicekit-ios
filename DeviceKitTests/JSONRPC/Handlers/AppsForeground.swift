@@ -1,5 +1,12 @@
 import os
 
+/// `viewController` asks for the class name of the view controller on screen. Finding it
+/// means snapshotting the hierarchy, which on an app with a large one costs as much as a
+/// UI dump, so a caller that only needs to know which app is in front can leave it out.
+struct AppsForegroundRequest: Codable {
+    let viewController: Bool?
+}
+
 @MainActor
 struct AppsForegroundMethodHandler: RPCMethodHandler {
     static let methodName = "device.apps.foreground"
@@ -10,6 +17,8 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
+        let request = try decodeParams(AppsForegroundRequest.self, from: params)
+        let includeViewController = request.viewController ?? true
         let start = Date()
 
         logger.info("[Start] Getting foreground app")
@@ -30,7 +39,9 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
         // hierarchy takes seconds; the accessibility server answers for the
         // application element alone in milliseconds.
         let name = AXClientProxy.sharedClient().label(forProcessIdentifier: pid) ?? foregroundApp.label
-        let viewController = AXClientProxy.sharedClient().viewControllerClassName(forProcessIdentifier: pid)
+        let viewController = includeViewController
+            ? AXClientProxy.sharedClient().viewControllerClassName(forProcessIdentifier: pid)
+            : nil
 
         let duration = Date().timeIntervalSince(start)
         logger.info("[Done] Foreground app: \(bundleId) (pid: \(pid)), took \(duration)")
