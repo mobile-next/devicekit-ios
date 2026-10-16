@@ -205,7 +205,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
                 return hierarchy
             }
             logger.info("Hierarchy hit the depth limit of \(snapshotMaxDepth), snapshotting children one by one")
-            let count = try element.snapshot().children.count
+            let count = try directChildCount(of: element)
             var children: [AXElement] = []
             for i in 0..<count {
                 let element = element.descendants(matching: .other).element(boundBy: i).firstMatch
@@ -259,6 +259,22 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         return AXElement(children: [other, keyboard, alerts, hierarchy].compactMap { $0 })
     }
 
+    /// Counts an element's direct children without snapshotting everything below them.
+    ///
+    /// `snapshot()` returns the entire subtree, so using it to count children costs as much
+    /// as the dump itself, once per element asked. The callers here only need the number of
+    /// children, and a two-level snapshot carries exactly that, the way OrientationGeometry
+    /// reads window attributes without pulling in their contents.
+    private func directChildCount(of element: XCUIElement) throws -> Int {
+        let previousMaxDepth = AXClientSwizzler.overwriteDefaultParameters["maxDepth"]
+        AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = 2
+        defer {
+            AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = previousMaxDepth
+        }
+
+        return try element.snapshot().children.count
+    }
+
     /// Reports whether XCTest refused to snapshot an element because the hierarchy was
     /// not something it could return in one piece, which is the failure the recovery path
     /// exists for. Any other error belongs to the caller.
@@ -274,7 +290,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
 
     private func customWindowElements(_ element: XCUIApplication) throws -> AXElement? {
         let windowElement = element.children(matching: .any).firstMatch
-        if try windowElement.snapshot().children.count > 1 {
+        if try directChildCount(of: windowElement) > 1 {
             return nil
         }
         return try? elementHierarchy(xcuiElement: windowElement)
@@ -318,7 +334,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
     }
 
     private func findRecoveryElement(_ element: XCUIElement) throws -> XCUIElement {
-        if try element.snapshot().children.count > 1 {
+        if try directChildCount(of: element) > 1 {
             return element
         }
         let firstOtherElement = element.children(matching: .other).firstMatch
