@@ -25,8 +25,11 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
             throw RPCMethodError.internalError("No bundleID in apps_foreground found")
         }
 
-        let name = foregroundApp.label
         let pid = foregroundApp.processID
+        // XCUIApplication.label resolves the element, which on an app with a large
+        // hierarchy takes seconds; the accessibility server answers for the
+        // application element alone in milliseconds.
+        let name = AXClientProxy.sharedClient().label(forProcessIdentifier: pid) ?? foregroundApp.label
         let viewController = AXClientProxy.sharedClient().viewControllerClassName(forProcessIdentifier: pid)
 
         let duration = Date().timeIntervalSince(start)
