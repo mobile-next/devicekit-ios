@@ -176,9 +176,27 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         )
     }
 
+    /// Snapshots `element` and everything below it, falling back when XCTest refuses.
+    ///
+    /// Three things can happen. The snapshot succeeds and is returned. It succeeds but
+    /// reaches `snapshotMaxDepth`, and the children are re-snapshotted one by one so the
+    /// tree is not silently cut short. Or XCTest rejects it with kAXErrorIllegalArgument,
+    /// which a hierarchy too large to snapshot in one piece does, and the tree is built
+    /// from a window element instead — a failure that is remembered for the application,
+    /// since repeating an attempt that walks the whole hierarchy before failing is what
+    /// makes a dump of a heavy screen slow.
     private func getHierarchyWithFallback(_ element: XCUIElement) throws -> AXElement {
         logger.info("Starting getHierarchyWithFallback for element.")
 
+        if let application = element as? XCUIApplication,
+           WholeAppSnapshotSupport.isKnownToFail(application) {
+            logger.info(
+                "Skipping the whole-application snapshot for \(application.bundleID): it failed for this process"
+            )
+            return try recoveredHierarchy(element)
+        }
+
+        let startedAt = Date()
         do {
             var hierarchy = try elementHierarchy(xcuiElement: element)
             logger.info("Successfully retrieved element hierarchy.")
@@ -186,7 +204,8 @@ struct DumpUIMethodHandler: RPCMethodHandler {
             if hierarchy.depth() < snapshotMaxDepth {
                 return hierarchy
             }
-            let count = try element.snapshot().children.count
+            logger.info("Hierarchy hit the depth limit of \(snapshotMaxDepth), snapshotting children one by one")
+            let count = try directChildCount(of: element)
             var children: [AXElement] = []
             for i in 0..<count {
                 let element = element.descendants(matching: .other).element(boundBy: i).firstMatch
@@ -199,31 +218,66 @@ struct DumpUIMethodHandler: RPCMethodHandler {
                 throw error
             }
 
-            logger.error("Snapshot failure, getting recovery element for fallback")
-            AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = snapshotMaxDepth
-
-            let recoveryElement = try findRecoveryElement(element.children(matching: .any).firstMatch)
-            let hierarchy = try getHierarchyWithFallback(recoveryElement)
-
-            if let element = element as? XCUIApplication {
-                let keyboard = logger.measure(message: "Fetch keyboard hierarchy") {
-                    keyboardHierarchy(element)
-                }
-
-                let alerts = logger.measure(message: "Fetch alert hierarchy") {
-                    fullScreenAlertHierarchy(element)
-                }
-
-                let other = try logger.measure(message: "Fetch other custom element from window") {
-                    try customWindowElements(element)
-                }
-                return AXElement(children: [other, keyboard, alerts, hierarchy].compactMap { $0 })
+            let elapsed = Date().timeIntervalSince(startedAt)
+            logger.error("Whole-element snapshot failed after \(elapsed) seconds, recovering")
+            if let application = element as? XCUIApplication {
+                WholeAppSnapshotSupport.recordFailure(application)
             }
 
-            return hierarchy
+            return try recoveredHierarchy(element)
         }
     }
 
+    /// Builds the hierarchy without snapshotting `element` as a whole: it starts at the
+    /// deepest single-child descendant that still has something below it, and collects the
+    /// keyboard, alerts and custom windows that are rooted outside that subtree separately.
+    private func recoveredHierarchy(_ element: XCUIElement) throws -> AXElement {
+        AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = snapshotMaxDepth
+
+        let recoveryElement = try logger.measure(message: "Find recovery element") {
+            try findRecoveryElement(element.children(matching: .any).firstMatch)
+        }
+        let hierarchy = try logger.measure(message: "Recovery element hierarchy") {
+            try getHierarchyWithFallback(recoveryElement)
+        }
+
+        guard let element = element as? XCUIApplication else {
+            return hierarchy
+        }
+
+        let keyboard = logger.measure(message: "Fetch keyboard hierarchy") {
+            keyboardHierarchy(element)
+        }
+
+        let alerts = logger.measure(message: "Fetch alert hierarchy") {
+            fullScreenAlertHierarchy(element)
+        }
+
+        let other = try logger.measure(message: "Fetch other custom element from window") {
+            try customWindowElements(element)
+        }
+        return AXElement(children: [other, keyboard, alerts, hierarchy].compactMap { $0 })
+    }
+
+    /// Counts an element's direct children without snapshotting everything below them.
+    ///
+    /// `snapshot()` returns the entire subtree, so using it to count children costs as much
+    /// as the dump itself, once per element asked. The callers here only need the number of
+    /// children, and a two-level snapshot carries exactly that, the way OrientationGeometry
+    /// reads window attributes without pulling in their contents.
+    private func directChildCount(of element: XCUIElement) throws -> Int {
+        let previousMaxDepth = AXClientSwizzler.overwriteDefaultParameters["maxDepth"]
+        AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = 2
+        defer {
+            AXClientSwizzler.overwriteDefaultParameters["maxDepth"] = previousMaxDepth
+        }
+
+        return try element.snapshot().children.count
+    }
+
+    /// Reports whether XCTest refused to snapshot an element because the hierarchy was
+    /// not something it could return in one piece, which is the failure the recovery path
+    /// exists for. Any other error belongs to the caller.
     private func isIllegalArgumentError(_ error: Error) -> Bool {
         error.localizedDescription.contains("Error kAXErrorIllegalArgument getting snapshot for element")
     }
@@ -236,7 +290,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
 
     private func customWindowElements(_ element: XCUIApplication) throws -> AXElement? {
         let windowElement = element.children(matching: .any).firstMatch
-        if try windowElement.snapshot().children.count > 1 {
+        if try directChildCount(of: windowElement) > 1 {
             return nil
         }
         return try? elementHierarchy(xcuiElement: windowElement)
@@ -280,7 +334,7 @@ struct DumpUIMethodHandler: RPCMethodHandler {
     }
 
     private func findRecoveryElement(_ element: XCUIElement) throws -> XCUIElement {
-        if try element.snapshot().children.count > 1 {
+        if try directChildCount(of: element) > 1 {
             return element
         }
         let firstOtherElement = element.children(matching: .other).firstMatch

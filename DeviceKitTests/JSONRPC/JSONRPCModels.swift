@@ -155,7 +155,50 @@ enum JSONValue: Codable, Equatable {
 
     static func from<T: Encodable>(_ value: T) throws -> JSONValue {
         let data = try JSONEncoder().encode(value)
-        return try JSONDecoder().decode(JSONValue.self, from: data)
+        let object = try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed])
+        return try JSONValue(foundationObject: object)
+    }
+
+    /// Builds a JSONValue from the object tree JSONSerialization produces.
+    ///
+    /// Decoding through `JSONDecoder` instead would go through `init(from:)`, which finds a
+    /// value's type by attempting every case in turn and throwing until one sticks. That is
+    /// six thrown errors per object, and a UI dump is tens of thousands of values, which
+    /// made serialising a heavy screen cost more than snapshotting it.
+    private init(foundationObject object: Any) throws {
+        switch object {
+        case is NSNull:
+            self = .null
+
+        case let number as NSNumber:
+            // NSNumber carries bools and numbers alike; the order matters, since a bool
+            // answers to intValue too. This matches what the decoder used to produce.
+            if CFGetTypeID(number) == CFBooleanGetTypeID() {
+                self = .bool(number.boolValue)
+            } else if CFNumberIsFloatType(number) {
+                self = .double(number.doubleValue)
+            } else {
+                self = .int(number.intValue)
+            }
+
+        case let string as String:
+            self = .string(string)
+
+        case let array as [Any]:
+            self = .array(try array.map { try JSONValue(foundationObject: $0) })
+
+        case let dictionary as [String: Any]:
+            self = .object(try dictionary.mapValues { try JSONValue(foundationObject: $0) })
+
+        default:
+            throw DecodingError.typeMismatch(
+                JSONValue.self,
+                DecodingError.Context(
+                    codingPath: [],
+                    debugDescription: "Unable to convert \(type(of: object)) to a JSON value"
+                )
+            )
+        }
     }
 }
 
