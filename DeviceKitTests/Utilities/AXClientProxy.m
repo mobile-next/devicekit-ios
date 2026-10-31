@@ -132,13 +132,7 @@ static NSString *_Nullable DeepestViewControllerClassName(id snapshot, NSInteger
 - (nullable NSString *)viewControllerClassNameForProcessIdentifier:(int)pid {
     // the elements stay in Objective-C: the reverse-engineered
     // XCAccessibilityElement protocol does not bridge to Swift as an array
-    id element = nil;
-    for (id<XCAccessibilityElement> candidate in [AXClient activeApplications]) {
-        if (candidate.processIdentifier == pid) {
-            element = candidate;
-            break;
-        }
-    }
+    id element = [self accessibilityElementForProcessIdentifier:pid];
 
     if (nil == element) {
         return nil;
@@ -167,6 +161,52 @@ static NSString *_Nullable DeepestViewControllerClassName(id snapshot, NSInteger
     NSInteger foundDepth = -1;
     NSString *className = DeepestViewControllerClassName(snapshot, 0, &foundDepth);
     return nil == className ? nil : DemangledClassName(className);
+}
+
+#pragma mark - Label
+
+/** The name the label request is made with. */
+static NSString *const AXLabelAttributeName = @"XC_kAXXCAttributeLabel";
+
+- (nullable NSString *)labelForProcessIdentifier:(int)pid {
+    id element = [self accessibilityElementForProcessIdentifier:pid];
+    if (nil == element) {
+        return nil;
+    }
+
+    // only the application element itself carries the label, so nothing below
+    // it needs to be snapshotted; XCUIApplication.label pulls in the hierarchy
+    NSMutableDictionary *parameters =
+        [NSMutableDictionary dictionaryWithDictionary:[AXClient defaultParameters]];
+    parameters[@"maxDepth"] = @(0);
+
+    NSError *error = nil;
+    id result = [AXClient requestSnapshotForElement:element
+                                         attributes:@[ AXLabelAttributeName ]
+                                         parameters:parameters
+                                              error:&error];
+    if (nil == result) {
+        NSLog(@"Label snapshot failed: %@", error);
+        return nil;
+    }
+
+    id snapshot = [result valueForKey:@"rootElementSnapshot"];
+    if (![snapshot respondsToSelector:@selector(label)]) {
+        return nil;
+    }
+
+    NSString *label = [snapshot valueForKey:@"label"];
+    return label.length > 0 ? label : nil;
+}
+
+/** Finds the accessibility element of a running application by its process id. */
+- (nullable id)accessibilityElementForProcessIdentifier:(int)pid {
+    for (id<XCAccessibilityElement> candidate in [AXClient activeApplications]) {
+        if (candidate.processIdentifier == pid) {
+            return candidate;
+        }
+    }
+    return nil;
 }
 
 @end

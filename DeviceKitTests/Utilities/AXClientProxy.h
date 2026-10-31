@@ -77,6 +77,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSString *)viewControllerClassNameForProcessIdentifier:(int)pid
     NS_SWIFT_NAME(viewControllerClassName(forProcessIdentifier:));
 
+/**
+ * Returns the display name of an application, as the accessibility server
+ * reports it, or nil when there is none.
+ *
+ * XCUIApplication exposes the same string as its `label`, but reading it makes
+ * XCTest resolve the element, which on an app with a large hierarchy takes
+ * seconds. Asking the accessibility server for that one attribute does not.
+ *
+ * @param pid Process id of the application to inspect.
+ * @return The application's label, or nil when there is none to report.
+ */
+- (nullable NSString *)labelForProcessIdentifier:(int)pid
+    NS_SWIFT_NAME(label(forProcessIdentifier:));
+
 @end
 
 NS_ASSUME_NONNULL_END
