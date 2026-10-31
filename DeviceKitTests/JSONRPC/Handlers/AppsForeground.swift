@@ -1,10 +1,16 @@
 import os
 
-/// `viewController` asks for the class name of the view controller on screen. Finding it
-/// means snapshotting the hierarchy, which on an app with a large one costs as much as a
-/// UI dump, so a caller that only needs to know which app is in front can leave it out.
+/// `fields` names the parts of the answer the caller wants. Leaving it out asks for all of
+/// them, as before. `bundleId` and `pid` are always reported, since they are free; `name`
+/// and `viewController` are only computed when asked for, because finding the view
+/// controller means snapshotting the hierarchy, which on an app with a large one costs as
+/// much as a UI dump.
 struct AppsForegroundRequest: Codable {
-    let viewController: Bool?
+    let fields: [String]?
+
+    func wants(_ field: String) -> Bool {
+        fields?.contains(field) ?? true
+    }
 }
 
 @MainActor
@@ -18,7 +24,6 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
 
     func execute(params: JSONValue?) async throws -> JSONValue {
         let request = try decodeParams(AppsForegroundRequest.self, from: params)
-        let includeViewController = request.viewController ?? true
         let start = Date()
 
         logger.info("[Start] Getting foreground app")
@@ -38,8 +43,10 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
         // XCUIApplication.label resolves the element, which on an app with a large
         // hierarchy takes seconds; the accessibility server answers for the
         // application element alone in milliseconds.
-        let name = AXClientProxy.sharedClient().label(forProcessIdentifier: pid) ?? foregroundApp.label
-        let viewController = includeViewController
+        let name = request.wants("name")
+            ? AXClientProxy.sharedClient().label(forProcessIdentifier: pid) ?? foregroundApp.label
+            : nil
+        let viewController = request.wants("viewController")
             ? AXClientProxy.sharedClient().viewControllerClassName(forProcessIdentifier: pid)
             : nil
 
@@ -48,9 +55,12 @@ struct AppsForegroundMethodHandler: RPCMethodHandler {
 
         var result: [String: JSONValue] = [
             "bundleId": .string(bundleId),
-            "name": .string(name),
             "pid": .int(Int(pid))
         ]
+
+        if let name {
+            result["name"] = .string(name)
+        }
 
         if let viewController {
             result["viewController"] = .string(viewController)
