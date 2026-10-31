@@ -1,3 +1,6 @@
+## [0.0.36](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.36) (2026-10-31)
+* Perf: make device.dump.ui fast on heavy React Native screens ([#105](https://github.com/mobile-next/devicekit-ios/pull/105)), thanks to [@avilashp-sportsbet](https://github.com/avilashp-sportsbet)
+
 ## [0.0.35](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.35) (2026-10-17)
 * Fix: report keyboard focus from the snapshot's hasKeyboardFocus, so the Email field reports focus too ([#104](https://github.com/mobile-next/devicekit-ios/pull/104))
 * Refactor: update naming conventions ([#103](https://github.com/mobile-next/devicekit-ios/pull/103))
