@@ -54,8 +54,65 @@ struct OrientationGeometry {
         case .landscapeRight:
             return CGPoint(x: point.y, y: portraitHeight - point.x)
 
+        case .portraitUpsideDown:
+            return CGPoint(x: portraitWidth - point.x, y: portraitHeight - point.y)
+
         default:
             return point
+        }
+    }
+
+    // interface orientation of the foreground app, which taps and the ui tree
+    // follow, expressed as the UIDeviceOrientation touchPoint is written for
+    static func interfaceOrientation() -> UIDeviceOrientation {
+        let app = RunningApp.getForegroundApp()
+            ?? XCUIApplication(bundleIdentifier: springboardBundleId)
+        return touchOrientation(of: app)
+    }
+
+    // springboard lays its elements out, status bar included, on the panel's
+    // portrait axes however the interface is turned, even when its own frame
+    // is landscape. nil when the interface is upright and there is nothing to undo
+    static func springboardToInterface() -> OrientationGeometry? {
+        let orientation = interfaceOrientation()
+        let rotations: [UIDeviceOrientation] = [.landscapeLeft, .landscapeRight, .portraitUpsideDown]
+        guard rotations.contains(orientation) else {
+            return nil
+        }
+
+        let size = XCUIApplication(bundleIdentifier: springboardBundleId).frame.size
+        guard size.width > 0, size.height > 0 else {
+            return nil
+        }
+        return OrientationGeometry(
+            portraitWidth: min(size.width, size.height),
+            portraitHeight: max(size.width, size.height),
+            orientation: orientation,
+            displayID: nil
+        )
+    }
+
+    // inverse of touchPoint, for a whole frame
+    func interfaceFrame(for panelFrame: AXFrame) -> AXFrame {
+        let x = panelFrame["X"] ?? 0
+        let y = panelFrame["Y"] ?? 0
+        let width = panelFrame["Width"] ?? 0
+        let height = panelFrame["Height"] ?? 0
+        let panelWidth = Double(portraitWidth)
+        let panelHeight = Double(portraitHeight)
+
+        switch orientation {
+        case .landscapeLeft:
+            return ["X": y, "Y": panelWidth - x - width, "Width": height, "Height": width]
+
+        case .landscapeRight:
+            return ["X": panelHeight - y - height, "Y": x, "Width": height, "Height": width]
+
+        case .portraitUpsideDown:
+            return ["X": panelWidth - x - width, "Y": panelHeight - y - height, "Width": width, "Height": height]
+
+        default:
+            return panelFrame
         }
     }
 

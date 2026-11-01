@@ -167,8 +167,8 @@ All methods follow the [JSON-RPC 2.0](https://www.jsonrpc.org/specification) spe
 
 | Method | Description |
 |--------|-------------|
-| `device.info` | Get screen size and scale factor |
-| `device.io.orientation.get` | Get current orientation (`PORTRAIT` / `LANDSCAPE`) |
+| `device.info` | Get screen size, laid out in the foreground app's orientation, and scale factor |
+| `device.io.orientation.get` | Get the orientation the foreground app is drawn in (`PORTRAIT` / `LANDSCAPE`) |
 | `device.io.orientation.set` | Set orientation to `PORTRAIT` or `LANDSCAPE` |
 | `device.url` | Open a URL |
 | `device.clipboard.get` | Read the clipboard text |

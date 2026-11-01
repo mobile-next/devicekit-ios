@@ -11,21 +11,10 @@ struct IOOrientationGetMethodHandler: RPCMethodHandler {
 
     func execute(params: JSONValue?) async throws -> JSONValue {
         let start = Date()
-        let orientation = XCUIDevice.shared.orientation
-
-        let value: String
-        switch orientation {
-        case .portrait:
-            value = "PORTRAIT"
-        case .portraitUpsideDown:
-            value = "PORTRAIT"
-        case .landscapeLeft:
-            value = "LANDSCAPE"
-        case .landscapeRight:
-            value = "LANDSCAPE"
-        default:
-            value = "PORTRAIT"
-        }
+        // the app's orientation, not the device's: a device lying flat is
+        // faceUp, and a landscape-only app stays landscape on a portrait device.
+        // screenshots, device.info, taps and the ui tree all follow the app
+        let value = OrientationGeometry.interfaceOrientation().isLandscape ? "LANDSCAPE" : "PORTRAIT"
 
         let duration = Date().timeIntervalSince(start)
         logger.info("Get orientation took \(duration), result: \(value)")

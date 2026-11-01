@@ -228,6 +228,26 @@ struct AXElement: Codable {
         try container.encode(self.displayID, forKey: .displayID)
     }
 
+    func mappingFrames(_ transform: (AXFrame) -> AXFrame) -> AXElement {
+        AXElement(
+            identifier: identifier,
+            frame: transform(frame),
+            value: value,
+            title: title,
+            label: label,
+            elementType: elementType,
+            enabled: enabled,
+            horizontalSizeClass: horizontalSizeClass,
+            verticalSizeClass: verticalSizeClass,
+            placeholderValue: placeholderValue,
+            selected: selected,
+            hasFocus: hasFocus,
+            displayID: displayID,
+            windowContextID: windowContextID,
+            children: children?.map { $0.mappingFrames(transform) }
+        )
+    }
+
     func depth() -> Int {
         guard let children = children
         else { return 1 }

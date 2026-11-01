@@ -55,7 +55,10 @@ struct DumpUIMethodHandler: RPCMethodHandler {
             let foregroundApp = RunningApp.getForegroundApp()
             guard let foregroundApp = foregroundApp else {
                 logger.warning("No foreground app found, returning springboard app hierarchy")
-                let springboardHierarchy = try elementHierarchy(xcuiElement: springboardApplication)
+                let springboardHierarchy = springboardAppInInterfaceSpace(
+                    try elementHierarchy(xcuiElement: springboardApplication),
+                    OrientationGeometry.springboardToInterface()
+                )
                 return try formatResponse(axElement: springboardHierarchy, format: format)
             }
 
@@ -104,11 +107,20 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         excludeKeyboardElements: Bool
     ) throws -> AXElement {
         SystemPermissionManager.handleSystemPermissionAlertIfNeeded(foregroundApp: foregroundApp)
-        let appHierarchy = try getHierarchyWithFallback(foregroundApp)
+        var appHierarchy = try getHierarchyWithFallback(foregroundApp)
 
-        let statusBars = logger.measure(message: "Fetch status bar hierarchy") {
+        // springboard lives on the main display; an app on another display
+        // (an unfolded foldable) has nothing to line up with it
+        let isOnSecondaryDisplay = OrientationGeometry.secondaryDisplayID(of: foregroundApp) != nil
+        let springboardToInterface = isOnSecondaryDisplay ? nil : OrientationGeometry.springboardToInterface()
+
+        if foregroundApp.bundleID == "com.apple.springboard" {
+            appHierarchy = springboardAppInInterfaceSpace(appHierarchy, springboardToInterface)
+        }
+
+        let statusBars = (logger.measure(message: "Fetch status bar hierarchy") {
             fullStatusBars(springboardApplication)
-        } ?? []
+        } ?? []).map { inInterfaceSpace($0, springboardToInterface) }
 
         let safariWebViewHierarchy = logger.measure(message: "Fetch Safari WebView hierarchy") {
             getSafariWebViewHierarchy()
@@ -127,10 +139,6 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         // the app frames are already in screen coordinates, don't shift them
         let isRotatedDeviceFrame = deviceAxFrame["Width"] == appFrame["Height"] && deviceAxFrame["Height"] == appFrame["Width"]
 
-        // springboard lives on the main display; an app on another display
-        // (an unfolded foldable) has nothing to line up with it
-        let isOnSecondaryDisplay = OrientationGeometry.secondaryDisplayID(of: foregroundApp) != nil
-
         if deviceAxFrame != appFrame, !isRotatedDeviceFrame, !isOnSecondaryDisplay,
            let deviceWidth = deviceAxFrame["Width"], deviceWidth > 0,
            let deviceHeight = deviceAxFrame["Height"], deviceHeight > 0,
@@ -142,6 +150,21 @@ struct DumpUIMethodHandler: RPCMethodHandler {
         }
 
         return buildRootElement(app: appHierarchy, statusBars: statusBars, safari: safariWebViewHierarchy)
+    }
+
+    // springboard's application element already reports the rotated screen;
+    // only the elements inside it are on the panel's axes
+    private func springboardAppInInterfaceSpace(_ app: AXElement, _ geometry: OrientationGeometry?) -> AXElement {
+        var mapped = app
+        mapped.children = app.children?.map { inInterfaceSpace($0, geometry) }
+        return mapped
+    }
+
+    private func inInterfaceSpace(_ springboardElement: AXElement, _ geometry: OrientationGeometry?) -> AXElement {
+        guard let geometry else {
+            return springboardElement
+        }
+        return springboardElement.mappingFrames(geometry.interfaceFrame(for:))
     }
 
     private func buildRootElement(app: AXElement, statusBars: [AXElement], safari: AXElement?) -> AXElement {

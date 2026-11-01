@@ -27,8 +27,8 @@ struct ScreenshotMethodHandler: RPCMethodHandler {
     func execute(params: JSONValue?) async throws -> JSONValue {
         let request = try decodeParams(ScreenshotRequest.self, from: params)
         
-        let fullScreenshot = captureActiveScreen()
-        let rotated = pixelsRotatedUpright(fullScreenshot.image)
+        let (fullScreenshot, isMainScreen) = captureActiveScreen()
+        let rotated = pixelsRotatedUpright(fullScreenshot.image, isMainScreen: isMainScreen)
         var imageData: Data?
         
         switch request.format.lowercased() {
@@ -58,36 +58,66 @@ struct ScreenshotMethodHandler: RPCMethodHandler {
     /// which the encoders write as an EXIF tag. Decoders disagree on honouring that tag, so
     /// redraw the image with the rotation applied to the pixels themselves.
     /// Returns nil when the image is already upright.
-    private func pixelsRotatedUpright(_ image: UIImage) -> UIImage? {
-        guard image.imageOrientation != .up else {
-            return nil
+    private func pixelsRotatedUpright(_ image: UIImage, isMainScreen: Bool) -> UIImage? {
+        var oriented = image
+        if isMainScreen, let cgImage = image.cgImage {
+            let orientation = uprightOrientation(of: cgImage, fallback: image.imageOrientation)
+            if orientation != image.imageOrientation {
+                oriented = UIImage(cgImage: cgImage, scale: image.scale, orientation: orientation)
+            }
+        }
+        guard oriented.imageOrientation != .up else {
+            return oriented === image ? nil : oriented
         }
 
         let format = UIGraphicsImageRendererFormat()
-        format.scale = image.scale
+        format.scale = oriented.scale
         format.opaque = true
         format.preferredRange = .standard
-        return UIGraphicsImageRenderer(size: image.size, format: format).image { _ in
-            image.draw(in: CGRect(origin: .zero, size: image.size))
+        return UIGraphicsImageRenderer(size: oriented.size, format: format).image { _ in
+            oriented.draw(in: CGRect(origin: .zero, size: oriented.size))
+        }
+    }
+
+    /// XCTest's orientation can disagree with the app's: on a real iPad held in portrait, a
+    /// landscape-only app comes back unrotated. Taps and the ui tree follow the app, and these
+    /// are the rotations OrientationGeometry.touchPoint undoes for touches. They assume the
+    /// panel's portrait pixels, so pixels already laid out in landscape keep XCTest's tag.
+    private func uprightOrientation(of pixels: CGImage, fallback: UIImage.Orientation) -> UIImage.Orientation {
+        guard pixels.width <= pixels.height else {
+            return fallback
+        }
+
+        switch OrientationGeometry.interfaceOrientation() {
+        case .portrait:
+            return .up
+        case .landscapeLeft:
+            return .left
+        case .landscapeRight:
+            return .right
+        case .portraitUpsideDown:
+            return .down
+        default:
+            return fallback
         }
     }
 
     /// Foldables (e.g. iPhone Duo) have two screens and XCUIScreen.main is always the cover screen,
     /// which is fully black while the device is unfolded. Fall back to the screen that is showing content.
-    private func captureActiveScreen() -> XCUIScreenshot {
+    private func captureActiveScreen() -> (screenshot: XCUIScreenshot, isMainScreen: Bool) {
         let mainScreenshot = XCUIScreen.main.screenshot()
         guard XCUIScreen.screens.count > 1, isBlank(mainScreenshot.image) else {
-            return mainScreenshot
+            return (mainScreenshot, true)
         }
 
         for screen in XCUIScreen.screens where screen != XCUIScreen.main {
             let screenshot = screen.screenshot()
             if !isBlank(screenshot.image) {
                 logger.info("Main screen is blank, using screen \(screen)")
-                return screenshot
+                return (screenshot, false)
             }
         }
-        return mainScreenshot
+        return (mainScreenshot, true)
     }
 
     /// An inactive screen is exactly black; downsample and look for any non-zero pixel

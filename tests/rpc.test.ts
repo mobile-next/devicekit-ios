@@ -331,14 +331,20 @@ test.describe("device.io.button", () => {
 // device.io.orientation
 // ---------------------------------------------------------------------------
 test.describe("device.io.orientation", () => {
+  test.afterEach(async ({ request }) => {
+    await returnToPortraitHomeScreen(request);
+  });
+
+  // get reports the orientation the foreground app is drawn in, and the app
+  // rotates a moment after the device does
   test("sets orientation to landscape and back", async ({ request }) => {
-    returnsResult(await rpc(request, "device.io.orientation.set", { orientation: "LANDSCAPE" }));
-    const landscape = returnsResult(await rpc(request, "device.io.orientation.get"));
-    expect(landscape.orientation).toBe("LANDSCAPE");
+    const orientation = async () => returnsResult(await rpc(request, "device.io.orientation.get")).orientation;
+
+    await showSafariInLandscape(request);
+    await expect.poll(orientation).toBe("LANDSCAPE");
 
     returnsResult(await rpc(request, "device.io.orientation.set", { orientation: "PORTRAIT" }));
-    const portrait = returnsResult(await rpc(request, "device.io.orientation.get"));
-    expect(portrait.orientation).toBe("PORTRAIT");
+    await expect.poll(orientation).toBe("PORTRAIT");
   });
 
   test("fails without orientation param", async ({ request }) => {
@@ -398,6 +404,18 @@ test.describe("device.screenshot in landscape", () => {
       expect(exifOrientationOf(screenshot)).toBe(EXIF_UPRIGHT);
     });
   }
+
+  // clients scale screenshot positions by screenSize to get tap coordinates
+  test("device.info reports the rotated screen size", async ({ request }) => {
+    const { screenSize } = returnsResult(await rpc(request, "device.info"));
+    expect(screenSize).toEqual(await foregroundAppSize(request));
+  });
+
+  test("a screenshot is device.info's screen size times its scale", async ({ request }) => {
+    const { screenSize, scale } = returnsResult(await rpc(request, "device.info"));
+    const screenshot = await takeScreenshot(request, "png");
+    expect(sizeOf(screenshot)).toEqual({ width: screenSize.width * scale, height: screenSize.height * scale });
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -436,6 +454,61 @@ test.describe("device.dump.ui", () => {
     const result = returnsResult(await rpc(request, "device.dump.ui", { format: "raw" }));
     expect(typeof result.elementType, "raw format should have numeric elementType").toBe("number");
     expect(result.frame, "raw format should have frame").toBeTruthy();
+  });
+});
+
+function elementsOfType(element: any, type: string): any[] {
+  const own = element.type === type ? [element] : [];
+  const children = (element.children ?? []) as any[];
+  return own.concat(...children.map((child) => elementsOfType(child, type)));
+}
+
+// springboard reports its own elements on the panel's portrait axes, whatever
+// way the home screen is drawn
+test.describe("device.dump.ui on the home screen in landscape", () => {
+  test.beforeEach(async ({ request }) => {
+    returnsResult(await rpc(request, "device.io.button", { button: "home" }));
+    returnsResult(await rpc(request, "device.io.orientation.set", { orientation: "LANDSCAPE" }));
+    // only an ipad's home screen turns, so there is no rotation to wait for
+    await sleep(2000);
+  });
+
+  test.afterEach(async ({ request }) => {
+    await returnToPortraitHomeScreen(request);
+  });
+
+  test("tapping the middle of an icon opens its app", async ({ request }) => {
+    const tree = returnsResult(await rpc(request, "device.dump.ui"));
+    const safari = elementsOfType(tree, "XCUIElementTypeIcon")
+      .find((icon) => icon.label === "Safari" && icon.rect.width > 0);
+    expect(safari, "no Safari icon on the home screen").toBeDefined();
+
+    const { x, y, width, height } = safari.rect;
+    returnsResult(await rpc(request, "device.io.tap", { x: x + width / 2, y: y + height / 2 }));
+
+    await expect
+      .poll(async () => returnsResult(await rpc(request, "device.apps.foreground")).bundleId)
+      .toBe(SAFARI_BUNDLE_ID);
+  });
+
+  test("the status bar runs along the top of the screen", async ({ request }) => {
+    const { screenSize } = returnsResult(await rpc(request, "device.info"));
+    const tree = returnsResult(await rpc(request, "device.dump.ui"));
+    const statusBars = elementsOfType(tree, "XCUIElementTypeStatusBar").filter((bar) => bar.rect.width > 0);
+    expect(statusBars.length, "no status bar in the ui tree").toBeGreaterThan(0);
+
+    for (const { rect } of statusBars) {
+      expect({ x: rect.x, y: rect.y, width: rect.width }).toEqual({ x: 0, y: 0, width: screenSize.width });
+    }
+  });
+
+  // the application element itself already reports the rotated screen
+  test("the home screen fills the screen", async ({ request }) => {
+    const { screenSize } = returnsResult(await rpc(request, "device.info"));
+    const tree = returnsResult(await rpc(request, "device.dump.ui"));
+    const [springboard] = elementsOfType(tree, "XCUIElementTypeApplication");
+    expect(springboard, "no application in the ui tree").toBeDefined();
+    expect(springboard.rect).toEqual({ x: 0, y: 0, ...screenSize });
   });
 });
 
