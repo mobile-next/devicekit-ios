@@ -7,6 +7,13 @@ import XCTest
 enum VoiceOver {
     static let unavailable = RPCMethodError.internalError("VoiceOver control requires iOS 27 or later")
 
+    /// XCUIVoiceOverService ships in the iOS 27 SDK (Xcode 27, Swift 6.4). Built with an older Xcode the
+    /// methods still exist but say why they can't work, since the runner embeds that Xcode's XCTest.
+    static let unsupportedBuild = RPCMethodError.internalError(
+        "VoiceOver control needs an agent built with Xcode 27 or later"
+    )
+
+    #if compiler(>=6.4)
     @available(iOS 27.0, *)
     static var service: XCUIVoiceOverService {
         XCUIDevice.shared.voiceOverService
@@ -20,6 +27,7 @@ enum VoiceOver {
             throw RPCMethodError.internalError("VoiceOver is not enabled, call device.voiceover.set first")
         }
     }
+    #endif
 
     /// Runs a service call, keeping the service's own message, which already names the cause
     /// (e.g. "moveIn() requires VoiceOver Navigation Style to be set to Groups.").

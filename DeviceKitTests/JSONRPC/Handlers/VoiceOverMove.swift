@@ -23,6 +23,7 @@ struct VoiceOverMoveMethodHandler: RPCMethodHandler {
                 "Invalid direction '\(request.direction)', must be 'next', 'previous', 'in' or 'out'"
             )
         }
+        #if compiler(>=6.4)
         guard #available(iOS 27.0, *) else { throw VoiceOver.unavailable }
 
         try VoiceOver.requireEnabled()
@@ -38,5 +39,8 @@ struct VoiceOverMoveMethodHandler: RPCMethodHandler {
         let utterance = output.utterance
         logger.info("VoiceOver moved \(request.direction): \(utterance, privacy: .public)")
         return .object(["utterance": .string(utterance)])
+        #else
+        throw VoiceOver.unsupportedBuild
+        #endif
     }
 }

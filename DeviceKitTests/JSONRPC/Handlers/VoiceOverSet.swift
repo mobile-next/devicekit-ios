@@ -16,6 +16,7 @@ struct VoiceOverSetMethodHandler: RPCMethodHandler {
 
     func execute(params: JSONValue?) async throws -> JSONValue {
         let request = try decodeParams(VoiceOverSetRequest.self, from: params)
+        #if compiler(>=6.4)
         guard #available(iOS 27.0, *) else { throw VoiceOver.unavailable }
 
         let service = VoiceOver.service
@@ -27,5 +28,9 @@ struct VoiceOverSetMethodHandler: RPCMethodHandler {
 
         logger.info("VoiceOver set to \(request.enabled), now \(service.isEnabled)")
         return .object(["enabled": .bool(service.isEnabled)])
+        #else
+        _ = request
+        throw VoiceOver.unsupportedBuild
+        #endif
     }
 }

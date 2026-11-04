@@ -12,6 +12,7 @@ struct VoiceOverSpeechMethodHandler: RPCMethodHandler {
     )
 
     func execute(params: JSONValue?) async throws -> JSONValue {
+        #if compiler(>=6.4)
         guard #available(iOS 27.0, *) else { throw VoiceOver.unavailable }
 
         try VoiceOver.requireEnabled()
@@ -21,5 +22,8 @@ struct VoiceOverSpeechMethodHandler: RPCMethodHandler {
         let utterance = output.utterance
         logger.info("VoiceOver speech: \(utterance, privacy: .public)")
         return .object(["utterance": .string(utterance)])
+        #else
+        throw VoiceOver.unsupportedBuild
+        #endif
     }
 }
