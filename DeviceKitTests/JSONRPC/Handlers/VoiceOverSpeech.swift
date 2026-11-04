@@ -20,7 +20,7 @@ struct VoiceOverSpeechMethodHandler: RPCMethodHandler {
             try VoiceOver.service.currentSpeech()
         }
         let utterance = output.utterance
-        logger.info("VoiceOver speech: \(utterance, privacy: .public)")
+        logger.info("VoiceOver speech: \(utterance)")
         return .object(["utterance": .string(utterance)])
         #else
         throw VoiceOver.unsupportedBuild

@@ -37,7 +37,7 @@ struct VoiceOverMoveMethodHandler: RPCMethodHandler {
             }
         }
         let utterance = output.utterance
-        logger.info("VoiceOver moved \(request.direction): \(utterance, privacy: .public)")
+        logger.info("VoiceOver moved \(request.direction): \(utterance)")
         return .object(["utterance": .string(utterance)])
         #else
         throw VoiceOver.unsupportedBuild
