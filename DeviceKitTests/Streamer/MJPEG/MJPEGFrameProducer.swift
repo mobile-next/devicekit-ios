@@ -1,10 +1,13 @@
 enum MJPEGFrameError: Error, LocalizedError {
     case screenshotFailed
+    case imageProcessingFailed
 
     var errorDescription: String? {
         switch self {
         case .screenshotFailed:
             return "Failed to capture screenshot"
+        case .imageProcessingFailed:
+            return "Failed to rotate and scale screenshot"
         }
     }
 }
@@ -29,21 +32,21 @@ final class MJPEGFrameProducer {
 
         let startTime = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW)
 
-        guard var jpegData = try? DKScreenshot.captureJPEG(
+        guard let capturedData = try? DKScreenshot.captureJPEG(
             withQuality: quality,
             timeout: captureTimeout
         ) else {
             throw MJPEGFrameError.screenshotFailed
         }
 
-        if scale < 1.0 {
-            if let scaledData = imageScaler.scaleJPEG(
-                jpegData,
-                scaleFactor: scale,
-                quality: quality
-            ) {
-                jpegData = scaledData
-            }
+        // Normalize orientation at every scale, including scale=100. A failed
+        // conversion must not silently publish a frame with incorrect geometry.
+        guard let jpegData = imageScaler.scaleJPEG(
+            capturedData,
+            scaleFactor: scale,
+            quality: quality
+        ) else {
+            throw MJPEGFrameError.imageProcessingFailed
         }
 
         var frameData = Data()
