@@ -4,8 +4,12 @@ import {
   request as playwrightRequest,
   type APIRequestContext,
 } from "@playwright/test";
+import { EXIF_UPRIGHT, exifOrientationOf, sizeOf, type ImageSize } from "./image";
 
 const BASE_URL = "http://localhost:12004";
+
+// rotates with the device, which the home screen of an iphone does not
+const SAFARI_BUNDLE_ID = "com.apple.mobilesafari";
 
 type RpcError = { code: number; message?: string };
 type RpcResponse = {
@@ -53,6 +57,46 @@ function returnsError(response: RpcResponse): RpcError {
   return response.error!;
 }
 
+async function takeScreenshot(request: APIRequestContext, format: string): Promise<Buffer> {
+  const result = returnsResult(await rpc(request, "device.screenshot", { format }));
+  const base64 = (result.data as string).split(",")[1];
+  return Buffer.from(base64, "base64");
+}
+
+// the size of the app on screen in points: the space taps and the ui tree use
+async function foregroundAppSize(request: APIRequestContext): Promise<ImageSize> {
+  const tree = returnsResult(await rpc(request, "device.dump.ui"));
+  const app = (tree.children as any[]).find((child) => child.type === "XCUIElementTypeApplication");
+  expect(app, "no application in the ui tree").toBeDefined();
+  return { width: app.rect.width, height: app.rect.height };
+}
+
+async function foregroundAppSizeInPixels(request: APIRequestContext): Promise<ImageSize> {
+  const { scale } = returnsResult(await rpc(request, "device.info"));
+  const { width, height } = await foregroundAppSize(request);
+  return { width: width * scale, height: height * scale };
+}
+
+async function isForegroundAppInLandscape(request: APIRequestContext): Promise<boolean> {
+  const { width, height } = await foregroundAppSize(request);
+  return width > height;
+}
+
+async function showSafariInLandscape(request: APIRequestContext): Promise<void> {
+  returnsResult(await rpc(request, "device.apps.launch", { bundleId: SAFARI_BUNDLE_ID }));
+  returnsResult(await rpc(request, "device.io.orientation.set", { orientation: "LANDSCAPE" }));
+
+  // the app rotates a moment after the device does
+  await expect
+    .poll(() => isForegroundAppInLandscape(request), { message: "safari never rotated to landscape" })
+    .toBe(true);
+}
+
+async function returnToPortraitHomeScreen(request: APIRequestContext): Promise<void> {
+  returnsResult(await rpc(request, "device.io.orientation.set", { orientation: "PORTRAIT" }));
+  returnsResult(await rpc(request, "device.io.button", { button: "home" }));
+}
+
 // ---------------------------------------------------------------------------
 // device.info
 // ---------------------------------------------------------------------------
@@ -83,6 +127,21 @@ test.describe("device.apps.foreground", () => {
     expect(result).toHaveProperty("bundleId");
     expect(result).toHaveProperty("name");
     expect(result).toHaveProperty("pid");
+  });
+
+  test("reports the view controller on screen", async ({ request }) => {
+    await rpc(request, "device.apps.launch", { bundleId: "com.apple.Preferences" });
+    await sleep(2000);
+
+    try {
+      const result = returnsResult(await rpc(request, "device.apps.foreground"));
+      expect(result.bundleId).toBe("com.apple.Preferences");
+      expect(typeof result.viewController).toBe("string");
+      expect(result.viewController.length).toBeGreaterThan(0);
+    } finally {
+      // leaving Settings in the foreground would change what later tests see
+      await rpc(request, "device.apps.terminate", { bundleId: "com.apple.Preferences" });
+    }
   });
 });
 
@@ -152,8 +211,36 @@ test.describe("device.io.swipe", () => {
     expect(result).toBeTruthy();
   });
 
+  test("swipes over an explicit duration", async ({ request }) => {
+    const started = Date.now();
+    const result = returnsResult(
+      await rpc(request, "device.io.swipe", {
+        x1: 200,
+        y1: 400,
+        x2: 200,
+        y2: 200,
+        duration: 1.5,
+      }),
+    );
+    expect(result).toBeTruthy();
+    expect(Date.now() - started).toBeGreaterThanOrEqual(1400);
+  });
+
   test("fails without coordinates", async ({ request }) => {
     const error = returnsError(await rpc(request, "device.io.swipe"));
+    expect(error.code).toBeTruthy();
+  });
+
+  test("rejects a negative duration", async ({ request }) => {
+    const error = returnsError(
+      await rpc(request, "device.io.swipe", {
+        x1: 200,
+        y1: 400,
+        x2: 200,
+        y2: 200,
+        duration: -1,
+      }),
+    );
     expect(error.code).toBeTruthy();
   });
 });
@@ -285,6 +372,35 @@ test.describe("device.screenshot", () => {
 });
 
 // ---------------------------------------------------------------------------
+// device.screenshot in landscape
+// ---------------------------------------------------------------------------
+test.describe("device.screenshot in landscape", () => {
+  test.beforeEach(async ({ request }) => {
+    await showSafariInLandscape(request);
+  });
+
+  test.afterEach(async ({ request }) => {
+    await returnToPortraitHomeScreen(request);
+  });
+
+  for (const format of ["png", "jpeg"]) {
+    // taps and the ui tree are expressed in the rotated screen, so a screenshot
+    // that is not has every coordinate read off it land somewhere else
+    test(`a ${format} screenshot is as wide and as tall as the rotated screen`, async ({ request }) => {
+      const screenshot = await takeScreenshot(request, format);
+      expect(sizeOf(screenshot)).toEqual(await foregroundAppSizeInPixels(request));
+    });
+
+    // the rotation must be in the pixels: a tag asking the viewer to rotate is
+    // ignored by some decoders and applied by others
+    test(`a ${format} screenshot does not ask its viewer to rotate it`, async ({ request }) => {
+      const screenshot = await takeScreenshot(request, format);
+      expect(exifOrientationOf(screenshot)).toBe(EXIF_UPRIGHT);
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
 // device.dump.ui
 // ---------------------------------------------------------------------------
 test.describe("device.dump.ui", () => {
@@ -334,6 +450,44 @@ test.describe("device.url", () => {
 
   test("fails without url param", async ({ request }) => {
     const error = returnsError(await rpc(request, "device.url"));
+    expect(error.code).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// device.clipboard
+// ---------------------------------------------------------------------------
+test.describe("device.clipboard", () => {
+  test("reads back what it wrote", async ({ request }) => {
+    const text = `devicekit-${Date.now()}`;
+    returnsResult(await rpc(request, "device.clipboard.set", { text }));
+    const result = returnsResult(await rpc(request, "device.clipboard.get"));
+    expect(result.text).toBe(text);
+  });
+
+  test("returns empty text after setting an empty clipboard", async ({ request }) => {
+    returnsResult(await rpc(request, "device.clipboard.set", { text: "" }));
+    const result = returnsResult(await rpc(request, "device.clipboard.get"));
+    expect(result.text).toBe("");
+  });
+
+  test("fails without text", async ({ request }) => {
+    const error = returnsError(await rpc(request, "device.clipboard.set"));
+    expect(error.code).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// device.settings.apply
+// ---------------------------------------------------------------------------
+test.describe("device.settings.apply", () => {
+  test("switches appearance to dark and back to light", async ({ request }) => {
+    returnsResult(await rpc(request, "device.settings.apply", { appearance: "dark" }));
+    returnsResult(await rpc(request, "device.settings.apply", { appearance: "light" }));
+  });
+
+  test("fails on an unknown appearance", async ({ request }) => {
+    const error = returnsError(await rpc(request, "device.settings.apply", { appearance: "sepia" }));
     expect(error.code).toBeTruthy();
   });
 });

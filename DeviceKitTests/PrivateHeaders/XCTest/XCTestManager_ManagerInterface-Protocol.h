@@ -44,7 +44,7 @@
 
 // Available since Xcode9
 // The first screenID type changed from "unsigned int" to "long long" since Xcode 13.3 in XCTAutomationSupport.framework/XCTScreenshotRequest.h
-// but this place is still "unsigned int" in the header. Appium/WDA changes to "long long" for Xcode 13.3 x iOS 15.4 environment.
+// but this place is still "unsigned int" in the header, so it is declared "long long" here for Xcode 13.3+ and iOS 15.4+.
 - (void)_XCT_requestScreenshotOfScreenWithID:(long long)arg1 withRect:(struct CGRect)arg2 uti:(NSString *)arg3 compressionQuality:(double)arg4 withReply:(void (^)(NSData *, NSError *))arg5;
 - (void)_XCT_requestScreenshotOfScreenWithID:(long long)arg1 withRect:(struct CGRect)arg2 withReply:(void (^)(NSData *, NSError *))arg3;
 - (void)_XCT_requestSnapshotForElement:(id/*XCAccessibilityElement*/)arg1 attributes:(NSArray *)arg2 parameters:(NSDictionary *)arg3 reply:(void (^)(id/*XCElementSnapshot*/, NSError *))arg4;

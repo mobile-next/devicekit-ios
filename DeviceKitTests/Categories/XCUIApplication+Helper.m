@@ -4,9 +4,8 @@
  */
 
 #import "AXClientProxy.h"
-#import "FBLogger.h"
 #import "XCAccessibilityElement.h"
-#import "XCTestDaemonsProxy.h"
+#import "XCTRunnerDaemonSession.h"
 #import "XCTestManager_ManagerInterface-Protocol.h"
 #import "XCUIApplication+Helper.h"
 
@@ -28,7 +27,7 @@
     NSMutableArray<NSDictionary<NSString *, id> *> *result =
         [NSMutableArray array];
     id<XCTestManager_ManagerInterface> proxy =
-        [XCTestDaemonsProxy testRunnerProxy];
+        [XCTRunnerDaemonSession sharedSession].daemonProxy;
 
     for (id<XCAccessibilityElement> axElement in axElements) {
         NSMutableDictionary<NSString *, id> *appInfo =
@@ -45,10 +44,9 @@
                                    if (nil == error) {
                                        bundleId = bundleID;
                                    } else {
-                                       [FBLogger
-                                           logFmt:@"Cannot request the bundle "
-                                                  @"ID for process ID %@: %@",
-                                                  @(pid), error.description];
+                                       NSLog(@"Cannot request the bundle "
+                                             @"ID for process ID %@: %@",
+                                             @(pid), error.description);
                                    }
                                    dispatch_semaphore_signal(sem);
                                  }];

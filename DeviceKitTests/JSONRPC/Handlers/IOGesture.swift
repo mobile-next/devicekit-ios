@@ -151,17 +151,15 @@ struct IOGestureMethodHandler: RPCMethodHandler {
         let isMultiFinger = fingerActions.count > 1
         let style: EventRecord.Style = isMultiFinger ? .multiFinger : .singleFinger
 
-        let eventRecord = EventRecord(orientation: .portrait, style: style)
-
-        let (screenWidth, screenHeight) = OrientationGeometry.physicalScreenSize()
+        let geometry = OrientationGeometry.current()
+        let eventRecord = EventRecord(orientation: .portrait, style: style, displayID: geometry.displayID)
 
         for (fingerIndex, actions) in fingerActions.sorted(by: { $0.key < $1.key }) {
             logger.info("Building path for finger \(fingerIndex) with \(actions.count) actions")
             try buildFingerPath(
                 actions: actions,
                 fingerIndex: fingerIndex,
-                screenWidth: screenWidth,
-                screenHeight: screenHeight,
+                geometry: geometry,
                 eventRecord: eventRecord
             )
         }
@@ -173,19 +171,14 @@ struct IOGestureMethodHandler: RPCMethodHandler {
     private func buildFingerPath(
         actions: [Action],
         fingerIndex: Int,
-        screenWidth: Float,
-        screenHeight: Float,
+        geometry: OrientationGeometry,
         eventRecord: EventRecord
     ) throws {
         guard let pressAction = actions.first else {
             throw RPCMethodError.invalidParams("Finger \(fingerIndex) has no actions")
         }
 
-        let initialPoint = OrientationGeometry.orientationAwarePoint(
-            width: screenWidth,
-            height: screenHeight,
-            point: CGPoint(x: CGFloat(pressAction.x), y: CGFloat(pressAction.y))
-        )
+        let initialPoint = geometry.touchPoint(for: CGPoint(x: CGFloat(pressAction.x), y: CGFloat(pressAction.y)))
 
         var currentOffset: TimeInterval = 0
 
@@ -194,11 +187,7 @@ struct IOGestureMethodHandler: RPCMethodHandler {
         currentOffset += max(pressAction.duration, Self.minimumPressHoldDuration)
 
         for action in actions.dropFirst() {
-            let point = OrientationGeometry.orientationAwarePoint(
-                width: screenWidth,
-                height: screenHeight,
-                point: CGPoint(x: CGFloat(action.x), y: CGFloat(action.y))
-            )
+            let point = geometry.touchPoint(for: CGPoint(x: CGFloat(action.x), y: CGFloat(action.y)))
 
             guard let actionType = ActionType(rawValue: action.type) else {
                 continue

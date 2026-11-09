@@ -62,6 +62,35 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSDictionary *)defaultParameters;
 
+/**
+ * Returns the class name of the view controller presenting the current screen
+ * of an application, or nil when the accessibility server reports none.
+ *
+ * This is the iOS counterpart of the focused activity on Android. The value
+ * comes from the accessibility snapshot: elements that host a view controller
+ * carry its class name as an extra attribute. The deepest one wins, so a
+ * pushed or presented controller is reported rather than the root.
+ *
+ * @param pid Process id of the application to inspect.
+ * @return The view controller class name, or nil when there is none to report.
+ */
+- (nullable NSString *)viewControllerClassNameForProcessIdentifier:(int)pid
+    NS_SWIFT_NAME(viewControllerClassName(forProcessIdentifier:));
+
+/**
+ * Returns the display name of an application, as the accessibility server
+ * reports it, or nil when there is none.
+ *
+ * XCUIApplication exposes the same string as its `label`, but reading it makes
+ * XCTest resolve the element, which on an app with a large hierarchy takes
+ * seconds. Asking the accessibility server for that one attribute does not.
+ *
+ * @param pid Process id of the application to inspect.
+ * @return The application's label, or nil when there is none to report.
+ */
+- (nullable NSString *)labelForProcessIdentifier:(int)pid
+    NS_SWIFT_NAME(label(forProcessIdentifier:));
+
 @end
 
 NS_ASSUME_NONNULL_END

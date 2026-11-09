@@ -46,6 +46,12 @@ private let keyboardKeysByName: [String: XCUIKeyboardKey] = [
     "f9": .F9, "f10": .F10, "f11": .F11, "f12": .F12,
 ]
 
+// HID "Keyboard Clear" (page 0x07, usage 0x9C) wipes the focused text field in one event.
+// Sent as a device event, not through typeKey, which has no key for it.
+private let hidClearKeyName = "clear"
+private let hidKeyboardPage: UInt32 = 0x07
+private let hidKeyboardClearUsage: UInt32 = 0x9C
+
 // Named keys whose XCUIKeyboardKey rawValue is a real control character that
 // typeText delivers correctly without a modifier. Every other named key (arrows,
 // home/end, page nav, F-keys) carries a scalar that typeText would insert as a
@@ -73,6 +79,9 @@ struct IOKeysMethodHandler: RPCMethodHandler {
         // resolve all combos upfront, so an invalid combo fails before any
         // key is pressed
         let resolvedCombos = try request.keys.map { combo -> ResolvedKeyCombo in
+            if combo.key.lowercased() == hidClearKeyName && combo.modifiers.isEmpty {
+                return ResolvedKeyCombo(key: hidClearKeyName, flags: [], preferTypeText: false)
+            }
             let resolved = try resolveKey(combo.key)
             return ResolvedKeyCombo(
                 key: resolved.value,
@@ -89,7 +98,9 @@ struct IOKeysMethodHandler: RPCMethodHandler {
             // typeKey delivers modifier combos and navigation/function keys;
             // typeText handles literal characters and control-character keys,
             // which typeKey does not deliver reliably without a modifier.
-            if combo.flags.isEmpty && combo.preferTypeText {
+            if combo.key == hidClearKeyName {
+                try sendHIDEvent(page: hidKeyboardPage, usage: hidKeyboardClearUsage)
+            } else if combo.flags.isEmpty && combo.preferTypeText {
                 app.typeText(combo.key)
             } else {
                 app.typeKey(combo.key, modifierFlags: combo.flags)

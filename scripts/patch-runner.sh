@@ -35,6 +35,21 @@ if [ -n "${XCODE_PLATFORM}" ]; then
     SELECTED_DEVELOPER_DIR="${DEVELOPER_DIR:-$(xcode-select -p)}"
     TESTING_INTEROP_LIBRARY="${SELECTED_DEVELOPER_DIR}/Platforms/${XCODE_PLATFORM}.platform/Developer/usr/lib/lib_TestingInterop.dylib"
     TESTING_FOUNDATION_FRAMEWORK="${SELECTED_DEVELOPER_DIR}/Platforms/${XCODE_PLATFORM}.platform/Developer/Library/Frameworks/_Testing_Foundation.framework"
+    # Xcode 27 stopped embedding XCTest in the runner; Xcode 26 still does, so only fill in what's missing.
+    PLATFORM_DEVELOPER_DIR="${SELECTED_DEVELOPER_DIR}/Platforms/${XCODE_PLATFORM}.platform/Developer"
+    if [ ! -d "${RUNNER_APP}/Frameworks/XCTest.framework" ]; then
+        mkdir -p "${RUNNER_APP}/Frameworks"
+        for framework in XCTest XCTestCore XCUIAutomation XCTAutomationSupport XCUnit XCTestSupport Testing; do
+            for dir in Library/Frameworks Library/PrivateFrameworks; do
+                if [ -d "${PLATFORM_DEVELOPER_DIR}/${dir}/${framework}.framework" ]; then
+                    cp -R "${PLATFORM_DEVELOPER_DIR}/${dir}/${framework}.framework" "${RUNNER_APP}/Frameworks/"
+                fi
+            done
+        done
+        if [ -f "${PLATFORM_DEVELOPER_DIR}/usr/lib/libXCTestSwiftSupport.dylib" ]; then
+            cp "${PLATFORM_DEVELOPER_DIR}/usr/lib/libXCTestSwiftSupport.dylib" "${RUNNER_APP}/Frameworks/"
+        fi
+    fi
     if [ -f "${TESTING_INTEROP_LIBRARY}" ]; then
         mkdir -p "${RUNNER_APP}/Frameworks"
         cp "${TESTING_INTEROP_LIBRARY}" "${RUNNER_APP}/Frameworks/"

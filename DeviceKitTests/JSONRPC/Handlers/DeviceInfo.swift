@@ -13,11 +13,12 @@ struct DeviceInfoMethodHandler: RPCMethodHandler {
 
         let start = Date()
 
+        // springboard reports the cover display's frame even when unfolded
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        let frame = springboard.frame
+        let size = OrientationGeometry.secondaryDisplaySize() ?? springboard.frame.size
         let scale = Int(UIScreen.main.scale)
-        let width = Int(frame.width)
-        let height = Int(frame.height)
+        let width = Int(size.width)
+        let height = Int(size.height)
 
         let duration = Date().timeIntervalSince(start)
         logger.info("Device info took \(duration), screen: \(width)x\(height)@\(scale)x")

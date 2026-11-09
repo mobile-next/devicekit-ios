@@ -36,7 +36,7 @@ Control any iOS device or simulator over a simple JSON-RPC API. Tap, swipe, stre
 
 | Platform | Minimum Version |
 |----------|----------------|
-| iOS      | 16.0           |
+| iOS      | 14.0           |
 | Swift    | 5.9            |
 | Xcode    | 15.0+          |
 
@@ -70,6 +70,14 @@ make sim-zip
 | `make lint` | — | Run SwiftLint |
 | `make clean` | — | Remove build artifacts |
 
+### Building with Newer Xcode
+
+The project targets iOS 15.0, the lowest Xcode 27 accepts, so local builds work out of the box. Release builds still support iOS 14: the build workflow sets `IPHONEOS_DEPLOYMENT_TARGET=14.0`, and the `ipa-unsigned` and `sim-zip*` targets pass it to `xcodebuild`. To reproduce a release build with an Xcode that still accepts 14.0:
+
+```bash
+make sim-zip IPHONEOS_DEPLOYMENT_TARGET=14.0
+```
+
 ## Quick Start
 
 Once the server is running at `127.0.0.1:12004`, make your first call:
@@ -93,7 +101,33 @@ DeviceKit runs as an XCUITest. Once installed and launched on a device or simula
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `DEVICEKIT_LISTEN_PORT` | `12004` | JSON-RPC server port |
-| `DEVICEKIT_LISTEN_HOST` | `127.0.0.1` | Bind address for the JSON-RPC server. All TCP servers (video, audio) also bind to `127.0.0.1` by default. |
+| `DEVICEKIT_LISTEN_HOST` | `127.0.0.1` | Bind address for the JSON-RPC server: a comma-separated list of IPv4 or IPv6 literals, one listener each. All TCP servers (video, audio) also bind to `127.0.0.1` by default. |
+
+#### Reaching a real device over Wi-Fi
+
+Xcode keeps a private IPv6 tunnel to each paired device, reachable only from the paired Mac and kept when the device switches from USB to Wi-Fi. Add the device side of that tunnel to the listen list to reach DeviceKit without USB port forwarding, while keeping the loopback listener for existing clients. `xcodebuild` passes `TEST_RUNNER_`-prefixed variables into the test runner:
+
+```bash
+TUNNEL=$(xcrun devicectl device info details --device <udid> | awk '/Tunnel IP Address|tunnelIPAddress/{print $NF}')
+# Keeps running until the server is stopped with POST /shutdown
+TEST_RUNNER_DEVICEKIT_LISTEN_HOST="127.0.0.1,$TUNNEL" xcodebuild test-without-building \
+  -project devicekit-ios.xcodeproj -scheme devicekit-ios -destination "id=<udid>" \
+  -collect-test-diagnostics never
+```
+
+Then, from a second terminal while it runs:
+
+```bash
+TUNNEL=$(xcrun devicectl device info details --device <udid> | awk '/Tunnel IP Address|tunnelIPAddress/{print $NF}')
+curl -g -X POST "http://[$TUNNEL]:12004/rpc" -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"device.info","params":{},"id":1}'
+```
+
+The tunnel address can change when the tunnel reconnects (for example during a long build), and a stale address fails to bind. Read it right before starting the runner, and if the tunnel reconnects while the runner is up, stop the runner (`POST /shutdown`) and start it again with the new address, since it does not rebind on its own.
+
+Avoid binding `0.0.0.0`, `::` or the device's Wi-Fi address instead: the server has no authentication, so that exposes device control to the whole network.
+
+If the server can't start (for example, an address that can't be bound), the test fails. `-collect-test-diagnostics never` stops `xcodebuild` from collecting a sysdiagnose on that failure, which otherwise can stall it for minutes.
 
 **Endpoints:**
 
@@ -123,7 +157,7 @@ All methods follow the [JSON-RPC 2.0](https://www.jsonrpc.org/specification) spe
 | Method | Description |
 |--------|-------------|
 | `device.io.tap` | Tap at (x, y) coordinates |
-| `device.io.swipe` | Swipe from (x1, y1) to (x2, y2) |
+| `device.io.swipe` | Swipe from (x1, y1) to (x2, y2) with an optional duration in seconds (default 0.1, max 60) |
 | `device.io.longpress` | Long press at (x, y) for a duration |
 | `device.io.gesture` | Multi-finger gesture with press/move/release actions |
 | `device.io.text` | Type text into the focused field |
@@ -137,6 +171,8 @@ All methods follow the [JSON-RPC 2.0](https://www.jsonrpc.org/specification) spe
 | `device.io.orientation.get` | Get current orientation (`PORTRAIT` / `LANDSCAPE`) |
 | `device.io.orientation.set` | Set orientation to `PORTRAIT` or `LANDSCAPE` |
 | `device.url` | Open a URL |
+| `device.clipboard.get` | Read the clipboard text |
+| `device.clipboard.set` | Replace the clipboard text |
 
 #### Apps
 
@@ -200,8 +236,13 @@ nc localhost 12005 | ffplay \
   -analyzeduration 0 \
   -framedrop \
   -sync ext \
-  -f h264 -
+  -f h264 -framerate 60 -
 ```
+
+`-framerate` matters: a raw H264 stream carries no timestamps ffplay can read, so
+ffplay assumes 25 fps. The broadcast sends up to 60 fps, and without the flag
+playback falls further behind every second. Any value at or above the real rate
+works, since ffplay simply waits for the next frame.
 
 ## Testing
 
