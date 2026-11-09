@@ -11,7 +11,7 @@ struct IOKeyboardHideMethodHandler: RPCMethodHandler {
 
     func execute(params: JSONValue?) async throws -> JSONValue {
         guard let foregroundApp = RunningApp.getForegroundApp() else {
-            return .object(["dismissed": .bool(false)])
+            throw RPCMethodError.internalError("No foreground app found")
         }
 
         guard foregroundApp.keyboards.firstMatch.exists else {
@@ -25,7 +25,11 @@ struct IOKeyboardHideMethodHandler: RPCMethodHandler {
         // keyboard-owned gesture (return-key action, swipe-to-type) to
         // misfire. Invoked via the Objective-C runtime, the same way this
         // project's EventRecord already calls other private XCTest APIs.
-        _ = foregroundApp.perform(NSSelectorFromString("dismissKeyboard"))
+        let dismissKeyboard = NSSelectorFromString("dismissKeyboard")
+        guard foregroundApp.responds(to: dismissKeyboard) else {
+            throw RPCMethodError.internalError("dismissKeyboard is not available on this iOS version")
+        }
+        _ = foregroundApp.perform(dismissKeyboard)
 
         return .object(["dismissed": .bool(true)])
     }
