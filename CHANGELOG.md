@@ -1,3 +1,6 @@
+## [0.0.37](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.37) (2026-11-09)
+* Feat: add device.io.keyboard.status ([#60](https://github.com/mobile-next/devicekit-ios/pull/60))
+
 ## [0.0.36](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.36) (2026-10-31)
 * Perf: make device.dump.ui fast on heavy React Native screens ([#105](https://github.com/mobile-next/devicekit-ios/pull/105)), thanks to [@avilashp-sportsbet](https://github.com/avilashp-sportsbet)
 
