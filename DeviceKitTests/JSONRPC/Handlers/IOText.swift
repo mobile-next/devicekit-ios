@@ -1,3 +1,7 @@
+// Portions of this file are derived from Maestro
+// (https://github.com/mobile-dev-inc/maestro), licensed under the Apache License 2.0,
+// and have been modified by Mobile Next HQ, Inc. See THIRD_PARTY_NOTICES.md.
+
 import XCTest
 import os
 

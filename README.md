@@ -19,6 +19,7 @@ Control any iOS device or simulator over a simple JSON-RPC API. Tap, swipe, stre
 - [Building](#building)
 - [Testing](#testing)
 - [Communication](#communication)
+- [Acknowledgements](#acknowledgements)
 - [License](#license)
 
 ## What You Can Build
@@ -285,6 +286,22 @@ Questions, issues, or ideas? [Open an issue](https://github.com/mobile-next/devi
 
 Want to contribute? PRs are appreciated. Check open issues for good first tasks.
 
+## Acknowledgements
+
+DeviceKit iOS began as a fork of the iOS XCTest runner in
+[Maestro](https://github.com/mobile-dev-inc/maestro) and has been substantially
+rewritten and extended since. Portions of that code remain in this repository,
+including parts that Maestro derived from
+[WebDriverAgent](https://github.com/facebookarchive/WebDriverAgent) by Facebook,
+Inc., later maintained by [Appium](https://github.com/appium/WebDriverAgent).
+
+We are grateful to those projects and their contributors. DeviceKit iOS is not
+affiliated with, or endorsed by, any of them.
+
 ## License
 
-DeviceKit iOS is released under the [Functional Source License 1.1, Apache 2.0 Future License](LICENSE).
+Code written for DeviceKit iOS is released under the
+[Functional Source License 1.1, Apache 2.0 Future License](LICENSE).
+
+Portions derived from third-party projects remain under their original licenses.
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
