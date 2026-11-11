@@ -130,7 +130,8 @@ struct DumpUIMethodHandler: RPCMethodHandler {
             getSafariWebViewHierarchy()
         }
 
-        let deviceFrame = springboardApplication.frame
+        // springboard's own frame is square in landscape on iPadOS 15
+        let deviceFrame = CGRect(origin: .zero, size: OrientationGeometry.mainDisplaySize())
         let deviceAxFrame: AXFrame = [
             "X": Double(deviceFrame.minX),
             "Y": Double(deviceFrame.minY),
