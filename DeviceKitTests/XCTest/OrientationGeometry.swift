@@ -113,7 +113,12 @@ struct OrientationGeometry {
             return nil
         }
 
-        let size = mainDisplayPortraitSize()
+        // springboard's own frame, not the display: its elements live in that
+        // space, and on iPadOS 15 it is a square as wide as the long side
+        let size = XCUIApplication(bundleIdentifier: springboardBundleId).frame.size
+        guard size.width > 0, size.height > 0 else {
+            return nil
+        }
         return OrientationGeometry(
             portraitWidth: min(size.width, size.height),
             portraitHeight: max(size.width, size.height),
