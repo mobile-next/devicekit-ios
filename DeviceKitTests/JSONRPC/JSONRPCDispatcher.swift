@@ -33,6 +33,10 @@ final class JSONRPCDispatcher {
         registerHandler(ClipboardGetMethodHandler())
         registerHandler(ClipboardSetMethodHandler())
         registerHandler(DeviceSettingsApplyMethodHandler())
+        registerHandler(VoiceOverSetMethodHandler())
+        registerHandler(VoiceOverGetMethodHandler())
+        registerHandler(VoiceOverSpeechMethodHandler())
+        registerHandler(VoiceOverMoveMethodHandler())
     }
 
     func registerHandler<T: RPCMethodHandler>(_ handler: T) {
