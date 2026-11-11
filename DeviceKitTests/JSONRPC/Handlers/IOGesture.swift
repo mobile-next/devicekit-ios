@@ -7,6 +7,10 @@ struct Action: Codable {
     let x: Float
     let y: Float
     let button: Int
+    /// Seconds after the gesture starts that this finger touches down. Only valid on a finger's
+    /// press; without it every finger touches down at once. Lets a gesture tap more than once:
+    /// VoiceOver's double tap is two fingers on the same spot, the second starting after the first lifts.
+    let start: TimeInterval?
 }
 
 struct IOGestureRequest: Codable {
@@ -42,6 +46,7 @@ struct IOGestureMethodHandler: RPCMethodHandler {
 
         for (fingerIndex, actions) in fingerActions {
             try validateFingerSequence(actions, fingerIndex: fingerIndex)
+            try validateStart(actions, fingerIndex: fingerIndex)
         }
 
         do {
@@ -64,6 +69,20 @@ struct IOGestureMethodHandler: RPCMethodHandler {
             grouped[action.button, default: []].append(action)
         }
         return grouped
+    }
+
+    private func validateStart(_ actions: [Action], fingerIndex: Int) throws {
+        for (index, action) in actions.enumerated() {
+            guard let start = action.start else { continue }
+            guard index == 0 else {
+                throw RPCMethodError.invalidParams(
+                    "Finger \(fingerIndex) has 'start' at index \(index), only its press can have one"
+                )
+            }
+            guard start >= 0 else {
+                throw RPCMethodError.invalidParams("Negative start \(start) for finger \(fingerIndex)")
+            }
+        }
     }
 
     private func validateFingerSequence(_ actions: [Action], fingerIndex: Int) throws {
@@ -180,7 +199,7 @@ struct IOGestureMethodHandler: RPCMethodHandler {
 
         let initialPoint = geometry.touchPoint(for: CGPoint(x: CGFloat(pressAction.x), y: CGFloat(pressAction.y)))
 
-        var currentOffset: TimeInterval = 0
+        var currentOffset: TimeInterval = pressAction.start ?? 0
 
         var path = PointerEventPath.pathForTouch(at: initialPoint, offset: currentOffset)
 

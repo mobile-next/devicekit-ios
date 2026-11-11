@@ -282,6 +282,44 @@ test.describe("device.io.gesture", () => {
     const error = returnsError(await rpc(request, "device.io.gesture"));
     expect(error.code).toBeTruthy();
   });
+
+  test("taps twice with a second finger that starts after the first lifts", async ({ request }) => {
+    const result = returnsResult(
+      await rpc(request, "device.io.gesture", {
+        actions: [
+          { type: "press", x: 150, y: 150, duration: 0.05, button: 0 },
+          { type: "release", x: 150, y: 150, duration: 0, button: 0 },
+          { type: "press", x: 150, y: 150, duration: 0.05, button: 1, start: 0.2 },
+          { type: "release", x: 150, y: 150, duration: 0, button: 1 },
+        ],
+      }),
+    );
+    expect(result).toBeTruthy();
+  });
+
+  test("rejects a negative start", async ({ request }) => {
+    const error = returnsError(
+      await rpc(request, "device.io.gesture", {
+        actions: [
+          { type: "press", x: 150, y: 150, duration: 0, button: 0, start: -1 },
+          { type: "release", x: 150, y: 150, duration: 0, button: 0 },
+        ],
+      }),
+    );
+    expect(error.code).toBe(-32602);
+  });
+
+  test("rejects start on anything but the press", async ({ request }) => {
+    const error = returnsError(
+      await rpc(request, "device.io.gesture", {
+        actions: [
+          { type: "press", x: 150, y: 150, duration: 0, button: 0 },
+          { type: "release", x: 150, y: 150, duration: 0, button: 0, start: 0.5 },
+        ],
+      }),
+    );
+    expect(error.code).toBe(-32602);
+  });
 });
 
 // ---------------------------------------------------------------------------
