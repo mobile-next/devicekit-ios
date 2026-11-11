@@ -1,3 +1,15 @@
+/*
+ * Portions of this file are derived from Maestro
+ * (https://github.com/mobile-dev-inc/maestro), licensed under the Apache License 2.0,
+ * which in turn derives them from WebDriverAgent
+ * (https://github.com/facebookarchive/WebDriverAgent).
+ *
+ * Copyright (c) 2015-present, Facebook, Inc. All rights reserved.
+ * WebDriverAgent is licensed under the BSD license found in THIRD_PARTY_NOTICES.md.
+ *
+ * Modified by Mobile Next HQ, Inc.
+ */
+
 /**
  * @file XCAccessibilityElement.h
  * @brief Protocol declaration for XCTest's private accessibility element
