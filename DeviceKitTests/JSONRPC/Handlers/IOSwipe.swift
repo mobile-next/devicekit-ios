@@ -11,6 +11,7 @@ struct IOSwipeRequest: Decodable {
     let x2: Int
     let y2: Int
     let duration: TimeInterval?
+    let coordinatesMapped: Bool?
 }
 
 @MainActor
@@ -36,8 +37,10 @@ struct IOSwipeMethodHandler: RPCMethodHandler {
         }
 
         let geometry = OrientationGeometry.current()
-        let start = geometry.touchPoint(for: CGPoint(x: request.x1, y: request.y1))
-        let end = geometry.touchPoint(for: CGPoint(x: request.x2, y: request.y2))
+        let rawStart = CGPoint(x: request.x1, y: request.y1)
+        let rawEnd = CGPoint(x: request.x2, y: request.y2)
+        let start = request.coordinatesMapped == true ? rawStart : geometry.touchPoint(for: rawStart)
+        let end = request.coordinatesMapped == true ? rawEnd : geometry.touchPoint(for: rawEnd)
 
         do {
             try await swipePrivateAPI(

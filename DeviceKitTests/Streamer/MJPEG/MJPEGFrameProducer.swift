@@ -39,6 +39,9 @@ final class MJPEGFrameProducer {
             throw MJPEGFrameError.screenshotFailed
         }
 
+        // Preserve source orientation for input mapping before scaleJPEG normalizes it.
+        let sourceOrientation = imageScaler.sourceOrientation(of: capturedData)
+
         // Normalize orientation at every scale, including scale=100. A failed
         // conversion must not silently publish a frame with incorrect geometry.
         guard let jpegData = imageScaler.scaleJPEG(
@@ -53,6 +56,7 @@ final class MJPEGFrameProducer {
         let header =
             "--\(boundary)\r\n" +
             "Content-Type: image/jpeg\r\n" +
+            "X-DeviceKit-Orientation: \(sourceOrientation)\r\n" +
             "Content-Length: \(jpegData.count)\r\n\r\n"
 
         frameData.append(Data(header.utf8))

@@ -4,6 +4,16 @@ import ImageIO
 import UniformTypeIdentifiers
 
 final class MJPEGImageScaler {
+    func sourceOrientation(of data: Data) -> Int {
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [CFString: Any],
+              let orientation = (properties[kCGImagePropertyOrientation] as? NSNumber)?.intValue,
+              (1...8).contains(orientation) else {
+            return 1
+        }
+        return orientation
+    }
+
     func scaleJPEG(_ data: Data, scaleFactor: CGFloat, quality: CGFloat) -> Data? {
         guard scaleFactor.isFinite, scaleFactor > 0, scaleFactor <= 1,
               let imageSource = CGImageSourceCreateWithData(data as CFData, nil),

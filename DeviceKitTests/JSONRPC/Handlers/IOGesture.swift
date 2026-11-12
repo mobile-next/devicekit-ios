@@ -15,6 +15,7 @@ struct Action: Codable {
 
 struct IOGestureRequest: Codable {
     let actions: [Action]
+    let coordinatesMapped: Bool?
 }
 
 private enum ActionType: String {
@@ -51,7 +52,7 @@ struct IOGestureMethodHandler: RPCMethodHandler {
 
         do {
             let start = Date()
-            try await executeGesture(fingerActions: fingerActions)
+            try await executeGesture(fingerActions: fingerActions, coordinatesMapped: request.coordinatesMapped == true)
             let duration = Date().timeIntervalSince(start)
             logger.info("Gesture execution completed in \(duration)s")
             return .object(["success": .bool(true)])
@@ -166,7 +167,7 @@ struct IOGestureMethodHandler: RPCMethodHandler {
         }
     }
 
-    private func executeGesture(fingerActions: [Int: [Action]]) async throws {
+    private func executeGesture(fingerActions: [Int: [Action]], coordinatesMapped: Bool) async throws {
         let isMultiFinger = fingerActions.count > 1
         let style: EventRecord.Style = isMultiFinger ? .multiFinger : .singleFinger
 
@@ -179,7 +180,8 @@ struct IOGestureMethodHandler: RPCMethodHandler {
                 actions: actions,
                 fingerIndex: fingerIndex,
                 geometry: geometry,
-                eventRecord: eventRecord
+                eventRecord: eventRecord,
+                coordinatesMapped: coordinatesMapped
             )
         }
 
@@ -191,13 +193,15 @@ struct IOGestureMethodHandler: RPCMethodHandler {
         actions: [Action],
         fingerIndex: Int,
         geometry: OrientationGeometry,
-        eventRecord: EventRecord
+        eventRecord: EventRecord,
+        coordinatesMapped: Bool
     ) throws {
         guard let pressAction = actions.first else {
             throw RPCMethodError.invalidParams("Finger \(fingerIndex) has no actions")
         }
 
-        let initialPoint = geometry.touchPoint(for: CGPoint(x: CGFloat(pressAction.x), y: CGFloat(pressAction.y)))
+        let rawInitialPoint = CGPoint(x: CGFloat(pressAction.x), y: CGFloat(pressAction.y))
+        let initialPoint = coordinatesMapped ? rawInitialPoint : geometry.touchPoint(for: rawInitialPoint)
 
         var currentOffset: TimeInterval = pressAction.start ?? 0
 
@@ -206,7 +210,8 @@ struct IOGestureMethodHandler: RPCMethodHandler {
         currentOffset += max(pressAction.duration, Self.minimumPressHoldDuration)
 
         for action in actions.dropFirst() {
-            let point = geometry.touchPoint(for: CGPoint(x: CGFloat(action.x), y: CGFloat(action.y)))
+            let rawPoint = CGPoint(x: CGFloat(action.x), y: CGFloat(action.y))
+            let point = coordinatesMapped ? rawPoint : geometry.touchPoint(for: rawPoint)
 
             guard let actionType = ActionType(rawValue: action.type) else {
                 continue

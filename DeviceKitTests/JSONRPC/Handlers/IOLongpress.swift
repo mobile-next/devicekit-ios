@@ -4,6 +4,7 @@ struct IOLongpressRequest: Codable {
     let x: Float
     let y: Float
     let duration: TimeInterval
+    let coordinatesMapped: Bool?
 }
 
 @MainActor
@@ -19,7 +20,8 @@ struct IOLongpressMethodHandler: RPCMethodHandler {
         let request = try decodeParams(IOLongpressRequest.self, from: params)
 
         let geometry = OrientationGeometry.current()
-        let point = geometry.touchPoint(for: CGPoint(x: CGFloat(request.x), y: CGFloat(request.y)))
+        let rawPoint = CGPoint(x: CGFloat(request.x), y: CGFloat(request.y))
+        let point = request.coordinatesMapped == true ? rawPoint : geometry.touchPoint(for: rawPoint)
 
         logger.info("Long pressing \(point.x), \(point.y) for \(request.duration)s")
 
