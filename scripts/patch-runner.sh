@@ -85,4 +85,14 @@ if [ -d "${HOST_APP}" ]; then
         "${RUNNER_APP}/Info.plist"
 fi
 
-echo "Patched runner: display name and icon applied"
+# Ship the license and third-party notices inside every distributed app bundle.
+# The BSD license of the WebDriverAgent-derived code requires the notice to travel
+# with binary distributions, not only with the source.
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+for app in "${RUNNER_APP}" "${HOST_APP}"; do
+    if [ -d "${app}" ]; then
+        cp "${REPO_ROOT}/LICENSE" "${REPO_ROOT}/THIRD_PARTY_NOTICES.md" "${app}/" || exit 1
+    fi
+done
+
+echo "Patched runner: display name, icon and notices applied"
