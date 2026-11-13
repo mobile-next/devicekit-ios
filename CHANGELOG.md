@@ -1,3 +1,9 @@
+## [0.0.38](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.38) (2026-11-13)
+* Feat: device.voiceover.* to drive VoiceOver and read what it speaks ([#109](https://github.com/mobile-next/devicekit-ios/pull/109)), thanks to [@vijaysharm](https://github.com/vijaysharm)
+* Feat: per-finger start in device.io.gesture, for double taps ([#110](https://github.com/mobile-next/devicekit-ios/pull/110)), thanks to [@vijaysharm](https://github.com/vijaysharm)
+* Fix: lay out screen size, screenshots and the ui tree in the foreground app's orientation ([#107](https://github.com/mobile-next/devicekit-ios/pull/107)), thanks to [@edusperoni](https://github.com/edusperoni)
+* Fix: normalize MJPEG frame orientation at every scale ([#111](https://github.com/mobile-next/devicekit-ios/pull/111)), thanks to [@jorahbi](https://github.com/jorahbi)
+
 ## [0.0.37](https://github.com/mobile-next/devicekit-ios/releases/tag/0.0.37) (2026-11-09)
 * Feat: add device.io.keyboard.status ([#60](https://github.com/mobile-next/devicekit-ios/pull/60))
 
